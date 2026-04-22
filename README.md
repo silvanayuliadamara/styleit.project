@@ -18,7 +18,7 @@
 - `main`
 - `development`
 - `silvana_yulia_damara`
-- `salwa_apriSlia`
+- `salwa_aprilia`
 - `nurul_asyifa`
 - `muhammad_abdul_hafiz`
 
