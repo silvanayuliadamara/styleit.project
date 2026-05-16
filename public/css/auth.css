@@ -394,4 +394,75 @@ input:focus {
     .footer {
         padding: 28px 6% 14px;
     }
+
+    /* Register Page */
+.auth-container.register-container {
+    width: min(980px, 86%);
+    margin: 35px auto 70px;
+    grid-template-columns: 360px 430px;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-container .welcome-card {
+    width: 360px;
+    min-height: 430px;
+    justify-self: center;
+}
+
+.register-card {
+    width: 430px;
+    min-height: auto;
+    padding: 34px 38px;
+    justify-self: center;
+}
+
+.register-card h2 {
+    font-size: 21px;
+    margin-bottom: 24px;
+}
+
+.register-card .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 18px;
+    row-gap: 14px;
+}
+
+.register-card .form-group {
+    margin-bottom: 0;
+}
+
+.register-card .form-group.full {
+    grid-column: 1 / -1;
+}
+
+.register-card input {
+    height: 39px;
+}
+
+.register-card .btn-primary {
+    height: 39px;
+    margin-top: 18px;
+    margin-bottom: 14px;
+}
+
+@media (max-width: 900px) {
+    .auth-container.register-container {
+        width: 88%;
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .register-container .welcome-card,
+    .register-card {
+        width: 100%;
+        max-width: 430px;
+    }
+
+    .register-card .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
 }

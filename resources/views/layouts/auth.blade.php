@@ -21,9 +21,13 @@
     </div>
 
         <script>
-            function togglePassword() {
-                const passwordInput = document.getElementById('password');
-                const eyeIcon = document.getElementById('eyeIcon');
+            function togglePassword(inputId = 'password', iconId = 'eyeIcon') {
+                const passwordInput = document.getElementById(inputId);
+                const eyeIcon = document.getElementById(iconId);
+
+                if (!passwordInput || !eyeIcon) {
+                    return;
+                }
 
                 if (passwordInput.type === 'password') {
                     passwordInput.type = 'text';

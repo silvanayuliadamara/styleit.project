@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
         return view('auth.login');
+    }
+
+    public function showRegister()
+    {
+        return view('auth.register');
     }
 
     public function login(Request $request)
@@ -32,6 +39,7 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
+        return redirect()->route('home');
 
         $user = Auth::user();
 
@@ -44,6 +52,43 @@ class AuthController extends Controller
         }
 
         return redirect()->route('customer.dashboard');
+    }
+
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone' ],
+            'instagram' => ['nullable', 'string', 'max:50'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'min:8', 'confirmed'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'phone.required' => 'Nomor telepon wajib diisi.',
+            'phone.unique' => 'Nomor telepon sudah terdaftar.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi sandi tidak sama.',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'instagram' => $validated['instagram'] ?? null,
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'customer',
+        ]);
+
+        Auth::login($user);
+
+        $request->session()->regenerate();
+
+        return redirect()->route('login')
+        ->with('success', 'Pendaftaran berhasil. Silakan masuk ke akun Anda.');
     }
 
     public function logout(Request $request)

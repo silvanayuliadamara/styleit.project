@@ -38,7 +38,7 @@
         </form>
 
         <div class="auth-link">
-            Belum punya akun? <a href="#">Daftar</a>
+            Belum punya akun? <a href="{{ route('register') }}">Daftar</a>
         </div>
     </div>
 </section>
