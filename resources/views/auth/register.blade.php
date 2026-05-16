@@ -11,95 +11,52 @@
             @csrf
 
             <div class="form-grid">
-                <div class="form-group">
-                    <label for="name">Nama Lengkap</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value="{{ old('name') }}"
-                        required
-                    >
+                @include('components.form-input', [
+                    'label' => 'Nama Lengkap',
+                    'id' => 'name',
+                    'name' => 'name',
+                    'required' => true
+                ])
 
-                    @error('name')
-                        <div class="error">{{ $message }}</div>
-                    @enderror
-                </div>
+                @include('components.form-input', [
+                    'label' => 'No. HP',
+                    'id' => 'phone',
+                    'name' => 'phone',
+                    'required' => true
+                ])
 
-                <div class="form-group">
-                    <label for="phone">No. HP</label>
-                    <input
-                        type="text"
-                        id="phone"
-                        name="phone"
-                        value="{{ old('phone') }}"
-                        required
-                    >
+                @include('components.form-input', [
+                    'label' => 'Username Instagram',
+                    'id' => 'instagram',
+                    'name' => 'instagram',
+                    'placeholder' => '@username',
+                    'class' => 'full'
+                ])
 
-                    @error('phone')
-                        <div class="error">{{ $message }}</div>
-                    @enderror
-                </div>
+                @include('components.form-input', [
+                    'label' => 'Email',
+                    'id' => 'email',
+                    'name' => 'email',
+                    'type' => 'email',
+                    'required' => true,
+                    'class' => 'full'
+                ])
 
-                <div class="form-group full">
-                    <label for="instagram">Username Instagram</label>
-                    <input
-                        type="text"
-                        id="instagram"
-                        name="instagram"
-                        value="{{ old('instagram') }}"
-                    >
+                @include('components.password-input', [
+                    'label' => 'Kata Sandi',
+                    'id' => 'password',
+                    'name' => 'password',
+                    'iconId' => 'eyeIconPassword',
+                    'class' => 'full'
+                ])
 
-                    @error('instagram')
-                        <div class="error">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group full">
-                    <label for="email">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value="{{ old('email') }}"
-                        required
-                    >
-
-                    @error('email')
-                        <div class="error">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group full">
-                    <label for="password">Kata Sandi</label>
-
-                    <div class="password-wrapper">
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            required
-                        >
-
-                        <button type="button" class="toggle-password" onclick="togglePassword()">
-                            <i id="eyeIcon" class="bi bi-eye"></i>
-                        </button>
-                    </div>
-
-                    @error('password')
-                        <div class="error">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group full">
-                    <label for="password_confirmation">Konfirmasi Kata Sandi</label>
-                    <input
-                        type="password"
-                        id="password_confirmation"
-                        name="password_confirmation"
-                        required
-                    >
-                </div>
+                @include('components.password-input', [
+                    'label' => 'Konfirmasi Kata Sandi',
+                    'id' => 'password_confirmation',
+                    'name' => 'password_confirmation',
+                    'iconId' => 'eyeIconPasswordConfirmation',
+                    'class' => 'full'
+                ])
             </div>
 
             <button type="submit" class="btn-primary">Daftar</button>
