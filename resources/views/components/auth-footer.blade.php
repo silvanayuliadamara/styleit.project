@@ -24,7 +24,7 @@
 
         <div>
             <h4>Navigasi</h4>
-            <p><a href="#">Home</a></p>
+            <p><a href="{{ route('home') }}">Home</a></p>
             <p><a href="#">Profil Usaha</a></p>
             <p><a href="#">Layanan</a></p>
             <p><a href="#">Portofolio</a></p>
