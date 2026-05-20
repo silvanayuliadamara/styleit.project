@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Lisa Yuli Belti' }}</title>
+    <title><?php echo e($title ?? 'Lisa Yuli Belti'); ?></title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+    <link rel="stylesheet" href="<?php echo e(asset('css/auth.css')); ?>">
 
 </head>
 <body>
     <div class="auth-page">
-        @include('components.auth-header')
+        <?php echo $__env->make('components.auth-header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
         <main>
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
         </main>
 
-        @include('components.auth-footer')
+        <?php echo $__env->make('components.auth-footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
 
         <script>
@@ -40,3 +40,4 @@
         </script>
 </body>
 </html>
+<?php /**PATH D:\styleit.project\resources\views/layouts/auth.blade.php ENDPATH**/ ?>

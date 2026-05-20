@@ -2,7 +2,7 @@
     <div class="footer-grid">
         <div>
             <div class="brand footer-brand">
-                <img src="{{ asset('images/logo.png') }}" class="brand-logo" alt="Logo">
+                <img src="<?php echo e(asset('images/logo.png')); ?>" class="brand-logo" alt="Logo">
                 <div>
                     <div class="brand-title">LISA YULI BELTI</div>
                     <div class="brand-subtitle">WEDDING GALLERY DAN MAKEUP ARTIST</div>
@@ -24,7 +24,7 @@
 
         <div>
             <h4>Navigasi</h4>
-            <p><a href="{{ route('home') }}">Home</a></p>
+            <p><a href="<?php echo e(route('home')); ?>">Home</a></p>
             <p><a href="#">Profil Usaha</a></p>
             <p><a href="#">Layanan</a></p>
             <p><a href="#">Portofolio</a></p>
@@ -57,9 +57,7 @@
                     </a>
                 </span>
 
-                {{-- <span>Wa admin makeup: +62 812-2754-5591<br></br>
-                      Wa admin gallery: +62 831-1226-9289
-                </span> --}}
+                
             </p>
 
             <p class="footer-contact-item">
@@ -73,3 +71,4 @@
         © 2026 LISA YULI BELTI — Wedding Gallery dan Makeup Artist. Semua hak dilindungi.
     </div>
 </footer>
+<?php /**PATH D:\styleit.project\resources\views/components/auth-footer.blade.php ENDPATH**/ ?>
