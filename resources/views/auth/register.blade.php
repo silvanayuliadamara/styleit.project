@@ -2,12 +2,7 @@
 
 @section('content')
 <section class="auth-container register-container">
-    @include('components.auth-welcome-card', [
-        'title' => 'Halo, Tamu Istimewa.',
-        'subtitle' => 'Daftarkan akun Anda untuk mulai merencanakan layanan makeup, wedding gallery, dan baju pengantin dengan lebih mudah.',
-        'quote' => 'Setiap langkah menuju hari spesial layak dimulai dengan pengalaman yang indah.',
-        'author' => 'LISA YULI BELTI'
-    ])
+    @include('components.auth-welcome-card')
 
     <div class="form-card register-card">
         <h2>Daftar Sekarang</h2>
@@ -19,13 +14,15 @@
                 @include('components.form-input', [
                     'label' => 'Nama Lengkap',
                     'id' => 'name',
-                    'name' => 'name'
+                    'name' => 'name',
+                    'required' => true
                 ])
 
                 @include('components.form-input', [
                     'label' => 'No. HP',
                     'id' => 'phone',
-                    'name' => 'phone'
+                    'name' => 'phone',
+                    'required' => true
                 ])
 
                 @include('components.form-input', [
@@ -41,6 +38,7 @@
                     'id' => 'email',
                     'name' => 'email',
                     'type' => 'email',
+                    'required' => true,
                     'class' => 'full'
                 ])
 
@@ -48,6 +46,7 @@
                     'label' => 'Kata Sandi',
                     'id' => 'password',
                     'name' => 'password',
+                    'iconId' => 'eyeIconPassword',
                     'class' => 'full'
                 ])
 
@@ -55,6 +54,7 @@
                     'label' => 'Konfirmasi Kata Sandi',
                     'id' => 'password_confirmation',
                     'name' => 'password_confirmation',
+                    'iconId' => 'eyeIconPasswordConfirmation',
                     'class' => 'full'
                 ])
             </div>

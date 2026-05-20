@@ -32,11 +32,14 @@ class AuthController extends Controller
 
         if (! Auth::attempt($credentials)) {
             return back()
-                ->with('login_error', 'Email atau kata sandi salah.')
+                ->withErrors([
+                    'email' => 'Email atau kata sandi salah.',
+                ])
                 ->onlyInput('email');
         }
 
         $request->session()->regenerate();
+        return redirect()->route('home');
 
         $user = Auth::user();
 
@@ -48,18 +51,17 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('home');
+        return redirect()->route('customer.dashboard');
     }
 
     public function register(Request $request)
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone' ],
             'instagram' => ['nullable', 'string', 'max:50'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'min:8'],
-            'password_confirmation' => ['required', 'same:password'],
+            'password' => ['required', 'min:8', 'confirmed'],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'phone.required' => 'Nomor telepon wajib diisi.',
@@ -69,11 +71,10 @@ class AuthController extends Controller
             'email.unique' => 'Email sudah terdaftar.',
             'password.required' => 'Kata sandi wajib diisi.',
             'password.min' => 'Kata sandi minimal 8 karakter.',
-            'password_confirmation.required' => 'Konfirmasi sandi wajib diisi.',
-            'password_confirmation.same' => 'Konfirmasi sandi tidak sama.',
+            'password.confirmed' => 'Konfirmasi sandi tidak sama.',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'phone' => $validated['phone'],
             'instagram' => $validated['instagram'] ?? null,
@@ -82,8 +83,12 @@ class AuthController extends Controller
             'role' => 'customer',
         ]);
 
+        Auth::login($user);
+
+        $request->session()->regenerate();
+
         return redirect()->route('login')
-            ->with('success', 'Pendaftaran berhasil. Silakan masuk ke akun Anda.');
+        ->with('success', 'Pendaftaran berhasil. Silakan masuk ke akun Anda.');
     }
 
     public function logout(Request $request)

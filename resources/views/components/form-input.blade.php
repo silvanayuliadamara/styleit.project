@@ -7,12 +7,10 @@
         name="{{ $name }}"
         value="{{ old($name) }}"
         placeholder="{{ $placeholder ?? '' }}"
-        class="@error($name) is-invalid @enderror"
+        {{ !empty($required) ? 'required' : '' }}
     >
 
     @error($name)
-        <div class="error">
-            {{ $message }}
-        </div>
+        <div class="error">{{ $message }}</div>
     @enderror
 </div>

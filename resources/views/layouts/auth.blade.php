@@ -21,20 +21,22 @@
     </div>
 
         <script>
-            function togglePassword(inputId, button) {
-                const input = document.getElementById(inputId);
-                const icon = button.querySelector('i');
+            function togglePassword(inputId = 'password', iconId = 'eyeIcon') {
+                const passwordInput = document.getElementById(inputId);
+                const eyeIcon = document.getElementById(iconId);
 
-                if (!input || !icon) return;
+                if (!passwordInput || !eyeIcon) {
+                    return;
+                }
 
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.remove('bi-eye');
-                    icon.classList.add('bi-eye-slash');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.classList.remove('bi-eye');
+                    eyeIcon.classList.add('bi-eye-slash');
                 } else {
-                    input.type = 'password';
-                    icon.classList.remove('bi-eye-slash');
-                    icon.classList.add('bi-eye');
+                    passwordInput.type = 'password';
+                    eyeIcon.classList.remove('bi-eye-slash');
+                    eyeIcon.classList.add('bi-eye');
                 }
             }
         </script>
