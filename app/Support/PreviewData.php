@@ -21,8 +21,8 @@ class PreviewData
         $categories = collect([
             ['id' => 1, 'name' => 'Prewedding', 'slug' => 'prewedding', 'headline' => 'Elegant Prewedding Look', 'description' => 'Riasan prewedding natural glam untuk sesi foto indoor maupun outdoor.', 'icon' => 'bi-camera-heart', 'sort_order' => 1],
             ['id' => 2, 'name' => 'Wedding', 'slug' => 'wedding', 'headline' => 'Luxury Bridal Makeup', 'description' => 'Paket rias pengantin lengkap untuk akad, resepsi, dan rangkaian hari bahagia.', 'icon' => 'bi-gem', 'sort_order' => 2],
-            ['id' => 3, 'name' => 'Regular', 'slug' => 'regular', 'headline' => 'Wisuda & Acara Spesial', 'description' => 'Riasan bersinar untuk wisuda, terbatas 3 customer/hari.', 'icon' => 'bi-stars', 'sort_order' => 3],
-            ['id' => 4, 'name' => 'Khusus Baju', 'slug' => 'baju', 'headline' => 'Koleksi Kebaya & Gaun', 'description' => 'Sewa baju elegan untuk wedding, prewedding, wisuda, dan event keluarga.', 'icon' => 'bi-bag-heart', 'sort_order' => 4],
+            ['id' => 3, 'name' => 'Regular', 'slug' => 'regular', 'headline' => 'Makeup Wisuda / Acara Lainnya', 'description' => 'Riasan bersinar untuk wisuda, terbatas 3 customer/hari.', 'icon' => 'bi-stars', 'sort_order' => 3],
+            ['id' => 4, 'name' => 'Khusus Baju', 'slug' => 'baju', 'headline' => 'Sewa Baju Pengantin & Kebaya', 'description' => 'Sewa baju elegan untuk wedding, prewedding, wisuda, dan event keluarga.', 'icon' => 'bi-bag-heart', 'sort_order' => 4],
         ])->map(fn ($item) => self::object($item));
 
         $packages = self::packages();
