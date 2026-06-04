@@ -1,0 +1,59 @@
+name: Code Linting PHP HTML CSS
+
+on:
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, fileinfo, openssl, tokenizer, xml, ctype, json
+          coverage: none
+
+      - name: Check PHP Syntax
+        run: find app routes database -name "*.php" -print0 | xargs -0 -n1 php -l
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install HTMLHint and Stylelint
+        run: npm install -g htmlhint stylelint stylelint-config-standard
+
+      - name: Check HTML Files
+        run: |
+          if find . -name "*.html" | grep -q .; then
+            htmlhint "**/*.html"
+          else
+            echo "Tidak ada file .html, project menggunakan Laravel Blade."
+          fi
+
+      - name: Create Stylelint Config
+        run: |
+          cat > .stylelintrc.json << 'EOF'
+          {
+            "extends": "stylelint-config-standard",
+            "rules": {
+              "selector-class-pattern": null,
+              "no-descending-specificity": null,
+              "font-family-name-quotes": null,
+              "custom-property-pattern": null,
+              "color-function-notation": null,
+              "alpha-value-notation": null
+            }
+          }
+          EOF
+
+      - name: Check CSS Files
+        run: stylelint "public/**/*.css"
