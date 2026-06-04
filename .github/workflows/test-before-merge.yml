@@ -9,6 +9,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      APP_ENV: testing
+      CACHE_STORE: array
+      CACHE_DRIVER: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      DB_CONNECTION: sqlite
+      DB_DATABASE: database/database.sqlite
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -35,9 +44,6 @@ jobs:
           touch database/database.sqlite
 
       - name: Run Database Migration
-        env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
         run: php artisan migrate --force
 
       - name: Clear Laravel Cache
@@ -47,7 +53,4 @@ jobs:
         run: find app routes database -name "*.php" -print0 | xargs -0 -n1 php -l
 
       - name: Run Laravel Tests
-        env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
         run: php artisan test

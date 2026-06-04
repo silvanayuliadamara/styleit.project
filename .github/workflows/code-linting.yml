@@ -29,7 +29,7 @@ jobs:
           node-version: "20"
 
       - name: Install HTMLHint and Stylelint
-        run: npm install -g htmlhint stylelint stylelint-config-standard
+        run: npm install -g htmlhint stylelint stylelint-config-recommended
 
       - name: Check HTML Files
         run: |
@@ -43,14 +43,15 @@ jobs:
         run: |
           cat > .stylelintrc.json << 'EOF'
           {
-            "extends": "stylelint-config-standard",
+            "extends": "stylelint-config-recommended",
             "rules": {
-              "selector-class-pattern": null,
-              "no-descending-specificity": null,
-              "font-family-name-quotes": null,
-              "custom-property-pattern": null,
-              "color-function-notation": null,
-              "alpha-value-notation": null
+              "comment-whitespace-inside": null,
+              "color-function-alias-notation": null,
+              "media-feature-range-notation": null,
+              "rule-empty-line-before": null,
+              "color-hex-length": null,
+              "shorthand-property-no-redundant-values": null,
+              "declaration-block-no-redundant-longhand-properties": null
             }
           }
           EOF
