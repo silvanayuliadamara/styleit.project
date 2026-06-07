@@ -12,7 +12,7 @@ Dokumen ini berisi daftar dependency/package yang digunakan dan direncanakan pad
 |   2 | Laravel Validation          | Memvalidasi input form                           | Mencegah data kosong, format salah, atau data tidak valid                       | Bawaan Laravel   | Rule validasi harus sesuai kebutuhan form                                |
 |   3 | Laravel File Storage        | Mengelola upload dan penyimpanan file            | Dibutuhkan untuk gambar portofolio, logo, banner, sertifikat, dan paket layanan | Bawaan Laravel   | Permission storage harus diperhatikan                                    |
 |   4 | barryvdh/laravel-dompdf     | Generate PDF dari Blade Laravel                  | Dibutuhkan untuk invoice atau bukti booking PDF                                 | ^3.1             | Perlu kompatibilitas dengan Laravel dan dapat menambah ukuran dependency |
-|   5 | Spatie Laravel Permission   | Mengelola role dan permission                    | Dibutuhkan untuk role customer, admin, dan owner                                | Rencana          | Perlu konfigurasi role yang rapi                                         |
+|   5 | Spatie Laravel Permission   | Mengelola role dan permission                    | Dibutuhkan untuk role customer, admin, dan owner                                | ^6.x             | Perlu konfigurasi role yang rapi                                         |
 |   6 | Midtrans PHP                | Integrasi payment gateway                        | Dibutuhkan untuk pembayaran DP online                                           | Rencana          | Perlu konfigurasi API key dan keamanan transaksi                         |
 |   7 | Laravel Excel               | Export/import data Excel                         | Dibutuhkan untuk laporan keuangan dan rekap transaksi                           | Rencana/Opsional | Perlu maintenance package dan format data                                |
 |   8 | Intervention Image          | Resize, crop, dan kompres gambar                 | Dibutuhkan untuk optimasi gambar upload                                         | Rencana/Opsional | Perlu konfigurasi ukuran gambar                                          |
@@ -80,6 +80,113 @@ thecodingmachine/safe
 - Perlu memastikan package kompatibel dengan versi Laravel.
 - Generate PDF dapat memengaruhi performa jika data terlalu besar.
 - Package perlu diperbarui jika ada update keamanan atau kompatibilitas.
+
+---
+
+### 2.2 spatie/laravel-permission
+
+#### Fungsi
+
+`spatie/laravel-permission` adalah package Laravel yang digunakan untuk mengelola role dan permission pengguna.
+
+#### Alasan Digunakan
+
+Project StyleIt memiliki tiga role pengguna, yaitu customer, admin, dan owner. Setiap role memiliki hak akses yang berbeda terhadap halaman dan fitur aplikasi.
+
+#### Cara Install
+
+```bash
+composer require spatie/laravel-permission
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+php artisan migrate
+```
+
+#### Perubahan File
+
+Setelah dependency Spatie ditambahkan, file yang berubah adalah:
+
+```text
+composer.json
+composer.lock
+config/permission.php
+database/migrations/xxxx_xx_xx_create_permission_tables.php
+app/Models/User.php
+database/seeders/RoleSeeder.php
+app/Http/Controllers/AuthController.php
+routes/web.php
+```
+
+Pada `composer.json`, package yang ditambahkan adalah:
+
+```json
+"spatie/laravel-permission": "^6.0"
+```
+
+#### Tabel Database yang Ditambahkan
+
+Setelah migration dijalankan, tabel berikut ditambahkan ke database:
+
+```text
+roles
+permissions
+model_has_roles
+model_has_permissions
+role_has_permissions
+```
+
+#### Perubahan Kode
+
+**`app/Models/User.php`** — tambahkan trait `HasRoles`:
+
+```php
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable
+{
+    use HasFactory, Notifiable, HasRoles;
+}
+```
+
+**`database/seeders/RoleSeeder.php`** — seeder untuk membuat role:
+
+```php
+use Spatie\Permission\Models\Role;
+
+public function run(): void
+{
+    Role::firstOrCreate(['name' => 'customer']);
+    Role::firstOrCreate(['name' => 'admin']);
+    Role::firstOrCreate(['name' => 'owner']);
+}
+```
+
+**`app/Http/Controllers/AuthController.php`** — assign role saat register:
+
+```php
+$user = User::create([...]);
+$user->assignRole('customer');
+```
+
+**`routes/web.php`** — proteksi route dengan middleware role:
+
+```php
+Route::middleware(['auth', 'role:customer'])->prefix('customer')->name('customer.')->group(function () {
+    // route customer
+});
+```
+
+#### Dampak pada Project
+
+- Role customer, admin, dan owner dapat dikelola langsung dari database.
+- Akses halaman otomatis dibatasi berdasarkan role user yang login.
+- Setiap user yang register otomatis mendapat role customer.
+- Tabel `model_has_roles` mencatat relasi antara user dan role-nya.
+
+#### Risiko
+
+- Role harus sudah ada di database sebelum `assignRole()` dipanggil — pastikan `RoleSeeder` sudah dijalankan.
+- Jika salah konfigurasi middleware, user dapat mengakses halaman yang bukan haknya.
+- Cache permission perlu dibersihkan jika ada perubahan role: `php artisan optimize:clear`.
 
 ---
 
@@ -157,37 +264,7 @@ Project StyleIt membutuhkan upload file seperti logo, banner, foto paket, portof
 
 ## 4. Dependency Rencana Pengembangan
 
-### 4.1 Spatie Laravel Permission
-
-#### Fungsi
-
-Digunakan untuk mengelola role dan permission user.
-
-#### Alasan Digunakan
-
-Project StyleIt memiliki role customer, admin, dan owner. Setiap role memiliki hak akses yang berbeda.
-
-#### Cara Install
-
-```bash
-composer require spatie/laravel-permission
-```
-
-#### Dampak pada Project
-
-- Role user dapat dikelola lebih rapi.
-- Akses fitur dapat dibatasi berdasarkan permission.
-- Cocok untuk pengembangan dashboard admin dan owner.
-
-#### Risiko
-
-- Perlu konfigurasi role dan permission secara konsisten.
-- Perlu migration tambahan.
-- Jika salah konfigurasi, user dapat memiliki akses yang tidak sesuai.
-
----
-
-### 4.2 Midtrans PHP
+### 4.1 Midtrans PHP
 
 #### Fungsi
 
@@ -217,7 +294,7 @@ composer require midtrans/midtrans-php
 
 ---
 
-### 4.3 Laravel Excel
+### 4.2 Laravel Excel
 
 #### Fungsi
 
@@ -247,7 +324,7 @@ composer require maatwebsite/excel
 
 ---
 
-### 4.4 Intervention Image
+### 4.3 Intervention Image
 
 #### Fungsi
 
@@ -277,7 +354,7 @@ composer require intervention/image-laravel
 
 ---
 
-### 4.5 WhatsApp Integration
+### 4.4 WhatsApp Integration
 
 #### Fungsi
 
@@ -307,7 +384,48 @@ https://wa.me/6281234567890?text=Halo%20saya%20ingin%20bertanya%20tentang%20book
 
 ---
 
+### 4.5 Laravel Mail / Notification
+
+#### Fungsi
+
+Digunakan untuk mengirim email atau notifikasi ke pengguna.
+
+#### Alasan Digunakan
+
+Rencana pengembangan untuk notifikasi booking, konfirmasi pembayaran DP, dan pengiriman invoice ke email customer.
+
+#### Cara Install
+
+Sudah tersedia sebagai fitur bawaan Laravel, tidak perlu install package tambahan. Cukup konfigurasi di file `.env`:
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=email@gmail.com
+MAIL_PASSWORD=app_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=email@gmail.com
+MAIL_FROM_NAME="Lisa Yuli Belti"
+```
+
+#### Dampak pada Project
+
+- Customer dapat menerima notifikasi booking melalui email.
+- Invoice dapat dikirim langsung ke email customer.
+- Konfirmasi pembayaran DP dapat diotomatisasi.
+
+#### Risiko
+
+- Perlu konfigurasi mail server yang benar.
+- Jika menggunakan Gmail, perlu mengaktifkan App Password.
+- Email dapat masuk ke folder spam jika tidak dikonfigurasi dengan benar.
+
+---
+
 ## 5. Kendala Implementasi Dependency
+
+### 5.1 barryvdh/laravel-dompdf
 
 Pada proses implementasi DomPDF, salah satu laptop anggota mengalami kendala SSL certificate Composer. Error yang muncul berkaitan dengan `curl error 60`, sehingga Composer tidak dapat mengakses Packagist melalui koneksi HTTPS.
 
@@ -319,10 +437,27 @@ Solusi yang dilakukan:
 - Melakukan commit perubahan `composer.json` dan `composer.lock`.
 - Anggota lain melakukan `git pull` dan menjalankan `composer install`.
 
+### 5.2 spatie/laravel-permission
+
+Pada proses implementasi Spatie Laravel Permission, ditemukan beberapa kendala berikut:
+
+- RoleSeeder tidak otomatis membuat role — seeder harus dijalankan manual setelah migration menggunakan `php artisan db:seed --class=RoleSeeder` atau melalui tinker.
+- Error `assignRole()` muncul karena trait `HasRoles` belum ditambahkan ke model `User`.
+- Error `RoleDoesNotExist` muncul karena tabel `roles` masih kosong saat register pertama kali dijalankan.
+
+Solusi yang dilakukan:
+
+- Menambahkan `use HasRoles` di dalam `class User` pada `app/Models/User.php`.
+- Membuat role langsung melalui `php artisan tinker` dengan perintah `Role::create()`.
+- Memastikan `RoleSeeder` dijalankan sebelum fitur register digunakan.
+
 ---
 
 ## 6. Kesimpulan
 
-Dependency pada project StyleIt digunakan untuk mendukung kebutuhan sistem agar lebih mudah dikembangkan. Pada tahap ini, dependency yang sudah berhasil diimplementasikan adalah `barryvdh/laravel-dompdf` untuk kebutuhan generate invoice PDF.
+Dependency pada project StyleIt digunakan untuk mendukung kebutuhan sistem agar lebih mudah dikembangkan. Pada tahap ini, dependency yang sudah berhasil diimplementasikan adalah:
 
-Dependency lain seperti Spatie Laravel Permission, Midtrans PHP, Laravel Excel, dan Intervention Image dapat digunakan pada tahap pengembangan berikutnya sesuai kebutuhan fitur project.
+- `barryvdh/laravel-dompdf` — untuk kebutuhan generate invoice PDF.
+- `spatie/laravel-permission` — untuk pengelolaan role customer, admin, dan owner beserta proteksi akses halaman.
+
+Dependency lain seperti Midtrans PHP, Laravel Excel, Intervention Image, WhatsApp Integration, dan Laravel Mail dapat digunakan pada tahap pengembangan berikutnya sesuai kebutuhan fitur project.
