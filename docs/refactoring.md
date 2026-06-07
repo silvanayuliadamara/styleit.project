@@ -1,4 +1,4 @@
-# Refactoring Documentation
+# Dokumentasi Refactoring — StyleIt
 
 Dokumen ini mencatat seluruh keputusan refactoring yang dilakukan selama pengembangan proyek StyleIt, beserta alasan, pendekatan, dan hasil yang dicapai.
 
