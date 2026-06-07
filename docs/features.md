@@ -15,7 +15,7 @@ Fitur login digunakan agar user dapat masuk ke sistem menggunakan akun yang suda
 - Owner
 
 ### Alur Fitur
-User membuka halaman login, lalu memasukkan email dan password. Sistem akan memvalidasi data login. Jika data benar, user diarahkan ke halaman dashboard sesuai role masing-masing. Jika data salah, sistem menampilkan pesan error.
+User membuka halaman login, lalu memasukkan email dan kata sandi. Sistem akan memvalidasi data login. Jika data benar, user diarahkan ke halaman dashboard sesuai role masing-masing. Jika data salah, sistem menampilkan pesan error.
 
 ### Route / Controller Terkait
 - Route: `GET /login`
@@ -36,7 +36,7 @@ Fitur register digunakan agar customer dapat membuat akun baru sebelum melakukan
 - Customer
 
 ### Alur Fitur
-Customer membuka halaman register, lalu mengisi data akun seperti nama, email, password, dan konfirmasi password. Sistem melakukan validasi data. Jika data valid, akun customer disimpan ke database dan customer dapat login ke sistem.
+Customer membuka halaman register, lalu mengisi data akun yang terdiri dari enam field: Nama Lengkap, No. HP, Username Instagram, Email, Kata Sandi, dan Konfirmasi Kata Sandi. Sistem melakukan validasi data. Jika data valid, akun customer disimpan ke database dan customer dapat login ke sistem.
 
 ### Route / Controller Terkait
 - Route: `GET /register`
@@ -79,7 +79,7 @@ Fitur profil usaha digunakan untuk menampilkan informasi mengenai usaha Lisa Yul
 - Customer
 
 ### Alur Fitur
-User membuka halaman profil usaha. Sistem menampilkan informasi tentang usaha, deskripsi layanan, alamat, kontak, jam operasional, dan media sosial yang dapat dihubungi oleh customer.
+User membuka halaman profil usaha. Sistem menampilkan informasi tentang usaha, deskripsi layanan, alamat, kontak WhatsApp, jam operasional, dan akun Instagram yang dapat dihubungi oleh customer.
 
 ### Route / Controller Terkait
 - Route: `GET /profil`
@@ -100,7 +100,7 @@ Fitur portofolio digunakan untuk menampilkan dokumentasi hasil layanan Lisa Yuli
 - Customer
 
 ### Alur Fitur
-User membuka halaman portofolio. Sistem menampilkan galeri foto hasil layanan, seperti hasil makeup, wedding gallery, prewedding, regular makeup, atau dokumentasi lainnya. User dapat melihat contoh hasil layanan sebelum melakukan booking.
+User membuka halaman portofolio. Sistem menampilkan galeri foto hasil layanan beserta filter kategori, yaitu Semua, Prewedding, Wedding, Regular, dan Khusus Baju. User dapat memilih kategori untuk menyaring tampilan galeri sesuai jenis layanan. Setiap item portofolio menampilkan foto, nama, kategori, dan deskripsi singkat hasil layanan. User dapat melihat contoh hasil layanan sebelum melakukan booking.
 
 ### Route / Controller Terkait
 - Route: `GET /portofolio`
@@ -108,6 +108,7 @@ User membuka halaman portofolio. Sistem menampilkan galeri foto hasil layanan, s
 
 ### Screenshot Fitur
 ![Screenshot Portofolio](screenshots/portofolio.png)
+
 ---
 
 ## 6. Pricelist
@@ -120,7 +121,7 @@ Fitur pricelist digunakan untuk menampilkan daftar harga atau paket layanan yang
 - Customer
 
 ### Alur Fitur
-User membuka halaman pricelist. Sistem menampilkan daftar paket layanan, harga, DP, dan deskripsi singkat setiap paket. Customer dapat melihat informasi harga sebelum memilih layanan yang ingin dipesan.
+User membuka halaman pricelist. Sistem menampilkan daftar paket layanan yang dikelompokkan berdasarkan kategori, seperti Prewedding dan Wedding. Setiap paket menampilkan nama paket, deskripsi, item yang termasuk, harga, DP, dan tombol Pesan Sekarang. Customer dapat melihat informasi harga sebelum memilih layanan yang ingin dipesan.
 
 ### Route / Controller Terkait
 - Route: `GET /pricelist`
@@ -140,7 +141,7 @@ Fitur keranjang digunakan untuk menyimpan sementara paket layanan yang dipilih c
 - Customer
 
 ### Alur Fitur
-Customer memilih paket layanan yang ingin dipesan. Sistem memasukkan paket tersebut ke dalam keranjang. Customer dapat membuka halaman keranjang untuk melihat daftar paket yang dipilih, mengecek detail pesanan, atau menghapus paket sebelum melanjutkan ke checkout.
+Customer memilih paket layanan yang ingin dipesan. Sistem memasukkan paket tersebut ke dalam keranjang. Customer dapat membuka halaman keranjang untuk melihat daftar paket yang dipilih, mengecek detail pesanan seperti tanggal, softlens, dan add-on yang dipilih, serta ringkasan total harga dan DP. Customer dapat menghapus paket atau melanjutkan ke halaman checkout.
 
 ### Route / Controller Terkait
 - Route: `GET /customer/cart`
@@ -161,7 +162,7 @@ Fitur checkout digunakan untuk memproses paket layanan yang telah dipilih custom
 - Customer
 
 ### Alur Fitur
-Customer membuka halaman checkout setelah memilih paket layanan. Sistem menampilkan detail pesanan, tanggal booking, total harga, DP, dan sisa pembayaran. Customer mengisi data yang diperlukan, lalu sistem menyimpan data booking ke database.
+Customer membuka halaman checkout setelah memilih paket layanan. Sistem menampilkan detail pesanan, tanggal booking, total harga, DP, dan sisa pembayaran. Customer mengisi field Catatan untuk Admin (opsional, berisi request look, alamat acara, jam acara, dll.) dan mengupload bukti pembayaran DP dalam format jpg/png/webp maksimal 2 MB. Setelah data diisi, customer menekan tombol Buat Booking dan sistem menyimpan data booking ke database.
 
 ### Route / Controller Terkait
 - Route: `GET /customer/checkout`
@@ -182,7 +183,7 @@ Fitur booking customer digunakan untuk menampilkan daftar booking yang telah dib
 - Customer
 
 ### Alur Fitur
-Customer membuka halaman booking. Sistem menampilkan daftar booking yang dimiliki customer, seperti nama paket, tanggal booking, total harga, status booking, dan status pembayaran. Customer juga dapat melihat detail booking yang sudah dibuat.
+Customer membuka halaman booking. Sistem menampilkan daftar booking yang dimiliki customer dalam bentuk tabel yang berisi kolom Kode (kode unik booking seperti LYB-PREV-xxxxx), Paket, Tanggal, Total, Status booking (contoh: Pending, Menunggu Konfirmasi), dan Status Pembayaran (contoh: Belum Bayar, Dp Diupload). Customer dapat menekan tombol Detail untuk melihat informasi lengkap booking yang sudah dibuat.
 
 ### Route / Controller Terkait
 - Route: `GET /customer/bookings`
