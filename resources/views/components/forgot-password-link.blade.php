@@ -1,3 +1,3 @@
 <div class="forgot-password">
-    <a href="#">Lupa kata sandi?</a>
+    <a href="{{ route('password.request') }}">Lupa kata sandi?</a>
 </div>
