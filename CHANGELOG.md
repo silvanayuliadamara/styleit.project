@@ -107,112 +107,13 @@ Format changelog mengikuti kategori:
 
 ---
 
-## v1.0.3 - Dokumentasi Dependency Lengkap dan Spatie Permission
-
-### Added
-
-- Menambahkan docs/dependency.md sebagai dokumentasi lengkap seluruh dependency project.
-- Menambahkan implementasi spatie/laravel-permission untuk pengelolaan role customer, admin, dan owner.
-- Menambahkan RoleSeeder untuk membuat role awal di database.
-- Menambahkan tabel roles, permissions, model_has_roles, model_has_permissions, dan role_has_permissions ke database.
-- Menambahkan trait HasRoles pada model User.
-- Menambahkan docs/dokumentasi-dependency-laravel.md sebagai dokumentasi dependency berbasis kerangka What-Why-Who-When-Where-How.
-- Menambahkan daftar dependency rencana pengembangan: Midtrans PHP, Laravel Excel, Intervention Image, WhatsApp Integration, dan Laravel Mail / Notification.
-
-### Changed
-
-- Memperbarui AuthController untuk assign role customer secara otomatis saat register.
-- Memperbarui routes/web.php dengan middleware role untuk proteksi akses halaman per role.
-- Memperbarui composer.json dan composer.lock setelah instalasi spatie/laravel-permission.
-- Memperbarui app/Models/User.php dengan penambahan trait HasRoles.
-
-### Fixed
-
-- Menambahkan catatan solusi error assignRole() karena trait HasRoles belum ditambahkan ke model User.
-- Menambahkan catatan solusi error RoleDoesNotExist karena tabel roles masih kosong saat register.
-- Menambahkan catatan bahwa RoleSeeder harus dijalankan sebelum fitur register digunakan.
-
-### Dependency
-
-- Package spatie/laravel-permission ^6.0 berhasil ditambahkan.
-- Dependency bawaan Laravel yang terdokumentasi: Laravel Authentication, Laravel Validation, Laravel File Storage.
-- Dependency rencana pengembangan yang diidentifikasi: midtrans/midtrans-php, maatwebsite/excel, intervention/image-laravel.
-
----
-
-## v1.0.4 - Dokumentasi Fitur
-
-### Added
-
-- Menambahkan docs/features.md sebagai dokumentasi fitur-fitur utama project StyleIt.
-- Mendokumentasikan fitur Login dengan alur, aktor, dan route terkait (AuthController).
-- Mendokumentasikan fitur Register dengan validasi enam field: Nama Lengkap, No. HP, Username Instagram, Email, Kata Sandi, dan Konfirmasi Kata Sandi.
-- Mendokumentasikan fitur Home sebagai halaman utama publik (PublicPageController).
-- Mendokumentasikan fitur Profil Usaha dengan informasi kontak WhatsApp dan Instagram.
-- Mendokumentasikan fitur Portofolio dengan filter kategori: Semua, Prewedding, Wedding, Regular, dan Khusus Baju.
-- Mendokumentasikan fitur Pricelist dengan pengelompokan paket berdasarkan kategori layanan.
-- Mendokumentasikan fitur Keranjang untuk menyimpan sementara paket layanan sebelum checkout (CartController).
-- Mendokumentasikan fitur Checkout dengan upload bukti pembayaran DP dan catatan untuk admin (CheckoutController).
-- Mendokumentasikan fitur Booking Customer dengan kode unik booking format LYB-PREV-xxxxx (CustomerBookingController).
-- Mendokumentasikan fitur Dashboard Customer sebagai halaman ringkasan aktivitas setelah login (CustomerDashboardController).
-
-### Changed
-
-- Memperbarui struktur folder resources/views dengan subfolder auth, customer, layanan, layouts, paket, dan components.
-
----
-
-## v1.0.5 - Dokumentasi GitHub Actions CI
-
-### Added
-
-- Menambahkan docs/github-actions.md sebagai dokumentasi konfigurasi Continuous Integration.
-- Menambahkan workflow Code Linting di .github/workflows/code-linting.yml untuk memeriksa sintaks PHP, HTML, dan CSS.
-- Menambahkan workflow Automated Testing di .github/workflows/test-before-merge.yml untuk menjalankan migrasi dan test suite Laravel.
-- Menambahkan konfigurasi SQLite sebagai database testing agar CI berjalan tanpa service MySQL terpisah.
-- Menambahkan panduan menjalankan test secara lokal sebelum membuat Pull Request.
-- Menambahkan panduan status badge untuk README.md.
-
-### Changed
-
-- Memperbarui alur kerja tim dengan trigger CI otomatis pada setiap pull request ke branch development.
-
-### Fixed
-
-- Menambahkan catatan bahwa test keranjang dan checkout perlu menggunakan withSession() karena data disimpan di session.
-- Menambahkan catatan bahwa test upload file perlu menggunakan UploadedFile::fake()->image() untuk mensimulasikan upload.
-- Menambahkan catatan agar tidak menggunakan query MySQL-specific seperti FULLTEXT atau JSON_EXTRACT di migration agar kompatibel dengan SQLite.
-
----
-
-## v1.0.6 - Dokumentasi Refactoring
-
-### Added
-
-- Menambahkan docs/refactoring.md sebagai dokumentasi keputusan refactoring project StyleIt.
-- Mengidentifikasi kandidat refactoring #1: Ekstraksi FormRequest untuk validasi di AuthController, CartController, dan CheckoutController.
-- Mengidentifikasi kandidat refactoring #2: Migrasi PreviewData dari session ke database menggunakan Eloquent dan model yang sudah tersedia.
-- Mengidentifikasi kandidat refactoring #3: Ekstraksi BookingService untuk memisahkan logika kalkulasi harga dari CartController.
-- Mengidentifikasi kandidat refactoring #4: Grouping route dengan prefix, name, dan middleware secara konsisten di routes/web.php.
-- Mengidentifikasi kandidat refactoring #5: Penggunaan Route Model Binding pada CustomerBookingController setelah migrasi ke database.
-
-### Changed
-
-- Mendokumentasikan prinsip refactoring yang digunakan: DRY, SRP, dan KISS.
-- Mendokumentasikan kondisi saat ini dan target refactoring untuk setiap kandidat beserta contoh kode sebelum dan sesudah.
-
----
-
 ## Rencana Perubahan Berikutnya
 
 ### Added
 
-- Mengerjakan refactoring kandidat #1: Ekstraksi FormRequest (LoginRequest, RegisterRequest, StoreCartRequest, StoreCheckoutRequest).
-- Mengerjakan refactoring kandidat #2: Migrasi PreviewData ke Eloquent — ServiceCategory, ServicePackage, PortfolioItem, BlockedDate, Booking.
-- Mengerjakan refactoring kandidat #3: Ekstraksi BookingService untuk logika kalkulasi harga booking.
-- Mengintegrasikan dependency rencana: Midtrans PHP untuk pembayaran DP online.
-- Mengintegrasikan dependency rencana: Laravel Excel untuk export laporan keuangan owner.
-- Mengintegrasikan dependency rencana: Intervention Image untuk kompresi gambar upload.
+- Menambahkan dokumentasi fitur pada docs/features.md.
+- Menambahkan dokumentasi refactoring pada docs/refactoring.md.
+- Menambahkan dokumentasi GitHub Actions pada docs/github-actions.md.
 
 ### Changed
 
@@ -220,7 +121,6 @@ Format changelog mengikuti kategori:
 
 ### Refactor
 
-- Mengerjakan refactoring kandidat #4: Grouping route dengan prefix dan middleware konsisten.
-- Mengerjakan refactoring kandidat #5: Route Model Binding pada CustomerBookingController.
 - Merapikan struktur controller agar sesuai standar PSR-4.
+- Merapikan route berdasarkan role user.
 - Memisahkan logic bisnis dari controller ke service jika diperlukan pada tahap final.
