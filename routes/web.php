@@ -20,8 +20,19 @@ Route::get('/pricelist', [PublicPageController::class, 'pricelist'])->name('pric
 // Auth routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.process');
+
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.process');
+
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendOtp'])->name('password.otp.send');
+
+Route::get('/verify-otp', [AuthController::class, 'showVerifyOtp'])->name('password.otp.form');
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('password.otp.verify');
+
+Route::get('/reset-password', [AuthController::class, 'showResetPassword'])->name('password.reset.form');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Customer routes
