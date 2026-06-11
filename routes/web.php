@@ -63,5 +63,13 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', fn () => 'Admin Dashboard')->name('dashboard');
+        Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('index');
+
+        Route::get('/dashboard', fn () => view('admin.dashboard'))->name('dashboard');
+
+        Route::get('/bookings', fn () => redirect()->route('admin.dashboard'))->name('bookings.index');
+
+        Route::get('/bookings/{bookingCode}', function ($bookingCode) {
+            return view('admin.bookings.show', compact('bookingCode'));
+        })->name('bookings.show');
     });
