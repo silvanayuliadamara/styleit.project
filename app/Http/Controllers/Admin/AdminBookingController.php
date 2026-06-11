@@ -34,5 +34,4 @@ class AdminBookingController extends Controller
             ->with('succces','Status booking berhasil diperbarui.');
     }
 
-
 }
