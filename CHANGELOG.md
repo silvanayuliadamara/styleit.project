@@ -224,3 +224,25 @@ Format changelog mengikuti kategori:
 - Mengerjakan refactoring kandidat #5: Route Model Binding pada CustomerBookingController.
 - Merapikan struktur controller agar sesuai standar PSR-4.
 - Memisahkan logic bisnis dari controller ke service jika diperlukan pada tahap final.
+
+---
+
+## Planned - Version 1.1.0
+
+### Added
+
+- Menambahkan fitur pilihan metode pembayaran DP pada halaman checkout.
+- Menambahkan tiga pilihan metode: Virtual Account (BCA/Mandiri/BNI/BRI), QRIS, dan E-Wallet (OVO/GoPay/DANA/ShopeePay).
+- Menambahkan kolom metode_pembayaran pada tabel payments.
+
+### Changed
+
+- Memperbarui halaman checkout customer dengan pilihan metode pembayaran.
+- Memperbarui halaman detail booking di sisi admin untuk menampilkan metode pembayaran yang dipilih.
+- Memperbarui halaman detail booking di sisi owner untuk menampilkan metode pembayaran yang dipilih.
+
+### Impacted Modules
+
+- Checkout Module
+- Payment Module
+- Booking Detail Module (Admin & Owner)
