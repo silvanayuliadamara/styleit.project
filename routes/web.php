@@ -50,7 +50,11 @@ Route::middleware(['auth', 'role:customer'])
         Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
         Route::get('/bookings', [CustomerBookingController::class, 'index'])->name('bookings.index');
         Route::get('/bookings/{booking}', [CustomerBookingController::class, 'show'])->name('bookings.show');
+        Route::get('/checkout/{booking}/snap-token', [\App\Http\Controllers\Customer\MidtransController::class, 'getSnapToken'])->name('checkout.snap-token');
     });
+
+// Midtrans webhook (public, no CSRF, no auth)
+Route::post('/midtrans/notification', [\App\Http\Controllers\Customer\MidtransController::class, 'notification'])->name('midtrans.notification');
 
 // Owner routes
 Route::middleware(['auth', 'role:owner'])
@@ -77,3 +81,5 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
         Route::patch('/bookings/{booking}/status', [AdminBookingController::class, 'updateStatus'])->name('bookings.updateStatus');
     });
+
+
