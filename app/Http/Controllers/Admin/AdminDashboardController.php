@@ -16,7 +16,7 @@ class AdminDashboardController extends Controller
         $bookingSelesai = Booking::where('status', 'completed')->count();
         $bookingExpired = Booking::where('status', 'expired')->count();
 
-        $latestBookings = Booking::with(['user', 'servicePackage'])
+        $latestBookings = Booking::with(['user', 'package'])
             ->latest()
             ->take(5)
             ->get();
@@ -31,4 +31,3 @@ class AdminDashboardController extends Controller
         ));
     }
 }
-

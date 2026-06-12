@@ -23,7 +23,7 @@ class AdminBookingController extends Controller
     public function updateStatus(Request $request, Booking $booking)
     {
         $validated = $request->validate([
-            'status' => ['required', 'in:pending,confirmed,process,completed,cancelled,expired'],
+            'status' => ['required', 'in:pending,menunggu_konfirmasi,diterima,ditolak,selesai,dibatalkan'],
         ]);
 
         $booking->update([
@@ -31,7 +31,7 @@ class AdminBookingController extends Controller
         ]);
 
         return redirect()->back()
-            ->with('succces','Status booking berhasil diperbarui.');
+            ->with('success','Status booking berhasil diperbarui.');
     }
 
 
