@@ -128,11 +128,11 @@
             <div class="lyb-whatsapp-left">
                 <div class="lyb-whatsapp-icon"><i class="bi bi-whatsapp"></i></div>
                 <div>
-                    <strong>+62 812-3456-7890</strong>
+                    <strong>+62 831-1226-9289</strong>
                     <p class="mb-0">Hubungi customer langsung via WhatsApp</p>
                 </div>
             </div>
-            <a href="https://wa.me/6281234567890" target="_blank" class="lyb-whatsapp-button">
+            <a href="https://wa.me/6283112269289" target="_blank" class="lyb-whatsapp-button">
                 Buka WhatsApp
             </a>
         </div>
