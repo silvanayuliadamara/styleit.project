@@ -39,9 +39,7 @@ class AuthController extends Controller
         if (! $user) {
             return back()
                 ->withInput()
-                ->withErrors([
-                    'email' => 'Email tidak terdaftar.',
-                ]);
+                ->withErrors(['email' => 'Email tidak terdaftar.']);
         }
 
         $otp = random_int(100000, 999999);
@@ -98,15 +96,11 @@ class AuthController extends Controller
 
             return redirect()
                 ->route('password.request')
-                ->withErrors([
-                    'email' => 'Kode OTP sudah kedaluwarsa. Silakan minta kode baru.',
-                ]);
+                ->withErrors(['email' => 'Kode OTP sudah kedaluwarsa. Silakan minta kode baru.']);
         }
 
         if (! Hash::check($request->otp, session('reset_otp_hash'))) {
-            return back()->withErrors([
-                'otp' => 'Kode OTP tidak sesuai.',
-            ]);
+            return back()->withErrors(['otp' => 'Kode OTP tidak sesuai.']);
         }
 
         session(['reset_otp_verified' => true]);
@@ -139,9 +133,7 @@ class AuthController extends Controller
             return redirect()->route('password.request');
         }
 
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
+        $user->update(['password' => Hash::make($request->password)]);
 
         session()->forget([
             'reset_email',
@@ -176,11 +168,9 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        if ($user->role === 'owner') {
+        if ($user->hasRole('owner')) {
             return redirect()->route('owner.dashboard');
-        }
-
-        if ($user->role === 'admin') {
+        } elseif ($user->hasRole('admin')) {
             return redirect()->route('admin.dashboard');
         }
 
@@ -188,41 +178,41 @@ class AuthController extends Controller
     }
 
     public function register(Request $request)
-{
-    $validated = $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
-        'instagram' => ['nullable', 'string', 'max:50'],
-        'email' => ['required', 'email', 'unique:users,email'],
-        'password' => ['required', 'min:8'],
-        'password_confirmation' => ['required', 'same:password'],
-    ], [
-        'name.required' => 'Nama lengkap wajib diisi.',
-        'phone.required' => 'Nomor telepon wajib diisi.',
-        'phone.unique' => 'Nomor telepon sudah terdaftar.',
-        'email.required' => 'Email wajib diisi.',
-        'email.email' => 'Format email tidak valid.',
-        'email.unique' => 'Email sudah terdaftar.',
-        'password.required' => 'Kata sandi wajib diisi.',
-        'password.min' => 'Kata sandi minimal 8 karakter.',
-        'password_confirmation.required' => 'Konfirmasi sandi wajib diisi.',
-        'password_confirmation.same' => 'Konfirmasi sandi tidak sama.',
-    ]);
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
+            'instagram' => ['nullable', 'string', 'max:50'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'min:8'],
+            'password_confirmation' => ['required', 'same:password'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'phone.required' => 'Nomor telepon wajib diisi.',
+            'phone.unique' => 'Nomor telepon sudah terdaftar.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password_confirmation.required' => 'Konfirmasi sandi wajib diisi.',
+            'password_confirmation.same' => 'Konfirmasi sandi tidak sama.',
+        ]);
 
-    $user = User::create([
-        'name' => $validated['name'],
-        'phone' => $validated['phone'],
-        'instagram' => $validated['instagram'] ?? null,
-        'email' => $validated['email'],
-        'password' => Hash::make($validated['password']),
-        'role' => 'customer',
-    ]);
+        $user = User::create([
+            'name' => $validated['name'],
+            'phone' => $validated['phone'],
+            'instagram' => $validated['instagram'] ?? null,
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'customer',
+        ]);
 
-    $user->assignRole('customer');
+        $user->assignRole('customer');
 
-    return redirect()->route('login')
-        ->with('success', 'Pendaftaran berhasil. Silakan masuk ke akun Anda.');
-}
+        return redirect()->route('login')
+            ->with('success', 'Pendaftaran berhasil. Silakan masuk ke akun Anda.');
+    }
 
     public function logout(Request $request)
     {
