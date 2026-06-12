@@ -5,6 +5,8 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\CustomerBookingController;
 use App\Http\Controllers\Customer\CustomerDashboardController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminBookingController;
 use App\Http\Controllers\PublicPageController;
 use Illuminate\Support\Facades\Route;
 
@@ -63,13 +65,15 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+
+        // Redirect / ke dashboard
         Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('index');
 
-        Route::get('/dashboard', fn () => view('admin.dashboard'))->name('dashboard');
+        // Dashboard → pakai AdminDashboardController
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/bookings', fn () => redirect()->route('admin.dashboard'))->name('bookings.index');
-
-        Route::get('/bookings/{bookingCode}', function ($bookingCode) {
-            return view('admin.bookings.show', compact('bookingCode'));
-        })->name('bookings.show');
+        // Bookings → pakai AdminBookingController
+        Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+        Route::get('/bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
+        Route::patch('/bookings/{booking}/status', [AdminBookingController::class, 'updateStatus'])->name('bookings.updateStatus');
     });
