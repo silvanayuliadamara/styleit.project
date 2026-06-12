@@ -2361,4 +2361,69 @@ body {
     .lyb-stat-card {
         padding: 16px;
     }
+
+    /* =============================================
+   TAMBAHKAN INI KE BAGIAN BAWAH app.css
+   ============================================= */
+
+    /* Tombol Register di navbar */
+    .register-btn {
+        background-color: transparent;
+        border: 1.5px solid var(--color-primary, #8b6f5b);
+        color: var(--color-primary, #8b6f5b);
+        padding: 6px 18px;
+        border-radius: 50px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+
+    .register-btn:hover {
+        background-color: var(--color-primary, #8b6f5b);
+        color: #fff;
+    }
+
+    /* Dropdown menu navbar */
+    .user-chip {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .dropdown-menu {
+        min-width: 220px;
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+
+    .dropdown-item {
+        padding: 8px 16px;
+        color: #444;
+        border-radius: 0;
+        transition: background 0.15s ease;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f5f0eb;
+        color: #333;
+    }
+
+    .dropdown-item.text-danger:hover {
+        background-color: #fff0f0;
+        color: #dc3545;
+    }
+
+    .dropdown-header {
+        font-size: 0.8rem;
+        color: #888;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 200px;
+    }
 }
