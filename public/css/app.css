@@ -1566,3 +1566,799 @@ body {
         padding: 20px;
     }
 }
+
+/* =========================
+   LYB ADMIN PANEL
+========================= */
+
+/* Layout */
+.lyb-admin-body {
+    background: #fbf5ef;
+    margin: 0;
+    min-height: 100vh;
+}
+
+.lyb-admin-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.lyb-admin-sidebar {
+    width: 280px;
+    min-height: 100vh;
+    background: #211313;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.lyb-admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.lyb-admin-brand img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.lyb-admin-brand h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.lyb-admin-brand p {
+    color: #b08a42;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 4px 0 0;
+}
+
+.lyb-admin-label {
+    color: #6b4f4f;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin: 0 0 10px 4px;
+}
+
+.lyb-admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lyb-admin-nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    color: #c9b8b8;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.lyb-admin-nav-link span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lyb-admin-nav-link:hover,
+.lyb-admin-nav-link.active {
+    background: #3a2222;
+    color: #fff;
+}
+
+.lyb-admin-nav-link i {
+    color: #b08a42;
+    font-size: 16px;
+}
+
+/* Sidebar Footer */
+.lyb-admin-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lyb-admin-profile {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: #2e1a1a;
+    margin-bottom: 4px;
+}
+
+.lyb-admin-profile strong {
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.lyb-admin-profile span {
+    color: #b08a42;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    margin-top: 2px;
+}
+
+.lyb-admin-footer-link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    color: #c9b8b8;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    text-align: left;
+}
+
+.lyb-admin-footer-link:hover {
+    background: #3a2222;
+    color: #fff;
+}
+
+.lyb-admin-logout {
+    color: #d87b7b;
+}
+
+.lyb-admin-logout:hover {
+    color: #fff;
+    background: #7a2626;
+}
+
+/* Main Content */
+.lyb-admin-main {
+    margin-left: 280px;
+    flex: 1;
+    min-height: 100vh;
+    background: #fbf5ef;
+}
+
+.lyb-admin-content {
+    padding: 36px 40px;
+    max-width: 1200px;
+}
+
+/* Page Header */
+.lyb-admin-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.lyb-admin-page-header h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 30px;
+    color: #211313;
+    margin: 0 0 4px;
+}
+
+.lyb-admin-page-header p {
+    color: #6f625c;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    margin: 0;
+}
+
+.lyb-admin-date {
+    color: #b08a42;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-top: 6px;
+}
+
+.lyb-admin-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #6f625c;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.lyb-admin-back-btn:hover {
+    color: #211313;
+}
+
+/* Section */
+.lyb-admin-section {
+    margin-bottom: 32px;
+}
+
+.lyb-admin-section h3 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    color: #211313;
+    margin: 0 0 16px;
+}
+
+.lyb-admin-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.lyb-admin-section-head h3 {
+    margin: 0;
+}
+
+.lyb-admin-link-all {
+    color: #b08a42;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.2s ease;
+}
+
+.lyb-admin-link-all:hover {
+    color: #211313;
+}
+
+/* Stat Cards */
+.lyb-stat-card {
+    background: #fff;
+    border: 1px solid #eadfd6;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(33, 19, 19, 0.05);
+}
+
+.lyb-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.lyb-stat-icon.total {
+    background: #f0e9ff;
+    color: #6b3fa0;
+}
+.lyb-stat-icon.pending {
+    background: #fff4cc;
+    color: #896414;
+}
+.lyb-stat-icon.aktif {
+    background: #e8f4fe;
+    color: #1d6ea6;
+}
+.lyb-stat-icon.selesai {
+    background: #dff0dc;
+    color: #376b31;
+}
+
+.lyb-stat-info span {
+    display: block;
+    color: #6f625c;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.lyb-stat-info strong {
+    display: block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 28px;
+    color: #211313;
+    line-height: 1;
+}
+
+/* Table */
+.lyb-admin-table-card {
+    background: #fff;
+    border: 1px solid #eadfd6;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(33, 19, 19, 0.05);
+}
+
+.lyb-admin-table thead th {
+    background: #f4ecdf;
+    color: #4e3a27;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 14px 18px;
+    border-bottom: 1px solid #eadfd6;
+}
+
+.lyb-admin-table tbody td {
+    padding: 14px 18px;
+    color: #211313;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border-bottom: 1px solid #f4ede6;
+}
+
+.lyb-admin-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.lyb-admin-table tbody tr:hover td {
+    background: #fdf8f3;
+}
+
+.lyb-package-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #5f4036;
+    font-weight: 600;
+}
+
+.lyb-package-name i {
+    color: #b08a42;
+}
+
+/* Status Badges */
+.lyb-admin-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.lyb-admin-status.pending {
+    background: #fff4cc;
+    color: #896414;
+}
+.lyb-admin-status.confirmed {
+    background: #e8f4fe;
+    color: #1d6ea6;
+}
+.lyb-admin-status.process {
+    background: #e8e2f6;
+    color: #533d83;
+}
+.lyb-admin-status.completed {
+    background: #dff0dc;
+    color: #376b31;
+}
+.lyb-admin-status.cancelled {
+    background: #f3d7d7;
+    color: #843232;
+}
+.lyb-admin-status.expired {
+    background: #ffe1e8;
+    color: #c91c4a;
+}
+.lyb-admin-status.paid {
+    background: #dff0dc;
+    color: #376b31;
+}
+
+.lyb-status-lg {
+    padding: 8px 18px;
+    font-size: 14px;
+}
+
+/* Action Button */
+.lyb-admin-action-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 16px;
+    border-radius: 10px;
+    background: #211313;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.lyb-admin-action-btn:hover {
+    background: #3a2222;
+    color: #fff;
+}
+
+/* Pagination */
+.lyb-admin-pagination {
+    padding: 16px 18px;
+    border-top: 1px solid #eadfd6;
+}
+
+.lyb-admin-pagination .pagination {
+    margin: 0;
+    gap: 4px;
+}
+
+.lyb-admin-pagination .page-link {
+    border-radius: 10px !important;
+    border-color: #eadfd6;
+    color: #211313;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+}
+
+.lyb-admin-pagination .page-item.active .page-link {
+    background: #211313;
+    border-color: #211313;
+}
+
+/* Empty State */
+.lyb-empty-row {
+    padding: 42px 20px !important;
+    color: #6f625c;
+    font-family: Arial, sans-serif;
+}
+
+.lyb-empty-row i {
+    font-size: 36px;
+    color: #d8c8be;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.lyb-empty-row p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* WhatsApp Card */
+.lyb-whatsapp-card {
+    background: #fff;
+    border: 1px solid #eadfd6;
+    border-radius: 20px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    box-shadow: 0 4px 16px rgba(33, 19, 19, 0.05);
+    flex-wrap: wrap;
+}
+
+.lyb-whatsapp-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.lyb-whatsapp-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: #e9f9ef;
+    color: #25d366;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.lyb-whatsapp-left strong {
+    display: block;
+    color: #211313;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+}
+
+.lyb-whatsapp-left p {
+    color: #6f625c;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    margin: 3px 0 0;
+}
+
+.lyb-whatsapp-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 12px;
+    background: #25d366;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+}
+
+.lyb-whatsapp-button:hover {
+    background: #1fb658;
+    color: #fff;
+}
+
+/* Detail Card (show.blade.php) */
+.lyb-admin-detail-card {
+    background: #fff;
+    border: 1px solid #eadfd6;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(33, 19, 19, 0.05);
+}
+
+.lyb-admin-detail-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    color: #211313;
+    margin: 0 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #eadfd6;
+}
+
+.lyb-admin-detail-title i {
+    color: #b08a42;
+}
+
+.lyb-admin-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.lyb-admin-detail-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lyb-admin-detail-grid span {
+    color: #6f625c;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lyb-admin-detail-grid strong {
+    color: #211313;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+}
+
+.lyb-admin-label-sm {
+    color: #6f625c;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+}
+
+.lyb-addon-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #f4ecdf;
+    color: #5f4036;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #eadfd6;
+}
+
+.lyb-admin-notes {
+    background: #fbf5ef;
+    border: 1px solid #eadfd6;
+    border-radius: 14px;
+    padding: 14px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #5f5650;
+}
+
+/* Payment Summary */
+.lyb-admin-payment-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.lyb-admin-payment-summary > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eadfd6;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.lyb-admin-payment-summary > div:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.lyb-admin-payment-summary span {
+    color: #6f625c;
+}
+
+.lyb-admin-payment-summary strong {
+    color: #211313;
+}
+
+.lyb-payment-remaining span,
+.lyb-payment-remaining strong {
+    font-size: 16px;
+    font-weight: 800;
+    color: #211313;
+}
+
+/* Payment Proof */
+.lyb-payment-proof {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eadfd6;
+}
+
+.lyb-payment-proof:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.lyb-proof-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+}
+
+.lyb-proof-img {
+    width: 100%;
+    max-width: 320px;
+    border-radius: 14px;
+    border: 1px solid #eadfd6;
+    object-fit: cover;
+}
+
+/* Status Card (sidebar update status) */
+.lyb-status-card {
+    position: sticky;
+    top: 24px;
+}
+
+.lyb-form-label {
+    color: #5f5650;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.lyb-admin-select {
+    border-color: #eadfd6;
+    border-radius: 12px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #211313;
+    padding: 10px 14px;
+}
+
+.lyb-admin-select:focus {
+    border-color: #b08a42;
+    box-shadow: 0 0 0 3px rgba(176, 138, 66, 0.15);
+}
+
+.lyb-admin-btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: #211313;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.lyb-admin-btn-submit:hover {
+    background: #3a2222;
+}
+
+/* Responsive Admin */
+@media (max-width: 991px) {
+    .lyb-admin-sidebar {
+        width: 240px;
+    }
+    .lyb-admin-main {
+        margin-left: 240px;
+    }
+    .lyb-admin-content {
+        padding: 24px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .lyb-admin-sidebar {
+        position: static;
+        width: 100%;
+        min-height: auto;
+        padding: 20px;
+    }
+    .lyb-admin-shell {
+        flex-direction: column;
+    }
+    .lyb-admin-main {
+        margin-left: 0;
+    }
+    .lyb-admin-content {
+        padding: 20px 16px;
+    }
+    .lyb-admin-detail-grid {
+        grid-template-columns: 1fr;
+    }
+    .lyb-stat-card {
+        padding: 16px;
+    }
+}
