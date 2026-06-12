@@ -169,9 +169,16 @@
                     <div class="mb-3">
                         <label class="form-label lyb-form-label">Status Booking</label>
                         <select name="status" class="form-select lyb-admin-select">
-                            @foreach (['pending', 'confirmed', 'process', 'completed', 'cancelled', 'expired'] as $status)
-                                <option value="{{ $status }}" {{ $booking->status === $status ? 'selected' : '' }}>
-                                    {{ ucfirst($status) }}
+                            @foreach ([
+                                'pending'              => 'Pending',
+                                'menunggu_konfirmasi'  => 'Menunggu Konfirmasi',
+                                'diterima'             => 'Diterima',
+                                'ditolak'              => 'Ditolak',
+                                'selesai'              => 'Selesai',
+                                'dibatalkan'           => 'Dibatalkan',
+                            ] as $value => $label)
+                                <option value="{{ $value }}" {{ $booking->status === $value ? 'selected' : '' }}>
+                                    {{ $label }}
                                 </option>
                             @endforeach
                         </select>
