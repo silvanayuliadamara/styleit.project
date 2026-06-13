@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Tabel 3: service_categories
         Schema::create('service_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabel 4: service_packages
         Schema::create('service_packages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained('service_categories')->cascadeOnDelete();
@@ -35,6 +37,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabel 5: package_items
         Schema::create('package_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('package_id')->constrained('service_packages')->cascadeOnDelete();
@@ -44,6 +47,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabel 7: addons
         Schema::create('addons', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -53,6 +57,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabel pendukung: blocked_dates
         Schema::create('blocked_dates', function (Blueprint $table) {
             $table->id();
             $table->date('blocked_date')->unique();
@@ -60,6 +65,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabel 25: portfolio_items
         Schema::create('portfolio_items', function (Blueprint $table) {
             $table->id();
             $table->string('title');
@@ -70,6 +76,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabel 14: bookings
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->string('booking_code')->unique();
@@ -82,12 +89,13 @@ return new class extends Migration
             $table->unsignedInteger('total_price');
             $table->unsignedInteger('dp_amount');
             $table->unsignedInteger('remaining_payment');
-            $table->enum('status', ['pending','menunggu_konfirmasi','diterima','ditolak','selesai','dibatalkan'])->default('pending');
-            $table->enum('payment_status', ['belum_bayar','dp_diupload','dp_diterima','dp_ditolak','lunas'])->default('belum_bayar');
+            $table->enum('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'ditolak', 'selesai', 'dibatalkan'])->default('pending');
+            $table->enum('payment_status', ['belum_bayar', 'dp_diupload', 'dp_diterima', 'dp_ditolak', 'lunas'])->default('belum_bayar');
             $table->text('notes')->nullable();
             $table->timestamps();
         });
 
+        // Tabel 16: booking_addons
         Schema::create('booking_addons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('booking_id')->constrained()->cascadeOnDelete();
@@ -96,12 +104,13 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // Tabel 17: payments
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('booking_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('amount');
             $table->string('proof_image')->nullable();
-            $table->enum('status', ['pending','diterima','ditolak'])->default('pending');
+            $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });
