@@ -6,11 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
+        // Tabel 2: users
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -18,22 +16,22 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('instagram')->nullable();
             $table->string('address')->nullable();
-
-            $table->enum('role', ['owner','admin','customer'])->default('customer');
-            $table->enum('status',['active','inactive'])->default('active');
-
+            $table->enum('role', ['owner', 'admin', 'customer'])->default('customer');
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
 
+        // Tabel pendukung Laravel: password_reset_tokens
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // Tabel pendukung Laravel: sessions
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
@@ -44,9 +42,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
