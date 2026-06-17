@@ -1,4 +1,4 @@
-name: Code Linting PHP HTML CSS
+name: Code Linting PHP CSS
 
 on:
   pull_request:
@@ -18,26 +18,18 @@ jobs:
         with:
           php-version: "8.4"
           extensions: mbstring, fileinfo, openssl, tokenizer, xml, ctype, json
-          coverage: none
 
-      - name: Check PHP Syntax
-        run: find app routes database -name "*.php" -print0 | xargs -0 -n1 php -l
+      - name: PHP Syntax Check
+        run: |
+          find app routes database -name "*.php" -print0 | xargs -0 -n1 php -l
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install HTMLHint and Stylelint
-        run: npm install -g htmlhint stylelint stylelint-config-recommended
-
-      - name: Check HTML Files
-        run: |
-          if find . -name "*.html" | grep -q .; then
-            htmlhint "**/*.html"
-          else
-            echo "Tidak ada file .html, project menggunakan Laravel Blade."
-          fi
+      - name: Install Stylelint
+        run: npm install -g stylelint stylelint-config-recommended
 
       - name: Create Stylelint Config
         run: |
@@ -45,17 +37,15 @@ jobs:
           {
             "extends": "stylelint-config-recommended",
             "rules": {
-              "comment-whitespace-inside": null,
-              "color-function-alias-notation": null,
-              "media-feature-range-notation": null,
-              "rule-empty-line-before": null,
-              "color-hex-length": null,
-              "shorthand-property-no-redundant-values": null,
-              "declaration-block-no-redundant-longhand-properties": null,
               "no-descending-specificity": null
             }
           }
           EOF
 
       - name: Check CSS Files
-        run: stylelint "public/**/*.css"
+        run: |
+          if find public -name "*.css" | grep -q .; then
+            stylelint "public/**/*.css"
+          else
+            echo "No CSS files found"
+          fi
