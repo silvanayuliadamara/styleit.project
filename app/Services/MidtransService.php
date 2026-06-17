@@ -36,6 +36,10 @@ class MidtransService
                     'name' => 'DP Booking ' . $booking->booking_code,
                 ],
             ],
+            'custom_expiry' => [
+                'expiry_duration' => 60,
+                'unit' => 'minute',
+            ],
         ];
 
         return Snap::getSnapToken($params);

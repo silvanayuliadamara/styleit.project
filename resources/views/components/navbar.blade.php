@@ -80,13 +80,20 @@
                     @endphp
 
                     <div class="dropdown">
+                        @php
+                            if ($user->hasRole('customer')) {
+                                $displayName = $user->name;
+                            } else {
+                                $displayName = explode('@', $user->email)[0];
+                            }
+                        @endphp
                         <button class="user-chip dropdown-toggle" type="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             <span class="user-chip-avatar">
-                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                                {{ strtoupper(substr($displayName, 0, 1)) }}
                             </span>
                             <span class="user-chip-name">
-                                {{ $user->name }}
+                                {{ $displayName }}
                             </span>
                         </button>
 
