@@ -11,7 +11,8 @@ class ServicePackage extends Model
 {
     protected $fillable = [
         'category_id', 'code', 'name', 'slug', 'description', 'price', 'dp_amount',
-        'quota_per_day', 'is_popular', 'image', 'sort_order'
+        'quota_per_day', 'is_popular', 'image', 'sort_order',
+        'butuh_makeup', 'butuh_baju', 'softlens_wajib_pilih', 'status'
     ];
 
     protected $casts = [
@@ -19,6 +20,9 @@ class ServicePackage extends Model
         'dp_amount' => 'integer',
         'quota_per_day' => 'integer',
         'is_popular' => 'boolean',
+        'butuh_makeup' => 'boolean',
+        'butuh_baju' => 'boolean',
+        'softlens_wajib_pilih' => 'boolean',
     ];
 
     public function category(): BelongsTo
