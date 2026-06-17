@@ -309,9 +309,12 @@
         <i class="bi bi-arrow-left"></i> Kembali ke {{ $package->category->name }}
     </a>
 
-    <form action="{{ route('customer.cart.store') }}" method="POST">
+    <form action="{{ route('customer.cart.store') }}" method="POST" id="bookingForm">
         @csrf
         <input type="hidden" name="package_id" value="{{ $package->id }}">
+        @if(isset($editItem))
+            <input type="hidden" name="edit_key" value="{{ $editItem['key'] }}">
+        @endif
 
         <div class="row g-5">
             {{-- Kolom Kiri: Cover Image --}}
@@ -439,7 +442,7 @@
 
                                             @if ($dateData)
                                                 <label class="calendar-day-cell {{ $dateData['status'] }}" title="{{ $dateData['label'] }}">
-                                                    <input type="radio" name="booking_date" value="{{ $currentDateStr }}" {{ $dateData['status'] !== 'available' ? 'disabled' : '' }} {{ old('booking_date') === $currentDateStr ? 'checked' : '' }} class="d-none">
+                                                    <input type="radio" name="booking_date" value="{{ $currentDateStr }}" {{ $dateData['status'] !== 'available' ? 'disabled' : '' }} {{ old('booking_date', $editItem['booking_date'] ?? '') === $currentDateStr ? 'checked' : '' }} class="d-none">
                                                     <span class="day-number">{{ $day }}</span>
                                                 </label>
                                             @else
@@ -470,16 +473,15 @@
                     </div>
                 </div>
 
-                {{-- Softlens --}}
                 <div class="mb-4">
-                    <label class="form-label fw-bold" style="color: var(--lyb-dark); font-size: 15px;">Penggunaan Softlens</label>
+                    <label class="form-label fw-bold" style="color: var(--lyb-dark); font-size: 15px;">Penggunaan Softlens <span class="text-danger">*</span></label>
                     <div class="softlens-container">
                         <label class="softlens-pill">
-                            <input type="radio" name="softlens" value="1" class="form-check-input">
+                            <input type="radio" name="softlens" value="1" required {{ old('softlens', isset($editItem) ? (int)$editItem['softlens'] : null) === 1 ? 'checked' : '' }} class="form-check-input">
                             <span class="fw-semibold text-dark" style="font-size: 14px;">Ya</span>
                         </label>
                         <label class="softlens-pill">
-                            <input type="radio" name="softlens" value="0" checked class="form-check-input">
+                            <input type="radio" name="softlens" value="0" required {{ old('softlens', isset($editItem) ? (int)$editItem['softlens'] : null) === 0 ? 'checked' : '' }} class="form-check-input">
                             <span class="fw-semibold text-dark" style="font-size: 14px;">Tidak</span>
                         </label>
                     </div>
@@ -495,15 +497,16 @@
                     </div>
                 </div>
 
-                {{-- Add-on Opsional --}}
-                @if($addons->isNotEmpty())
-                    <div class="mb-4">
+                        @if($addons->isNotEmpty())
                         <h5 class="fw-bold mb-3" style="color: var(--lyb-dark); font-size: 15px;">Add-on Opsional</h5>
                         <div class="d-flex flex-column gap-2">
                             @foreach($addons as $addon)
+                                @php
+                                    $isEditAddon = isset($editItem) && collect($editItem['addons'])->contains('id', $addon->id);
+                                @endphp
                                 <label class="d-flex align-items-center justify-content-between addon-row-clickable" style="cursor: pointer; transition: all 0.2s ease;">
                                     <div class="d-flex align-items-center gap-3">
-                                        <input type="checkbox" name="addons[]" value="{{ $addon->id }}" data-price="{{ $addon->price }}" class="form-check-input flex-shrink-0" style="width: 20px; height: 20px;">
+                                        <input type="checkbox" name="addons[]" value="{{ $addon->id }}" data-price="{{ $addon->price }}" {{ (old('addons') ? in_array($addon->id, old('addons')) : $isEditAddon) ? 'checked' : '' }} class="form-check-input flex-shrink-0" style="width: 20px; height: 20px;">
                                         <div class="d-flex flex-column">
                                             <span class="fw-semibold text-dark" style="font-size: 14px;">{{ $addon->name }}</span>
                                         </div>
@@ -512,8 +515,7 @@
                                 </label>
                             @endforeach
                         </div>
-                    </div>
-                @endif
+                        @endif
 
                 {{-- Summary Calculation Card --}}
                 <div class="summary-card mb-4">
@@ -533,16 +535,24 @@
 
                 {{-- Action Buttons --}}
                 <div class="row g-3">
-                    <div class="col-sm-6">
-                        <button type="submit" name="action" value="cart" class="btn btn-lyb-outline w-100 py-3 rounded-pill">
-                            Tambah Keranjang
-                        </button>
-                    </div>
-                    <div class="col-sm-6">
-                        <button type="submit" name="action" value="checkout" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
-                            Booking Sekarang
-                        </button>
-                    </div>
+                    @if(isset($editItem))
+                        <div class="col-12">
+                            <button type="submit" name="action" value="cart" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
+                                Simpan Perubahan
+                            </button>
+                        </div>
+                    @else
+                        <div class="col-sm-6">
+                            <button type="submit" name="action" value="cart" class="btn btn-lyb-outline w-100 py-3 rounded-pill">
+                                Tambah Keranjang
+                            </button>
+                        </div>
+                        <div class="col-sm-6">
+                            <button type="submit" name="action" value="checkout" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
+                                Booking Sekarang
+                            </button>
+                        </div>
+                    @endif
                     <div class="col-12 mt-3 text-start">
                         <a href="https://wa.me/6281227545591?text=Halo%20admin%20LYB,%20saya%20mau%20tanya%20paket%20{{ urlencode($package->name) }}" target="_blank" class="link-whatsapp-gold">
                             <i class="bi bi-whatsapp" style="font-size: 16px;"></i> Tanya via WhatsApp (Owner Makeup)
@@ -602,6 +612,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCalendarVisibility();
     const basePrice = {{ $package->price }};
     const baseDp = {{ $package->dp_amount }};
+    const editSlotWaktu = @json($editItem['slot_waktu'] ?? null);
+    const editTanggalFitting = @json($editItem['tanggal_fitting'] ?? null);
     
     function updateTotals() {
         const addonTotal = [...document.querySelectorAll('input[name="addons[]"]:checked')].reduce((sum, item) => sum + Number(item.dataset.price), 0);
@@ -617,6 +629,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('input[name="addons[]"]').forEach((checkbox) => {
         checkbox.addEventListener('change', updateTotals);
     });
+
+    // Run totals once on load to show correct sum if editing/repopulating
+    updateTotals();
 
     // Date change event
     document.querySelectorAll('input[name="booking_date"]').forEach((radio) => {
@@ -656,6 +671,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             radioInput.required = true;
                             if (!value.available) {
                                 radioInput.disabled = true;
+                            }
+                            
+                            // Check if this slot is selected
+                            if (key === editSlotWaktu || key === '{{ old('slot_waktu') }}') {
+                                radioInput.checked = true;
                             }
                             
                             const label = document.createElement('div');
@@ -705,6 +725,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             fittingInput.max = todayStr;
                         }
+                        
+                        if (editTanggalFitting) {
+                            fittingInput.value = editTanggalFitting;
+                        } else if ('{{ old('tanggal_fitting') }}') {
+                            fittingInput.value = '{{ old('tanggal_fitting') }}';
+                        }
                     } else {
                         fittingContainer.classList.add('d-none');
                         fittingInput.required = false;
@@ -718,10 +744,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Trigger change event for already checked booking date on page load (e.g., from old input)
+    // Trigger change event for already checked booking date on page load (e.g., from old input or edit data)
     const selectedRadio = document.querySelector('input[name="booking_date"]:checked');
     if (selectedRadio) {
         selectedRadio.dispatchEvent(new Event('change'));
+    }
+
+    // Frontend validation form submit handler
+    const bookingForm = document.getElementById('bookingForm');
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', function(e) {
+            const selectedDate = document.querySelector('input[name="booking_date"]:checked');
+            if (!selectedDate) {
+                e.preventDefault();
+                alert('Silakan pilih tanggal booking terlebih dahulu pada kalender.');
+                return false;
+            }
+            
+            const slotContainer = document.getElementById('slotSelectionContainer');
+            if (slotContainer && !slotContainer.classList.contains('d-none')) {
+                const selectedSlot = document.querySelector('input[name="slot_waktu"]:checked');
+                if (!selectedSlot) {
+                    e.preventDefault();
+                    alert('Silakan pilih slot waktu MUA (Pagi, Siang, atau Sore).');
+                    return false;
+                }
+            }
+            
+            const selectedSoftlens = document.querySelector('input[name="softlens"]:checked');
+            if (!selectedSoftlens) {
+                e.preventDefault();
+                alert('Silakan pilih apakah Anda menggunakan softlens atau tidak.');
+                return false;
+            }
+
+            const fittingContainer = document.getElementById('fittingDateContainer');
+            if (fittingContainer && !fittingContainer.classList.contains('d-none')) {
+                const fittingInput = document.getElementById('tanggalFittingInput');
+                if (!fittingInput.value) {
+                    e.preventDefault();
+                    alert('Silakan pilih tanggal fitting ke gallery.');
+                    return false;
+                }
+            }
+        });
     }
 });
 </script>

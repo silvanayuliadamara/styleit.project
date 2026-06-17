@@ -59,7 +59,14 @@ class PublicPageController extends Controller
         $addons = Addon::where('is_active', true)->get();
         $calendar = $this->buildCalendar($package);
 
-        return view('paket.show', compact('package', 'addons', 'calendar'));
+        // Prepopulate edit data if editing cart item
+        $editItem = null;
+        if (request()->has('edit_key')) {
+            $cart = session('cart', []);
+            $editItem = collect($cart)->firstWhere('key', request()->query('edit_key'));
+        }
+
+        return view('paket.show', compact('package', 'addons', 'calendar', 'editItem'));
     }
 
     public function portofolio()
