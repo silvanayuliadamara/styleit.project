@@ -16,6 +16,24 @@
                                 <strong>Rp{{ number_format($item['total_price'], 0, ',', '.') }}</strong>
                             </div>
                         @endforeach
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Nomor WhatsApp / HP <span class="text-danger">*</span></label>
+                                <input type="text" name="phone" class="form-control rounded-4" value="{{ old('phone', auth()->user()->phone) }}" required placeholder="Contoh: 08123456789">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Username Instagram</label>
+                                <div class="input-group">
+                                    <span class="input-group-text rounded-start-4 bg-light border-end-0">@</span>
+                                    <input type="text" name="instagram" class="form-control rounded-end-4 border-start-0" value="{{ old('instagram', auth()->user()->instagram) }}" placeholder="username_ig">
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label class="form-label fw-bold">Alamat Lengkap</label>
+                                <textarea name="address" class="form-control rounded-4" rows="2" placeholder="Masukkan alamat lengkap Anda">{{ old('address', auth()->user()->address) }}</textarea>
+                            </div>
+                        </div>
+
                         <div class="mt-4">
                             <label class="form-label fw-bold">Catatan untuk admin</label>
                             <textarea name="notes" class="form-control rounded-4" rows="4" placeholder="Contoh: request look natural, alamat acara, jam acara, dll.">{{ old('notes') }}</textarea>

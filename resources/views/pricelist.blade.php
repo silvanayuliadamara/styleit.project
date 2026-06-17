@@ -6,100 +6,76 @@
 <section class="price-page py-5">
     <div class="container price-container">
 
-        @php
-            $priceGroups = [
-                [
-                    'kicker' => '',
-                    'title' => 'Prewedding',
-                    'packages' => [
-                        [
-                            'code' => 'PKG-PREWED',
-                            'name' => 'Paket Prewedding',
-                            'description' => 'Makeup prewedding + opsi baju pasangan',
-                            'includes' => 'Henna 1x',
-                            'price' => 2500000,
-                            'dp' => 500000,
-                        ],
-                    ],
-                ],
-                [
-                    'kicker' => 'HARI SAKRAL ANDA, SEMPURNA',
-                    'title' => 'Wedding',
-                    'packages' => [
-                        [
-                            'code' => 'PKG-WED-GOLD',
-                            'name' => 'Paket Wedding Gold',
-                            'description' => 'Makeup pengantin lengkap + henna 2x + melati 1x',
-                            'includes' => 'Henna 2x, Melati 1x',
-                            'price' => 5000000,
-                            'dp' => 1000000,
-                        ],
-                    ],
-                ],
-                [
-                    'kicker' => 'WISUDA & ACARA SPESIAL',
-                    'title' => 'Regular',
-                    'packages' => [
-                        [
-                            'code' => 'PKG-REG-WIS',
-                            'name' => 'Paket Regular Wisuda',
-                            'description' => 'Makeup wisuda glowing, maksimal 3 customer per hari',
-                            'includes' => '',
-                            'price' => 500000,
-                            'dp' => 200000,
-                        ],
-                    ],
-                ],
-                [
-                    'kicker' => 'KOLEKSI GAUN & KEBAYA',
-                    'title' => 'Khusus Baju',
-                    'packages' => [
-                        [
-                            'code' => 'PKG-BAJU-PASANGAN',
-                            'name' => 'Paket Baju Pasangan',
-                            'description' => 'Sewa baju pengantin pasangan, koleksi premium',
-                            'includes' => '',
-                            'price' => 750000,
-                            'dp' => 250000,
-                        ],
-                    ],
-                ],
-            ];
-        @endphp
+        @foreach ($categories as $category)
+            @if ($category->packages->isNotEmpty())
+                <div class="price-category mb-5">
+                    @if ($category->headline)
+                        <p class="section-kicker mb-1">{{ strtoupper($category->headline) }}</p>
+                    @endif
 
-        @foreach ($priceGroups as $group)
-            <div class="price-category mb-5">
-                @if ($group['kicker'])
-                    <p class="section-kicker mb-1">{{ $group['kicker'] }}</p>
-                @endif
+                    <h2 class="price-category-title">{{ $category->name }}</h2>
+                    <div class="price-line mb-4"></div>
 
-                <h2 class="price-category-title">{{ $group['title'] }}</h2>
-                <div class="price-line mb-4"></div>
+                    {{-- Brosur Manual untuk kategori ini --}}
+                    @php
+                        $brochures = [];
+                        if ($category->slug === 'baju') {
+                            $brochures = [
+                                ['url' => asset('storage/packages/attire_packages.jpg'), 'title' => 'Buku Paket Attire'],
+                                ['url' => asset('storage/packages/attire_items.jpg'), 'title' => 'Brosur Satuan Attire (Premium & Luxury)']
+                            ];
+                        } elseif ($category->slug === 'wedding') {
+                            $brochures = [
+                                ['url' => asset('storage/packages/wedding_premium.png'), 'title' => 'Brosur Wedding Premium'],
+                                ['url' => asset('storage/packages/wedding_luxury.png'), 'title' => 'Brosur Wedding Luxury'],
+                                ['url' => asset('storage/packages/makeup_wedding.png'), 'title' => 'Brosur Jasa Makeup Wedding']
+                            ];
+                        }
+                    @endphp
 
-                @foreach ($group['packages'] as $package)
-                    <div class="price-card mb-4">
-                        <div class="price-card-left">
-                            <h5>{{ $package['name'] }}</h5>
-                            <p>{{ $package['description'] }}</p>
+                    @if (!empty($brochures))
+                        <div class="row mb-5 g-3 justify-content-center">
+                            <div class="col-12"><p class="small text-muted mb-2"><i class="bi bi-book-half"></i> Brosur Cetak / Buku Paket Resmi:</p></div>
+                            @foreach ($brochures as $b)
+                                <div class="col-6 col-sm-4 col-md-3 text-center">
+                                    <div class="position-relative overflow-hidden rounded-3 shadow-sm border border-light" style="aspect-ratio: 3/4; background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important;">
+                                        <a href="{{ $b['url'] }}" target="_blank" title="Klik untuk memperbesar {{ $b['title'] }}">
+                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100 h-100 object-fit-cover" style="transition: transform 0.3s ease; max-width: 100%;">
+                                        </a>
+                                    </div>
+                                    <span class="d-block small fw-bold text-secondary mt-2" style="font-size: 11px;">{{ $b['title'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
 
-                            @if ($package['includes'])
-                                <small>Termasuk: {{ $package['includes'] }}</small>
-                            @endif
+                    @foreach ($category->packages as $package)
+                        <div class="price-card mb-4">
+                            <div class="price-card-left">
+                                <h5>{{ $package->name }}</h5>
+                                <p>{{ $package->description }}</p>
 
-                            <div class="mt-3">
-                                <a href="{{ url('/paket/' . $package['code']) }}" class="btn btn-dark btn-sm rounded-pill px-3">
-                                    Pesan Sekarang
-                                </a>
+                                @if ($package->items->isNotEmpty())
+                                    <small>Termasuk: 
+                                        {{ $package->items->map(fn($it) => $it->name . ' (' . $it->quantity . ' ' . $it->unit . ')')->implode(', ') }}
+                                    </small>
+                                @endif
+
+                                <div class="mt-3">
+                                    <a href="{{ route('paket.show', $package->code) }}" class="btn btn-dark btn-sm rounded-pill px-3">
+                                        Pesan Sekarang
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="price-card-right">
+                                <h4>Rp{{ number_format($package->price, 0, ',', '.') }}</h4>
+                                <small>DP Rp{{ number_format($package->dp_amount, 0, ',', '.') }}</small>
                             </div>
                         </div>
-
-                        <div class="price-card-right">
-                            <h4>Rp{{ number_format($package['price'], 0, ',', '.') }}</h4>
-                            <small>DP Rp{{ number_format($package['dp'], 0, ',', '.') }}</small>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
+                    @endforeach
+                </div>
+            @endif
         @endforeach
 
     </div>

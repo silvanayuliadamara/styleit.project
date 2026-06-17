@@ -1,0 +1,667 @@
+/* =========================
+   OWNER PANEL — SUB-MENU
+========================= */
+.lyb-nav-group-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    color: #c9b8b8;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.lyb-nav-group-toggle:hover,
+.lyb-nav-group.open>.lyb-nav-group-toggle {
+    background: #3a2222;
+    color: #fff;
+}
+
+.lyb-nav-group-toggle span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lyb-nav-group-toggle i {
+    color: #b08a42;
+    font-size: 16px;
+}
+
+.lyb-nav-group-toggle .lyb-caret {
+    font-size: 12px;
+    transition: transform 0.25s ease;
+    color: #c9b8b8;
+}
+
+.lyb-nav-group.open>.lyb-nav-group-toggle .lyb-caret {
+    transform: rotate(180deg);
+}
+
+.lyb-nav-submenu {
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 0 0 28px;
+}
+
+.lyb-nav-group.open>.lyb-nav-submenu {
+    display: flex;
+}
+
+.lyb-nav-submenu-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    color: #a89494;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.lyb-nav-submenu-link:hover,
+.lyb-nav-submenu-link.active {
+    background: #3a2222;
+    color: #fff;
+}
+
+.lyb-nav-submenu-link i {
+    font-size: 6px;
+    color: #b08a42;
+}
+
+/* =========================
+   OWNER SCHEDULE CALENDAR
+========================= */
+.lyb-schedule-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.lyb-calendar-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #eadfd6;
+    border-radius: 14px;
+    padding: 6px;
+}
+
+.lyb-calendar-nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    color: #211313;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.lyb-calendar-nav a:hover {
+    background: #f4ecdf;
+}
+
+.lyb-calendar-nav-label {
+    min-width: 140px;
+    text-align: center;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #211313;
+}
+
+/* Legend */
+.lyb-schedule-legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6f625c;
+}
+
+.lyb-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.lyb-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.lyb-legend-dot.tersedia {
+    background: #6c9d67;
+}
+
+.lyb-legend-dot.penuh {
+    background: #c44;
+}
+
+.lyb-legend-dot.diblokir {
+    background: #999;
+}
+
+.lyb-legend-dot.belum {
+    background: #d8c8be;
+}
+
+.lyb-legend-dot.wedding {
+    background: #e6a817;
+}
+
+/* Calendar Grid */
+.lyb-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.lyb-cal-dayname {
+    text-align: center;
+    padding: 10px 4px;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8a7a72;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lyb-cal-cell {
+    min-height: 105px;
+    background: #fff;
+    border: 1px solid #eadfd6;
+    border-radius: 14px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.lyb-cal-cell:hover {
+    border-color: #b08a42;
+    box-shadow: 0 6px 18px rgba(176, 138, 66, 0.12);
+    transform: translateY(-2px);
+}
+
+.lyb-cal-cell.today {
+    border-color: #b08a42;
+    background: #fffdf7;
+    box-shadow: 0 0 0 2px rgba(176, 138, 66, 0.18);
+}
+
+.lyb-cal-cell.past {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.lyb-cal-cell.empty {
+    background: transparent;
+    border: none;
+    pointer-events: none;
+    min-height: 0;
+}
+
+.lyb-cal-date {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #211313;
+    margin-bottom: 8px;
+}
+
+.lyb-cal-today-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #b08a42;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+/* Slot Pills inside calendar cell */
+.lyb-cal-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.lyb-slot-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 7px;
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1;
+}
+
+.lyb-slot-pill .lyb-slot-qty {
+    font-size: 9px;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.lyb-slot-pill.tersedia {
+    background: #e3f2e1;
+    color: #2d6e25;
+}
+
+.lyb-slot-pill.penuh {
+    background: #fde2e2;
+    color: #a03131;
+}
+
+.lyb-slot-pill.diblokir {
+    background: #e8e4e4;
+    color: #888;
+    text-decoration: line-through;
+}
+
+.lyb-slot-pill.belum {
+    background: #f4ede6;
+    color: #b8a89e;
+}
+
+.lyb-slot-pill.wedding-block {
+    background: #fff4cc;
+    color: #896414;
+}
+
+/* =========================
+   SCHEDULE MODAL
+========================= */
+.lyb-sched-modal .modal-content {
+    border-radius: 22px;
+    border: 1px solid #eadfd6;
+    box-shadow: 0 24px 60px rgba(33, 19, 19, 0.14);
+    overflow: hidden;
+}
+
+.lyb-sched-modal .modal-header {
+    background: #fbf5ef;
+    border-bottom: 1px solid #eadfd6;
+    padding: 18px 24px;
+}
+
+.lyb-sched-modal .modal-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    color: #211313;
+}
+
+.lyb-sched-modal .modal-body {
+    padding: 24px;
+}
+
+.lyb-sched-modal .modal-footer {
+    border-top: 1px solid #eadfd6;
+    padding: 14px 24px;
+    background: #fdf9f5;
+}
+
+.lyb-slot-config {
+    padding: 16px;
+    border: 1px solid #eadfd6;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.lyb-slot-config.active-slot {
+    border-color: #b08a42;
+    background: #fffdf7;
+}
+
+.lyb-slot-config-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 0;
+}
+
+.lyb-slot-config.active-slot .lyb-slot-config-head {
+    margin-bottom: 14px;
+}
+
+.lyb-slot-config-body {
+    display: none;
+}
+
+.lyb-slot-config.active-slot .lyb-slot-config-body {
+    display: block;
+}
+
+.lyb-slot-title {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #211313;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.lyb-slot-title i {
+    color: #b08a42;
+    font-size: 16px;
+}
+
+.lyb-slot-time {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #8a7a72;
+}
+
+.lyb-slot-booked-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    background: #fde2e2;
+    color: #a03131;
+}
+
+.lyb-slot-wedding-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    background: #fff4cc;
+    color: #896414;
+}
+
+/* Form Elements in Modal */
+.lyb-sched-label {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6f625c;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.lyb-sched-input {
+    border: 1px solid #eadfd6;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #211313;
+    width: 100%;
+    transition: border-color 0.2s ease;
+}
+
+.lyb-sched-input:focus {
+    outline: none;
+    border-color: #b08a42;
+    box-shadow: 0 0 0 3px rgba(176, 138, 66, 0.12);
+}
+
+.lyb-sched-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.lyb-sched-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.lyb-sched-switch .slider {
+    position: absolute;
+    inset: 0;
+    background: #d8c8be;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.lyb-sched-switch .slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    left: 3px;
+    top: 3px;
+    transition: transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.lyb-sched-switch input:checked+.slider {
+    background: #6c9d67;
+}
+
+.lyb-sched-switch input:checked+.slider::before {
+    transform: translateX(20px);
+}
+
+/* Blocked Toggle */
+.lyb-block-switch input:checked+.slider {
+    background: #c44;
+}
+
+/* =========================
+   RESPONSIVE CALENDAR
+========================= */
+@media (max-width: 991px) {
+    .lyb-cal-cell {
+        min-height: 90px;
+        padding: 8px;
+    }
+
+    .lyb-cal-date {
+        font-size: 13px;
+    }
+
+    .lyb-slot-pill {
+        font-size: 9px;
+        padding: 2px 5px;
+    }
+}
+
+@media (max-width: 768px) {
+    .lyb-cal-grid {
+        gap: 4px;
+    }
+
+    .lyb-cal-cell {
+        min-height: 75px;
+        padding: 6px;
+        border-radius: 10px;
+    }
+
+    .lyb-cal-dayname {
+        font-size: 9px;
+        padding: 6px 2px;
+    }
+
+    .lyb-cal-date {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .lyb-slot-pill {
+        font-size: 8px;
+        padding: 2px 4px;
+        border-radius: 4px;
+    }
+
+    .lyb-slot-pill .lyb-slot-qty {
+        display: none;
+    }
+
+    .lyb-schedule-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .lyb-cal-cell {
+        min-height: 60px;
+        padding: 4px;
+        border-radius: 8px;
+    }
+
+    .lyb-slot-pill span:first-child {
+        max-width: 20px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* =========================
+   OWNER STAT CARDS (EXTRA)
+========================= */
+.lyb-stat-icon.dp {
+    background: #fff4cc;
+    color: #896414;
+}
+
+.lyb-stat-icon.lunas {
+    background: #dff0dc;
+    color: #376b31;
+}
+
+.lyb-stat-icon.harga {
+    background: #f4ecdf;
+    color: #8b6a2f;
+}
+
+.lyb-stat-icon.pendapatan {
+    background: #e3f2e1;
+    color: #2d6e25;
+}
+
+.lyb-stat-icon.biaya {
+    background: #fde2e2;
+    color: #a03131;
+}
+
+.lyb-stat-icon.bersih {
+    background: #e0f0e8;
+    color: #1a7a42;
+}
+
+/* =========================
+   OWNER STATUS BADGE EXTRAS
+   (extends app.css lyb-admin-status)
+========================= */
+.lyb-admin-status.selesai,
+.lyb-admin-status.completed {
+    background: #dff0dc;
+    color: #376b31;
+}
+
+.lyb-admin-status.aktif,
+.lyb-admin-status.confirmed {
+    background: #e8f4fe;
+    color: #1d6ea6;
+}
+
+.lyb-admin-status.ditolak,
+.lyb-admin-status.cancelled {
+    background: #f3d7d7;
+    color: #843232;
+}
+
+.lyb-admin-status.diterima {
+    background: #e8f4fe;
+    color: #1d6ea6;
+}
+
+/* =========================
+   LAPORAN KEUANGAN
+========================= */
+.lyb-laporan-summary-card {
+    background: #fff;
+    border: 1px solid #eadfd6;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 4px 16px rgba(33, 19, 19, 0.05);
+}
+
+.lyb-laporan-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #f4ede6;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #211313;
+}
+
+.lyb-laporan-row:last-child {
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.lyb-laporan-row .label {
+    color: #6f625c;
+    font-size: 13px;
+}
+
+.lyb-laporan-row .value {
+    font-weight: 700;
+}
+
+.lyb-laporan-row .value.positive {
+    color: #2d6e25;
+}
+
+.lyb-laporan-row .value.negative {
+    color: #a03131;
+}
+
+.lyb-laporan-row .value.gold {
+    color: #b08a42;
+}

@@ -118,12 +118,27 @@ class PreviewData
     {
         $package = self::packageByCode('PKG-WED-GOLD');
         $addon = self::addons()->firstWhere('id', 4);
-        $addon->pivot = self::object(['price' => $addon->price]);
+        $addon->pivot = self::object([
+            'price' => $addon->price,
+            'nama_addon' => $addon->name,
+            'qty' => 1,
+            'nama_option' => null,
+            'subtotal' => $addon->price
+        ]);
         return collect([
             self::object([
                 'booking_code' => 'LYB-DEMO-001',
                 'package' => $package,
                 'booking_date' => Carbon::today()->addDays(14),
+                'tanggal_acara' => Carbon::today()->addDays(14),
+                'created_at' => Carbon::now()->subDays(2),
+                'user' => self::object([
+                    'name' => 'Demo User',
+                    'phone' => '08123456789',
+                    'instagram' => 'demo_user',
+                    'address' => 'Jl. Merdeka No. 10'
+                ]),
+                'latestCancellationRequest' => null,
                 'softlens' => true,
                 'addons' => collect([$addon]),
                 'payments' => collect([self::object(['amount' => $package->dp_amount, 'proof_image' => null, 'status' => 'pending', 'paid_at' => Carbon::now()])]),
@@ -131,8 +146,11 @@ class PreviewData
                 'addon_total' => $addon->price,
                 'total_price' => $package->price + $addon->price,
                 'dp_amount' => $package->dp_amount,
+                'total_dibayar' => 0,
                 'remaining_payment' => $package->price + $addon->price - $package->dp_amount,
+                'sisa_pelunasan' => $package->price + $addon->price,
                 'status' => 'menunggu_konfirmasi',
+                'status_layanan' => 'pending',
                 'payment_status' => 'dp_diupload',
                 'notes' => 'Contoh booking demo untuk melihat tampilan detail.',
             ]),
@@ -145,13 +163,28 @@ class PreviewData
             $package = self::packageById((int) $item['package_id']) ?? self::packageByCode($item['package_code']);
             $addons = collect($item['addons'] ?? [])->map(function ($addon) {
                 $object = self::object($addon);
-                $object->pivot = self::object(['price' => $addon['price'] ?? 0]);
+                $object->pivot = self::object([
+                    'price' => $addon['price'] ?? 0,
+                    'nama_addon' => $addon['name'] ?? null,
+                    'qty' => 1,
+                    'nama_option' => null,
+                    'subtotal' => $addon['price'] ?? 0
+                ]);
                 return $object;
             });
             return self::object([
                 'booking_code' => $item['booking_code'],
                 'package' => $package,
                 'booking_date' => Carbon::parse($item['booking_date']),
+                'tanggal_acara' => Carbon::parse($item['booking_date']),
+                'created_at' => Carbon::now(),
+                'user' => auth()->user() ?? self::object([
+                    'name' => 'Guest Customer',
+                    'phone' => '-',
+                    'instagram' => null,
+                    'address' => null,
+                ]),
+                'latestCancellationRequest' => null,
                 'softlens' => (bool) $item['softlens'],
                 'addons' => $addons,
                 'payments' => collect($item['proof_uploaded'] ? [self::object(['amount' => $item['dp_amount'], 'proof_image' => null, 'status' => 'pending', 'paid_at' => Carbon::now()])] : []),
@@ -159,8 +192,11 @@ class PreviewData
                 'addon_total' => $item['addon_total'],
                 'total_price' => $item['total_price'],
                 'dp_amount' => $item['dp_amount'],
+                'total_dibayar' => 0,
                 'remaining_payment' => $item['remaining_payment'],
+                'sisa_pelunasan' => $item['total_price'],
                 'status' => $item['proof_uploaded'] ? 'menunggu_konfirmasi' : 'pending',
+                'status_layanan' => 'pending',
                 'payment_status' => $item['proof_uploaded'] ? 'dp_diupload' : 'belum_bayar',
                 'notes' => $item['notes'] ?? null,
             ]);

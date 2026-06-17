@@ -71,9 +71,10 @@ class MidtransController extends Controller
                 ]);
             }
         } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
+            $newStatus = ($transactionStatus === 'expire') ? 'expired' : 'dibatalkan';
             $booking->update([
                 'payment_status' => 'belum_bayar',
-                'status' => 'dibatalkan',
+                'status' => $newStatus,
             ]);
         }
 

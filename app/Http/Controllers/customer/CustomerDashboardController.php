@@ -3,15 +3,47 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
+use App\Models\CancellationRequest;
 use App\Support\PreviewData;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerDashboardController extends Controller
 {
     public function index()
     {
-        $bookings = PreviewData::sessionBookings()->take(5);
-        $activeBookingCount = $bookings->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima'])->count();
+        $userId = Auth::id();
 
-        return view('customer.dashboard', compact('bookings', 'activeBookingCount'));
+        $dbBookings = Booking::where('user_id', $userId)
+            ->with(['package', 'addons', 'payments', 'latestCancellationRequest'])
+            ->latest()
+            ->get();
+
+        if ($dbBookings->isEmpty()) {
+            $bookings = PreviewData::sessionBookings();
+        } else {
+            $bookings = $dbBookings;
+        }
+
+        $totalBookingCount    = $bookings->count();
+        $activeBookingCount   = $bookings->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima'])->count();
+        $completedBookingCount = $bookings->where('status', 'selesai')->count();
+
+        // Fetch unread cancellation result notifications for this customer
+        $unreadCancellationNotifs = $userId ? CancellationRequest::whereHas('booking', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->whereIn('status_persetujuan', ['disetujui', 'ditolak'])
+            ->where('customer_dibaca', false)
+            ->with('booking')
+            ->get() : collect();
+
+        return view('customer.dashboard', compact(
+            'bookings',
+            'totalBookingCount',
+            'activeBookingCount',
+            'completedBookingCount',
+            'unreadCancellationNotifs'
+        ));
     }
 }
