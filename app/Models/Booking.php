@@ -6,24 +6,49 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Booking extends Model
 {
     protected $fillable = [
-        'booking_code', 'user_id', 'package_id', 'booking_date', 'softlens', 'subtotal',
-        'addon_total', 'total_price', 'dp_amount', 'remaining_payment', 'status',
-        'payment_status', 'notes'
+        'booking_code',
+        'user_id',
+        'checkout_id',
+        'schedule_id',
+        'package_id',
+        'booking_date',
+        'tanggal_acara',
+        'softlens',
+        'subtotal',
+        'addon_total',
+        'total_price',
+        'dp_amount',
+        'total_dibayar',
+        'remaining_payment',
+        'sisa_pelunasan',
+        'status',
+        'status_layanan',
+        'payment_status',
+        'notes',
+        'slot_waktu',
+        'tanggal_fitting',
     ];
 
     protected $casts = [
-        'booking_date' => 'date',
-        'softlens' => 'boolean',
-        'subtotal' => 'integer',
-        'addon_total' => 'integer',
-        'total_price' => 'integer',
-        'dp_amount' => 'integer',
+        'booking_date'   => 'date',
+        'tanggal_acara'  => 'date',
+        'softlens'       => 'boolean',
+        'subtotal'       => 'integer',
+        'addon_total'    => 'integer',
+        'total_price'    => 'integer',
+        'dp_amount'      => 'integer',
+        'total_dibayar'  => 'integer',
         'remaining_payment' => 'integer',
+        'sisa_pelunasan' => 'integer',
+        'tanggal_fitting' => 'date',
     ];
+
+    /* ---- Relationships ---- */
 
     public function user(): BelongsTo
     {
@@ -35,15 +60,81 @@ class Booking extends Model
         return $this->belongsTo(ServicePackage::class, 'package_id');
     }
 
+    public function schedule(): BelongsTo
+    {
+        return $this->belongsTo(Schedule::class);
+    }
+
+    public function checkout(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Checkout::class ?? Checkout::class, 'checkout_id');
+    }
+
+    public function detail(): HasOne
+    {
+        return $this->hasOne(\App\Models\BookingDetail::class ?? BookingDetail::class);
+    }
+
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(\App\Models\Invoice::class ?? Invoice::class);
+    }
+
     public function addons(): BelongsToMany
     {
         return $this->belongsToMany(Addon::class, 'booking_addons')
-            ->withPivot(['price'])
+            ->withPivot(['price', 'addon_option_id', 'nama_addon', 'nama_option', 'qty', 'subtotal', 'is_pihak_lain', 'biaya_pihak_lain'])
             ->withTimestamps();
     }
 
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function cancellationRequests(): HasMany
+    {
+        return $this->hasMany(CancellationRequest::class);
+    }
+
+    public function latestCancellationRequest(): HasOne
+    {
+        return $this->hasOne(CancellationRequest::class)->latestOfMany();
+    }
+
+    /* ---- Dynamic Accessors ---- */
+
+    public function getGatewayFeeAttribute(): int
+    {
+        if ($this->booking_code === 'BOOK-001' || $this->booking_code === 'LYB-DEMO-001') {
+            return 4400;
+        }
+        if ($this->booking_code === 'BOOK-003') {
+            return 2500;
+        }
+
+        $hasOnlinePayment = $this->payments()->whereNull('proof_image')->where('status', 'approved')->exists();
+        if ($hasOnlinePayment) {
+            return 4400;
+        }
+        return 0;
+    }
+
+    public function getFittingPriorityAttribute(): ?int
+    {
+        if (!$this->tanggal_fitting) {
+            return null;
+        }
+
+        $bookingIds = self::whereDate('tanggal_acara', $this->tanggal_acara)
+            ->whereNotNull('tanggal_fitting')
+            ->whereNotIn('status', ['ditolak', 'dibatalkan'])
+            ->orderBy('tanggal_fitting', 'asc')
+            ->orderBy('created_at', 'asc')
+            ->pluck('id')
+            ->toArray();
+
+        $index = array_search($this->id, $bookingIds);
+        return $index !== false ? $index + 1 : null;
     }
 }
