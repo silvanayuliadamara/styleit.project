@@ -46,6 +46,7 @@ Route::middleware(['auth', 'role:customer'])
         Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
         Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
+        Route::post('/cart/select', [CartController::class, 'select'])->name('cart.select');
         Route::delete('/cart/{key}', [CartController::class, 'destroy'])->name('cart.destroy');
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
         Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
