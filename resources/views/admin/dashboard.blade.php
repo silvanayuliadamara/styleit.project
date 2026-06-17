@@ -4,11 +4,32 @@
     {{-- Page Header --}}
     <header class="lyb-admin-page-header">
         <div>
-            <h2>Dashboard Admin</h2>
-            <p>Selamat datang, {{ Auth::user()->name }}. Berikut ringkasan transaksi hari ini.</p>
+            <h2>Admin</h2>
+            <p>Selamat datang, {{ Auth::user()->name }}. Berikut ringkasan booking baju hari ini.</p>
         </div>
         <span class="lyb-admin-date">{{ now()->translatedFormat('l, d F Y') }}</span>
     </header>
+
+    {{-- Pengajuan Pembatalan Alert Banner --}}
+    @if ($pendingCancellations->isNotEmpty())
+        <div class="alert alert-danger border-danger rounded-4 shadow-sm p-4 mb-4" style="background-color: #fdf2f2;">
+            <h5 class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-triangle-fill me-2"></i> Ada {{ $pendingCancellations->count() }} Pengajuan Pembatalan Menunggu Persetujuan</h5>
+            <p class="text-secondary small mb-3">Customer telah mengajukan pembatalan booking baju. Persetujuan pembatalan akan diproses oleh Owner, namun Anda dapat memantau detailnya di sini:</p>
+            <div class="list-group rounded-3 shadow-sm overflow-hidden border">
+                @foreach ($pendingCancellations as $pb)
+                    <a href="{{ route('admin.bookings.show', $pb->id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 border-bottom py-3" style="background: #fff;">
+                        <div>
+                            <strong class="text-dark">{{ $pb->booking_code }}</strong> — <span class="text-secondary">{{ $pb->user->name ?? '-' }}</span>
+                            <small class="text-muted d-block mt-1">Paket: {{ $pb->package->name ?? '-' }} | Acara: {{ $pb->tanggal_acara ? $pb->tanggal_acara->translatedFormat('d M Y') : ($pb->booking_date ? $pb->booking_date->translatedFormat('d M Y') : '-') }}</small>
+                        </div>
+                        <span class="btn btn-sm btn-outline-danger fw-bold rounded-pill px-3" style="font-size: 12px;">
+                            Lihat Detail <i class="bi bi-arrow-right-short"></i>
+                        </span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
     {{-- Stat Cards --}}
     <section class="lyb-admin-section">
@@ -19,7 +40,7 @@
                         <i class="bi bi-calendar2-check"></i>
                     </div>
                     <div class="lyb-stat-info">
-                        <span>Total Booking</span>
+                        <span>Total Booking Baju</span>
                         <strong>{{ $totalBooking }}</strong>
                     </div>
                 </div>
@@ -63,7 +84,7 @@
     {{-- Tabel Booking Terbaru --}}
     <section class="lyb-admin-section">
         <div class="lyb-admin-section-head">
-            <h3>Booking Terbaru</h3>
+            <h3>Booking Baju Terbaru</h3>
             <a href="{{ route('admin.bookings.index') }}" class="lyb-admin-link-all">
                 Lihat semua <i class="bi bi-arrow-right"></i>
             </a>
@@ -76,7 +97,7 @@
                         <tr>
                             <th>Kode</th>
                             <th>Customer</th>
-                            <th>Paket</th>
+                            <th>Paket Baju</th>
                             <th>Tanggal</th>
                             <th>Total</th>
                             <th>Status</th>
@@ -101,17 +122,22 @@
                                         {{ ucfirst($booking->status) }}
                                     </span>
                                 </td>
-                                <td class="text-end">
-                                    <a href="{{ route('admin.bookings.show', $booking) }}" class="lyb-admin-action-btn">
-                                        Lihat
-                                    </a>
+                                <td class="text-end text-nowrap">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{{ route('admin.bookings.invoice', $booking) }}" class="lyb-admin-action-btn" style="background-color: #fbf8f1; border: 1px solid #eadfd6; color: #5c430e;">
+                                            <i class="bi bi-receipt"></i> Invoice
+                                        </a>
+                                        <a href="{{ route('admin.bookings.show', $booking) }}" class="lyb-admin-action-btn">
+                                            Lihat
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="7" class="text-center lyb-empty-row">
                                     <i class="bi bi-inbox"></i>
-                                    <p>Belum ada booking masuk.</p>
+                                    <p>Belum ada booking baju masuk.</p>
                                 </td>
                             </tr>
                         @endforelse
