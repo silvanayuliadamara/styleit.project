@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/owner.css') }}">
 </head>
 
 <body class="lyb-admin-body">
@@ -25,7 +26,12 @@
                 <nav class="lyb-admin-nav">
                     <a href="{{ route('admin.dashboard') }}"
                         class="lyb-admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                        <span><i class="bi bi-bag-heart"></i> Daftar Transaksi</span>
+                        <span><i class="bi bi-grid-1x2-fill"></i> Dashboard Overview</span>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    <a href="{{ route('admin.bookings.index') }}"
+                        class="lyb-admin-nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}">
+                        <span><i class="bi bi-bag-heart"></i> Booking Baju</span>
                         <i class="bi bi-chevron-right"></i>
                     </a>
                 </nav>
