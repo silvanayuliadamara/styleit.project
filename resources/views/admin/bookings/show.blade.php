@@ -5,16 +5,31 @@
     {{-- Page Header --}}
     <header class="lyb-admin-page-header">
         <div>
-            <a href="{{ route('admin.bookings.index') }}" class="lyb-admin-back-btn">
-                <i class="bi bi-arrow-left"></i> Kembali
-            </a>
-            <h2 class="mt-2">Detail Booking</h2>
+            <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+                <a href="{{ route('admin.bookings.index') }}" class="lyb-admin-back-btn me-2">
+                    <i class="bi bi-arrow-left"></i> Kembali
+                </a>
+                <a href="{{ route('admin.bookings.invoice', $booking) }}" class="btn btn-sm" style="border-radius: 8px; background-color: #fbf8f1; border: 1px solid #eadfd6; color: #5c430e; font-weight: 600;">
+                    <i class="bi bi-receipt"></i> Cetak / Lihat Invoice
+                </a>
+            </div>
+            <h2>Detail Booking</h2>
             <p>{{ $booking->booking_code }}</p>
         </div>
         <span class="lyb-admin-status {{ $booking->status }} lyb-status-lg">
             {{ ucfirst($booking->status) }}
         </span>
-    </header>
+
+    {{-- Info Pengajuan Pembatalan (Read-Only untuk Admin) --}}
+    @if ($booking->latestCancellationRequest && $booking->latestCancellationRequest->status_persetujuan === 'diajukan')
+        <div class="alert alert-warning border-warning rounded-4 shadow-sm p-4 mb-4" style="background-color: #fffbeb;">
+            <h5 class="fw-bold text-dark"><i class="bi bi-info-circle-fill text-warning me-2"></i> Pengajuan Pembatalan Customer</h5>
+            <p class="text-secondary small mb-3">Customer telah mengajukan permohonan pembatalan. Saat ini sedang <strong>menunggu persetujuan Owner</strong>. Berikut rincian pengembalian dana:</p>
+            <div class="p-3 bg-white rounded-3 border border-warning-subtle small mb-0" style="white-space: pre-wrap; font-family: sans-serif; color: #4e3a27;">{{ $booking->latestCancellationRequest->alasan }}</div>
+        </div>
+    @endif
+
+
 
     {{-- Flash Message --}}
     @if (session('success'))
@@ -76,6 +91,27 @@
                         <span>Softlens</span>
                         <strong>{{ $booking->softlens ? 'Ya' : 'Tidak' }}</strong>
                     </div>
+                    @if ($booking->tanggal_fitting)
+                        <div>
+                            <span>Tanggal Fitting Baju</span>
+                            <strong class="text-gold">
+                                <i class="bi bi-scissors"></i>
+                                {{ $booking->tanggal_fitting->translatedFormat('l, d F Y') }}
+                            </strong>
+                        </div>
+                        <div>
+                            <span>Urutan Prioritas Fitting</span>
+                            <strong>
+                                @if ($booking->fitting_priority)
+                                    <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 11px; font-weight: 700;">
+                                        <i class="bi bi-star-fill"></i> Prioritas #{{ $booking->fitting_priority }}
+                                    </span>
+                                @else
+                                    -
+                                @endif
+                            </strong>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Addon --}}
@@ -157,36 +193,28 @@
 
         </div>
 
-        {{-- Kolom Kanan: Update Status --}}
+        {{-- Kolom Kanan: Status Booking --}}
         <div class="col-lg-4">
-            <div class="lyb-admin-detail-card lyb-status-card">
+            <div class="lyb-admin-detail-card">
                 <h3 class="lyb-admin-detail-title">
-                    <i class="bi bi-pencil-square"></i> Perbarui Status
+                    <i class="bi bi-info-square"></i> Status Booking
                 </h3>
-                <form action="{{ route('admin.bookings.updateStatus', $booking) }}" method="POST">
-                    @csrf
-                    @method('PATCH')
-                    <div class="mb-3">
-                        <label class="form-label lyb-form-label">Status Booking</label>
-                        <select name="status" class="form-select lyb-admin-select">
-                            @foreach ([
-                                'pending'              => 'Pending',
-                                'menunggu_konfirmasi'  => 'Menunggu Konfirmasi',
-                                'diterima'             => 'Diterima',
-                                'ditolak'              => 'Ditolak',
-                                'selesai'              => 'Selesai',
-                                'dibatalkan'           => 'Dibatalkan',
-                            ] as $value => $label)
-                                <option value="{{ $value }}" {{ $booking->status === $value ? 'selected' : '' }}>
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <button type="submit" class="lyb-admin-btn-submit w-100">
-                        <i class="bi bi-check-lg me-1"></i> Simpan Perubahan
-                    </button>
-                </form>
+                <div class="mb-3 text-center">
+                    <span class="badge py-2 px-3 fs-6 w-100 {{ $booking->payment_status == 'lunas' ? 'bg-success' : ($booking->payment_status == 'dp_diterima' ? 'bg-info' : ($booking->payment_status == 'dp_diupload' ? 'bg-warning text-dark' : 'bg-secondary')) }}">
+                        PEMBAYARAN: {{ strtoupper(str_replace('_', ' ', $booking->payment_status)) }}
+                    </span>
+                </div>
+                <div class="mb-4 text-center">
+                    <span class="badge py-2 px-3 fs-6 w-100 {{ $booking->status == 'diterima' ? 'bg-success' : ($booking->status == 'dibatalkan' || $booking->status == 'ditolak' ? 'bg-danger' : 'bg-warning text-dark') }}">
+                        BOOKING: {{ strtoupper(str_replace('_', ' ', $booking->status)) }}
+                    </span>
+                </div>
+                <div class="p-3 rounded-4" style="background-color: #fdfaf7; border: 1px solid #eadfd6;">
+                    <p class="small text-secondary mb-0">
+                        <i class="bi bi-shield-lock-fill text-gold me-1"></i>
+                        Persetujuan booking, konfirmasi DP/pembayaran, dan persetujuan pembatalan dikelola sepenuhnya oleh <strong>Owner</strong>. Admin hanya memiliki akses untuk memantau data.
+                    </p>
+                </div>
             </div>
         </div>
 
