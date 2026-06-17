@@ -13,4 +13,11 @@ class ServiceCategory extends Model
     {
         return $this->hasMany(ServicePackage::class, 'category_id');
     }
+
+    public function addons()
+    {
+        return $this->belongsToMany(Addon::class, 'category_addons', 'category_id', 'addon_id')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
 }
