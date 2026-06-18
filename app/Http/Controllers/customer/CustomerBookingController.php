@@ -61,7 +61,7 @@ class CustomerBookingController extends Controller
 
         if ($booking) {
             // Check if there is already a pending cancellation request
-            $existingRequest = \App\Models\CancellationRequest::where('booking_id', $booking->id)
+            $existingRequest = CancellationRequest::where('booking_id', $booking->id)
                 ->where('status_persetujuan', 'diajukan')
                 ->exists();
 
@@ -83,11 +83,11 @@ class CustomerBookingController extends Controller
 
             if (in_array($booking->status, ['pending', 'menunggu_konfirmasi', 'diterima'])) {
                 // Format alasan to include bank details
-                $formattedAlasan = "Alasan: " . $validated['alasan'] . "\n"
-                    . "Rekening Refund: " . $validated['bank_name'] . " - " . $validated['bank_account'] . " a.n. " . $validated['account_holder'];
+                $formattedAlasan = 'Alasan: '.$validated['alasan']."\n"
+                    .'Rekening Refund: '.$validated['bank_name'].' - '.$validated['bank_account'].' a.n. '.$validated['account_holder'];
 
                 // Create cancellation request
-                \App\Models\CancellationRequest::create([
+                CancellationRequest::create([
                     'booking_id' => $booking->id,
                     'alasan' => $formattedAlasan,
                     'status_persetujuan' => 'diajukan',
@@ -95,6 +95,7 @@ class CustomerBookingController extends Controller
 
                 return redirect()->back()->with('success', 'Permohonan pembatalan berhasil dikirim. Menunggu persetujuan Admin/Owner.');
             }
+
             return redirect()->back()->with('error', 'Booking tidak dapat dibatalkan pada status ini.');
         }
 

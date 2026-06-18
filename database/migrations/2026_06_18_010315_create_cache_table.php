@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->string('slot_waktu')->nullable()->after('tanggal_acara');
-            $table->date('tanggal_fitting')->nullable()->after('slot_waktu');
+        Schema::create('cache', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
@@ -22,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn(['slot_waktu', 'tanggal_fitting']);
-        });
+        Schema::dropIfExists('cache');
     }
 };

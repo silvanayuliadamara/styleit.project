@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Addon;
 use App\Models\ServiceCategory;
-use App\Models\AddonOption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,12 +13,14 @@ class OwnerAddonController extends Controller
     public function index()
     {
         $addons = Addon::with(['categories', 'options'])->get();
+
         return view('owner.addons.index', compact('addons'));
     }
 
     public function create()
     {
         $categories = ServiceCategory::orderBy('sort_order')->get();
+
         return view('owner.addons.create', compact('categories'));
     }
 
@@ -33,7 +34,7 @@ class OwnerAddonController extends Controller
             'is_pihak_lain' => 'nullable|boolean',
             'biaya_pihak_lain' => 'nullable|numeric|min:0',
             'status' => 'required|in:aktif,nonaktif',
-            
+
             // Categories
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'exists:service_categories,id',
@@ -46,7 +47,7 @@ class OwnerAddonController extends Controller
             'options.*.biaya_pihak_lain' => 'nullable|numeric|min:0',
         ]);
 
-        DB::transaction(function() use ($request, $validated) {
+        DB::transaction(function () use ($request, $validated) {
             $validated['is_active'] = ($validated['status'] === 'aktif');
             $validated['is_pihak_lain'] = $request->has('is_pihak_lain');
             $validated['harga_default'] = $validated['harga_default'] ?? $validated['price'];
@@ -54,7 +55,7 @@ class OwnerAddonController extends Controller
             $addon = Addon::create($validated);
 
             // Sync categories
-            if (!empty($validated['category_ids'])) {
+            if (! empty($validated['category_ids'])) {
                 $syncData = [];
                 foreach ($validated['category_ids'] as $catId) {
                     $syncData[$catId] = ['status' => 'aktif'];
@@ -63,7 +64,7 @@ class OwnerAddonController extends Controller
             }
 
             // Options
-            if (!empty($validated['options'])) {
+            if (! empty($validated['options'])) {
                 foreach ($validated['options'] as $option) {
                     $addon->options()->create([
                         'nama_option' => $option['nama_option'],
@@ -85,6 +86,7 @@ class OwnerAddonController extends Controller
     {
         $categories = ServiceCategory::orderBy('sort_order')->get();
         $addon->load(['categories', 'options']);
+
         return view('owner.addons.edit', compact('addon', 'categories'));
     }
 
@@ -98,7 +100,7 @@ class OwnerAddonController extends Controller
             'is_pihak_lain' => 'nullable|boolean',
             'biaya_pihak_lain' => 'nullable|numeric|min:0',
             'status' => 'required|in:aktif,nonaktif',
-            
+
             // Categories
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'exists:service_categories,id',
@@ -111,7 +113,7 @@ class OwnerAddonController extends Controller
             'options.*.biaya_pihak_lain' => 'nullable|numeric|min:0',
         ]);
 
-        DB::transaction(function() use ($request, $validated, $addon) {
+        DB::transaction(function () use ($request, $validated, $addon) {
             $validated['is_active'] = ($validated['status'] === 'aktif');
             $validated['is_pihak_lain'] = $request->has('is_pihak_lain');
             $validated['harga_default'] = $validated['harga_default'] ?? $validated['price'];
@@ -119,7 +121,7 @@ class OwnerAddonController extends Controller
             $addon->update($validated);
 
             // Sync categories
-            if (!empty($validated['category_ids'])) {
+            if (! empty($validated['category_ids'])) {
                 $syncData = [];
                 foreach ($validated['category_ids'] as $catId) {
                     $syncData[$catId] = ['status' => 'aktif'];
@@ -131,7 +133,7 @@ class OwnerAddonController extends Controller
 
             // Sync options
             $addon->options()->delete();
-            if (!empty($validated['options'])) {
+            if (! empty($validated['options'])) {
                 foreach ($validated['options'] as $option) {
                     $addon->options()->create([
                         'nama_option' => $option['nama_option'],
@@ -151,7 +153,7 @@ class OwnerAddonController extends Controller
 
     public function destroy(Addon $addon)
     {
-        DB::transaction(function() use ($addon) {
+        DB::transaction(function () use ($addon) {
             $addon->categories()->detach();
             $addon->options()->delete();
             $addon->delete();

@@ -12,6 +12,7 @@ class WhatsappSettingController extends Controller
     public function index()
     {
         $setting = WhatsappSetting::first();
+
         return view('owner.whatsapp.index', compact('setting'));
     }
 

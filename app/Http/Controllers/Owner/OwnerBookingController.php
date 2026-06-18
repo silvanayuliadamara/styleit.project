@@ -24,12 +24,12 @@ class OwnerBookingController extends Controller
         }
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('booking_code', 'like', "%{$search}%")
-                  ->orWhereHas('user', function($qu) use ($search) {
-                      $qu->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('user', function ($qu) use ($search) {
+                        $qu->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -41,12 +41,14 @@ class OwnerBookingController extends Controller
     public function show(Booking $booking)
     {
         $booking->load(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest']);
+
         return view('owner.bookings.show', compact('booking'));
     }
 
     public function invoice(Booking $booking)
     {
         $booking->load(['user', 'package', 'schedule', 'addons', 'payments']);
+
         return view('shared.invoice', compact('booking'));
     }
 
@@ -124,7 +126,7 @@ class OwnerBookingController extends Controller
     {
         $validated = $request->validate([
             'status' => 'required|in:diterima,ditolak,selesai,dibatalkan',
-            'status_layanan' => 'nullable|in:pending,terjadwal,selesai,dibatalkan'
+            'status_layanan' => 'nullable|in:pending,terjadwal,selesai,dibatalkan',
         ]);
 
         $oldStatus = $booking->status;
@@ -173,7 +175,7 @@ class OwnerBookingController extends Controller
         ]);
 
         $cancelReq = $booking->latestCancellationRequest;
-        if (!$cancelReq || $cancelReq->status_persetujuan !== 'diajukan') {
+        if (! $cancelReq || $cancelReq->status_persetujuan !== 'diajukan') {
             return redirect()->back()->with('error', 'Tidak ada pengajuan pembatalan aktif.');
         }
 
@@ -181,8 +183,8 @@ class OwnerBookingController extends Controller
             if ($validated['action'] === 'approve') {
                 $cancelReq->update([
                     'status_persetujuan' => 'disetujui',
-                    'approved_by'        => auth()->id(),
-                    'customer_dibaca'    => false, // trigger notification to customer
+                    'approved_by' => auth()->id(),
+                    'customer_dibaca' => false, // trigger notification to customer
                 ]);
 
                 // Decrement schedule if status was diterima
@@ -194,14 +196,14 @@ class OwnerBookingController extends Controller
                 }
 
                 $booking->update([
-                    'status'        => 'dibatalkan',
+                    'status' => 'dibatalkan',
                     'status_layanan' => 'dibatalkan',
                 ]);
             } else {
                 $cancelReq->update([
                     'status_persetujuan' => 'ditolak',
-                    'approved_by'        => auth()->id(),
-                    'customer_dibaca'    => false, // trigger notification to customer
+                    'approved_by' => auth()->id(),
+                    'customer_dibaca' => false, // trigger notification to customer
                 ]);
             }
         });
@@ -241,7 +243,7 @@ class OwnerBookingController extends Controller
             if (in_array($booking->status, ['expired', 'dibatalkan', 'ditolak'])) {
                 $booking->bersih_owner = 0;
             } else {
-                $booking->bersih_owner = $booking->total_dibayar > 0 
+                $booking->bersih_owner = $booking->total_dibayar > 0
                     ? max(0, $booking->total_dibayar - $biayaP - $booking->gateway_fee)
                     : max(0, $booking->dp_amount - $biayaP);
             }
@@ -269,28 +271,28 @@ class OwnerBookingController extends Controller
             ->whereNotIn('status', ['ditolak', 'dibatalkan'])
             ->get();
 
-        $fileName = 'Laporan_Keuangan_' . date('Y-m-d') . '.csv';
+        $fileName = 'Laporan_Keuangan_'.date('Y-m-d').'.csv';
 
         $headers = [
-            "Content-type"        => "text/csv; charset=UTF-8",
-            "Content-Disposition" => "attachment; filename=$fileName",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
+            'Content-type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=$fileName",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $columns = [
-            'Kode Booking', 'Customer', 'Paket', 'Tanggal Acara', 
-            'Total Harga', 'DP Wajib', 'Total Dibayar', 'Sisa Pelunasan', 
-            'Biaya Pihak Lain', 'Gateway Fee', 'Bersih Owner', 'Status'
+            'Kode Booking', 'Customer', 'Paket', 'Tanggal Acara',
+            'Total Harga', 'DP Wajib', 'Total Dibayar', 'Sisa Pelunasan',
+            'Biaya Pihak Lain', 'Gateway Fee', 'Bersih Owner', 'Status',
         ];
 
-        $callback = function() use($bookings, $columns) {
+        $callback = function () use ($bookings, $columns) {
             $file = fopen('php://output', 'w');
-            
+
             // Add UTF-8 BOM for Excel compatibility
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
-            
+
             fputcsv($file, $columns, ';');
 
             foreach ($bookings as $booking) {
@@ -303,7 +305,7 @@ class OwnerBookingController extends Controller
                 if (in_array($booking->status, ['expired', 'dibatalkan', 'ditolak'])) {
                     $bersih = 0;
                 } else {
-                    $bersih = $booking->total_dibayar > 0 
+                    $bersih = $booking->total_dibayar > 0
                         ? max(0, $booking->total_dibayar - $biayaP - $booking->gateway_fee)
                         : max(0, $booking->dp_amount - $biayaP);
                 }
@@ -320,7 +322,7 @@ class OwnerBookingController extends Controller
                     $biayaP,
                     $booking->gateway_fee,
                     $bersih,
-                    $booking->status
+                    $booking->status,
                 ], ';');
             }
 

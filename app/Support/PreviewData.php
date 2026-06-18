@@ -9,10 +9,11 @@ class PreviewData
 {
     public static function object(array $data): object
     {
-        $object = new \stdClass();
+        $object = new \stdClass;
         foreach ($data as $key => $value) {
             $object->{$key} = $value;
         }
+
         return $object;
     }
 
@@ -51,6 +52,7 @@ class PreviewData
         ])->map(function ($item) use ($categories) {
             $item['category'] = $categories[$item['category_id']];
             $item['items'] = collect($item['items'])->map(fn ($row) => self::object(['name' => $row[0], 'quantity' => $row[1], 'unit' => $row[2]]));
+
             return self::object($item);
         });
     }
@@ -111,6 +113,7 @@ class PreviewData
                 'reason' => $isBlocked ? 'Jadwal diblokir admin' : null,
             ];
         }
+
         return $dates;
     }
 
@@ -123,8 +126,9 @@ class PreviewData
             'nama_addon' => $addon->name,
             'qty' => 1,
             'nama_option' => null,
-            'subtotal' => $addon->price
+            'subtotal' => $addon->price,
         ]);
+
         return collect([
             self::object([
                 'booking_code' => 'LYB-DEMO-001',
@@ -136,7 +140,7 @@ class PreviewData
                     'name' => 'Demo User',
                     'phone' => '08123456789',
                     'instagram' => 'demo_user',
-                    'address' => 'Jl. Merdeka No. 10'
+                    'address' => 'Jl. Merdeka No. 10',
                 ]),
                 'latestCancellationRequest' => null,
                 'softlens' => true,
@@ -168,10 +172,12 @@ class PreviewData
                     'nama_addon' => $addon['name'] ?? null,
                     'qty' => 1,
                     'nama_option' => null,
-                    'subtotal' => $addon['price'] ?? 0
+                    'subtotal' => $addon['price'] ?? 0,
                 ]);
+
                 return $object;
             });
+
             return self::object([
                 'booking_code' => $item['booking_code'],
                 'package' => $package,

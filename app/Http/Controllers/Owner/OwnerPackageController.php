@@ -5,23 +5,24 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\ServiceCategory;
 use App\Models\ServicePackage;
-use App\Models\PackageItem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class OwnerPackageController extends Controller
 {
     public function index()
     {
         $packages = ServicePackage::with('category')->orderBy('sort_order')->get();
+
         return view('owner.packages.index', compact('packages'));
     }
 
     public function create()
     {
         $categories = ServiceCategory::orderBy('sort_order')->get();
+
         return view('owner.packages.create', compact('categories'));
     }
 
@@ -42,7 +43,7 @@ class OwnerPackageController extends Controller
             'status' => 'required|in:aktif,nonaktif',
             'sort_order' => 'nullable|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            
+
             // Items
             'items' => 'nullable|array',
             'items.*.name' => 'required_with:items|string|max:255',
@@ -53,7 +54,7 @@ class OwnerPackageController extends Controller
             'items.*.keterangan' => 'nullable|string|max:255',
         ]);
 
-        DB::transaction(function() use ($request, $validated) {
+        DB::transaction(function () use ($request, $validated) {
             $validated['slug'] = Str::slug($validated['name']);
             $validated['is_popular'] = $request->has('is_popular');
             $validated['butuh_makeup'] = $request->has('butuh_makeup');
@@ -66,7 +67,7 @@ class OwnerPackageController extends Controller
 
             $package = ServicePackage::create($validated);
 
-            if (!empty($validated['items'])) {
+            if (! empty($validated['items'])) {
                 foreach ($validated['items'] as $item) {
                     $package->items()->create([
                         'name' => $item['name'],
@@ -88,6 +89,7 @@ class OwnerPackageController extends Controller
     {
         $categories = ServiceCategory::orderBy('sort_order')->get();
         $package->load('items');
+
         return view('owner.packages.edit', compact('package', 'categories'));
     }
 
@@ -95,7 +97,7 @@ class OwnerPackageController extends Controller
     {
         $validated = $request->validate([
             'category_id' => 'required|exists:service_categories,id',
-            'code' => 'required|string|max:50|unique:service_packages,code,' . $package->id,
+            'code' => 'required|string|max:50|unique:service_packages,code,'.$package->id,
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
@@ -119,7 +121,7 @@ class OwnerPackageController extends Controller
             'items.*.keterangan' => 'nullable|string|max:255',
         ]);
 
-        DB::transaction(function() use ($request, $validated, $package) {
+        DB::transaction(function () use ($request, $validated, $package) {
             $validated['slug'] = Str::slug($validated['name']);
             $validated['is_popular'] = $request->has('is_popular');
             $validated['butuh_makeup'] = $request->has('butuh_makeup');
@@ -138,7 +140,7 @@ class OwnerPackageController extends Controller
 
             // Re-sync package items
             $package->items()->delete();
-            if (!empty($validated['items'])) {
+            if (! empty($validated['items'])) {
                 foreach ($validated['items'] as $item) {
                     $package->items()->create([
                         'name' => $item['name'],
@@ -163,7 +165,7 @@ class OwnerPackageController extends Controller
                 ->with('error', 'Paket tidak dapat dihapus karena sudah ada booking yang menggunakan paket ini.');
         }
 
-        DB::transaction(function() use ($package) {
+        DB::transaction(function () use ($package) {
             if ($package->image) {
                 Storage::disk('public')->delete($package->image);
             }

@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ServicePackage extends Model
 {
     protected $fillable = [
         'category_id', 'code', 'name', 'slug', 'description', 'price', 'dp_amount',
         'quota_per_day', 'is_popular', 'image', 'sort_order',
-        'butuh_makeup', 'butuh_baju', 'softlens_wajib_pilih', 'status'
+        'butuh_makeup', 'butuh_baju', 'softlens_wajib_pilih', 'status',
     ];
 
     protected $casts = [

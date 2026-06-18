@@ -50,7 +50,7 @@ return new class extends Migration
             $table->unsignedInteger('total_dibayar')->default(0);
             $table->unsignedInteger('sisa_pelunasan')->default(0);
             $table->enum('status_invoice', [
-                'menunggu_dp', 'dp_dibayar', 'lunas', 'dibatalkan'
+                'menunggu_dp', 'dp_dibayar', 'lunas', 'dibatalkan',
             ])->default('menunggu_dp');
             $table->date('tanggal_invoice');
             $table->timestamps();

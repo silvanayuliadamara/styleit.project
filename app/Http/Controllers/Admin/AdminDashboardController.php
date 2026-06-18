@@ -17,9 +17,9 @@ class AdminDashboardController extends Controller
             $q->select('id')->from('service_packages')->where('category_id', $bajuCat?->id);
         });
 
-        $totalBooking   = (clone $bajuQuery)->count();
+        $totalBooking = (clone $bajuQuery)->count();
         $bookingPending = (clone $bajuQuery)->whereIn('status', ['pending', 'menunggu_konfirmasi'])->count();
-        $bookingAktif   = (clone $bajuQuery)->where('status', 'diterima')->count();
+        $bookingAktif = (clone $bajuQuery)->where('status', 'diterima')->count();
         $bookingSelesai = (clone $bajuQuery)->where('status', 'selesai')->count();
         $bookingExpired = (clone $bajuQuery)->where('status', 'expired')->count();
 

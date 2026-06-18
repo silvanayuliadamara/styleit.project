@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Addon;
+use App\Models\ServicePackage;
 use App\Support\PreviewData;
 use Illuminate\Http\Request;
 
@@ -11,14 +13,15 @@ class CartController extends Controller
     public function index()
     {
         $cart = session('cart', []);
+
         return view('customer.cart', compact('cart'));
     }
 
     public function store(Request $request)
     {
         // Try fetching package from database first, fallback to PreviewData
-        $package = \App\Models\ServicePackage::with('category')->find($request->package_id);
-        if (!$package) {
+        $package = ServicePackage::with('category')->find($request->package_id);
+        if (! $package) {
             $package = PreviewData::packageById((int) $request->package_id);
         }
         abort_if(! $package, 404);
@@ -57,12 +60,12 @@ class CartController extends Controller
 
         $addons = collect([]);
         if (count($validated['addons'] ?? []) > 0) {
-            $dbAddons = \App\Models\Addon::whereIn('id', $validated['addons'])->get();
+            $dbAddons = Addon::whereIn('id', $validated['addons'])->get();
             if ($dbAddons->isNotEmpty()) {
-                $addons = $dbAddons->map(fn ($addon) => (object)[
+                $addons = $dbAddons->map(fn ($addon) => (object) [
                     'id' => $addon->id,
                     'name' => $addon->name,
-                    'price' => $addon->harga_default ?: $addon->price
+                    'price' => $addon->harga_default ?: $addon->price,
                 ]);
             } else {
                 $addons = PreviewData::addons()->whereIn('id', collect($validated['addons'])->map(fn ($id) => (int) $id))->values();
@@ -74,8 +77,8 @@ class CartController extends Controller
 
         $cart = session('cart', []);
         $editKey = $request->input('edit_key');
-        
-        $itemIndex = collect($cart)->search(fn($item) => $item['key'] === $editKey);
+
+        $itemIndex = collect($cart)->search(fn ($item) => $item['key'] === $editKey);
 
         $cartData = [
             'key' => $editKey ?: uniqid('cart_', true),
@@ -99,6 +102,7 @@ class CartController extends Controller
         if ($itemIndex !== false) {
             $cart[$itemIndex] = $cartData;
             session(['cart' => $cart]);
+
             return redirect()->route('customer.cart.index')->with('success', 'Detail layanan berhasil diperbarui.');
         } else {
             $cart[] = $cartData;
@@ -106,6 +110,7 @@ class CartController extends Controller
 
             if (($validated['action'] ?? 'cart') === 'checkout') {
                 session(['checkout_keys' => [$cartData['key']]]);
+
                 return redirect()->route('customer.checkout.index')->with('success', 'Paket berhasil ditambahkan. Silakan lanjut checkout.');
             }
 
@@ -120,6 +125,7 @@ class CartController extends Controller
             return redirect()->back()->with('warning', 'Pilih minimal satu layanan untuk checkout.');
         }
         session(['checkout_keys' => $selectedKeys]);
+
         return redirect()->route('customer.checkout.index');
     }
 

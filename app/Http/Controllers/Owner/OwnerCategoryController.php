@@ -12,6 +12,7 @@ class OwnerCategoryController extends Controller
     public function index()
     {
         $categories = ServiceCategory::orderBy('sort_order')->get();
+
         return view('owner.categories.index', compact('categories'));
     }
 

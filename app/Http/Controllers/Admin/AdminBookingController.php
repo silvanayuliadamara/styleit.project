@@ -31,12 +31,12 @@ class AdminBookingController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('booking_code', 'like', "%{$search}%")
-                  ->orWhereHas('user', function($qu) use ($search) {
-                      $qu->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('user', function ($qu) use ($search) {
+                        $qu->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -47,19 +47,21 @@ class AdminBookingController extends Controller
 
     public function show(Booking $booking)
     {
-        if (!$this->bajuScope()->where('id', $booking->id)->exists()) {
+        if (! $this->bajuScope()->where('id', $booking->id)->exists()) {
             abort(403, 'Unauthorized action.');
         }
         $booking->load(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest']);
+
         return view('admin.bookings.show', compact('booking'));
     }
 
     public function invoice(Booking $booking)
     {
-        if (!$this->bajuScope()->where('id', $booking->id)->exists()) {
+        if (! $this->bajuScope()->where('id', $booking->id)->exists()) {
             abort(403, 'Unauthorized action.');
         }
         $booking->load(['user', 'package', 'schedule', 'addons', 'payments']);
+
         return view('shared.invoice', compact('booking'));
     }
 }

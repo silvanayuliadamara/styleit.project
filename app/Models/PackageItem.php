@@ -9,7 +9,7 @@ class PackageItem extends Model
 {
     protected $fillable = [
         'package_id', 'name', 'quantity', 'unit',
-        'is_pihak_lain', 'biaya_pihak_lain', 'keterangan'
+        'is_pihak_lain', 'biaya_pihak_lain', 'keterangan',
     ];
 
     protected $casts = [
