@@ -21,9 +21,9 @@
                 ];
             } elseif ($category->slug === 'wedding') {
                 $brochures = [
-                    ['url' => asset('storage/packages/wedding_premium.png'), 'title' => 'Brosur Wedding Premium'],
-                    ['url' => asset('storage/packages/wedding_luxury.png'), 'title' => 'Brosur Wedding Luxury'],
-                    ['url' => asset('storage/packages/makeup_wedding.png'), 'title' => 'Brosur Jasa Makeup Wedding']
+                    ['url' => asset('storage/packages/wedding_premium.jpg'), 'title' => 'Brosur Wedding Premium'],
+                    ['url' => asset('storage/packages/wedding_luxury.jpg'), 'title' => 'Brosur Wedding Luxury'],
+                    ['url' => asset('storage/packages/makeup_wedding.jpg'), 'title' => 'Brosur Jasa Makeup Wedding']
                 ];
             }
         @endphp
@@ -37,9 +37,9 @@
                         <div class="row g-3 justify-content-center">
                             @foreach ($brochures as $b)
                                 <div class="col-6 col-sm-4 text-center">
-                                    <div class="position-relative overflow-hidden rounded-3 shadow-sm border border-light" style="aspect-ratio: 3/4; background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important;">
+                                    <div class="position-relative overflow-hidden rounded-3 shadow-sm border border-light" style="background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important;">
                                         <a href="{{ $b['url'] }}" target="_blank" title="Klik untuk memperbesar {{ $b['title'] }}">
-                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100 h-100 object-fit-cover hover-zoom" style="transition: transform 0.3s ease; max-width: 100%;">
+                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100" style="transition: transform 0.3s ease; display: block;">
                                         </a>
                                     </div>
                                     <span class="d-block small fw-bold text-secondary mt-2" style="font-size: 11px;">{{ $b['title'] }}</span>
@@ -58,11 +58,11 @@
                         @if($package->is_popular)<span class="popular-badge">Terfavorit</span>@endif
                         
                         @if($package->image)
-                            <div class="mb-3 overflow-hidden rounded-4 shadow-sm" style="aspect-ratio: 16/10; border: 1px solid var(--lyb-line) !important;">
-                                <img src="{{ asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 h-100 object-fit-cover" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <div class="mb-3 overflow-hidden rounded-4 shadow-sm" style="aspect-ratio: 3/4; border: 1px solid var(--lyb-line) !important; background: #f9f5f0;">
+                                <img src="{{ asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 h-100" style="object-fit: cover; object-position: center; transition: transform 0.3s ease; display: block;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                             </div>
                         @else
-                            <div class="mb-3 overflow-hidden rounded-4 bg-light d-flex align-items-center justify-content-center text-muted shadow-sm" style="aspect-ratio: 16/10; border: 1px solid var(--lyb-line) !important;">
+                            <div class="mb-3 overflow-hidden rounded-4 bg-light d-flex align-items-center justify-content-center text-muted shadow-sm" style="aspect-ratio: 3/4; border: 1px solid var(--lyb-line) !important;">
                                 <i class="bi bi-image" style="font-size: 24px;"></i>
                             </div>
                         @endif
