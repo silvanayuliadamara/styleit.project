@@ -69,6 +69,13 @@ Route::middleware(['auth', 'role:customer'])
 // Midtrans webhook (public, no CSRF, no auth)
 Route::post('/midtrans/notification', [MidtransController::class, 'notification'])->name('midtrans.notification');
 
+// Payment instruction route (authenticated, top-level url)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/pembayaran/{booking_code}', [CheckoutController::class, 'paymentInstruction'])->name('customer.payment.instruction');
+    Route::get('/pembayaran/{booking_code}/berhasil', [CheckoutController::class, 'paymentSuccess'])->name('customer.payment.success');
+    Route::post('/pembayaran/{booking_code}/confirm', [CheckoutController::class, 'confirmPayment'])->name('customer.payment.confirm');
+});
+
 // Owner routes
 Route::middleware(['auth', 'role:owner'])
     ->prefix('owner')

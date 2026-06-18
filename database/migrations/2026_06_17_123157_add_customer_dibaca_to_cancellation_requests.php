@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::table('cancellation_requests', function (Blueprint $table) {
             // Track whether the customer has seen/acknowledged the approval or rejection
-            $table->boolean('customer_dibaca')->default(false)->after('approved_by');
+            if (! Schema::hasColumn('cancellation_requests', 'customer_dibaca')) {
+                $table->boolean('customer_dibaca')->default(false)->after('approved_by');
+            }
         });
     }
 
@@ -23,7 +25,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('cancellation_requests', function (Blueprint $table) {
-            $table->dropColumn('customer_dibaca');
+            if (Schema::hasColumn('cancellation_requests', 'customer_dibaca')) {
+                $table->dropColumn('customer_dibaca');
+            }
         });
     }
 };

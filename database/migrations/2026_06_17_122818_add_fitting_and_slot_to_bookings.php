@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->string('slot_waktu')->nullable()->after('tanggal_acara');
-            $table->date('tanggal_fitting')->nullable()->after('slot_waktu');
+            if (! Schema::hasColumn('bookings', 'slot_waktu')) {
+                $table->string('slot_waktu')->nullable()->after('tanggal_acara');
+            }
+            if (! Schema::hasColumn('bookings', 'tanggal_fitting')) {
+                $table->date('tanggal_fitting')->nullable()->after('slot_waktu');
+            }
         });
     }
 
@@ -23,7 +27,16 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn(['slot_waktu', 'tanggal_fitting']);
+            $columns = [];
+            if (Schema::hasColumn('bookings', 'slot_waktu')) {
+                $columns[] = 'slot_waktu';
+            }
+            if (Schema::hasColumn('bookings', 'tanggal_fitting')) {
+                $columns[] = 'tanggal_fitting';
+            }
+            if (! empty($columns)) {
+                $table->dropColumn($columns);
+            }
         });
     }
 };
