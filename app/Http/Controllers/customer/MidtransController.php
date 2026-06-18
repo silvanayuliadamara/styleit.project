@@ -75,12 +75,20 @@ class MidtransController extends Controller
                         'status' => 'diterima',
                     ]);
 
-                    $booking->payments()->create([
-                        'amount' => $booking->dp_amount,
-                        'proof_image' => null,
-                        'status' => 'diterima',
-                        'paid_at' => now(),
-                    ]);
+                    $payment = $booking->payments()->where('status', 'pending')->first();
+                    if ($payment) {
+                        $payment->update([
+                            'status' => 'diterima',
+                            'paid_at' => now(),
+                        ]);
+                    } else {
+                        $booking->payments()->create([
+                            'amount' => $booking->dp_amount,
+                            'proof_image' => null,
+                            'status' => 'diterima',
+                            'paid_at' => now(),
+                        ]);
+                    }
                 }
             }
         } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
@@ -90,6 +98,13 @@ class MidtransController extends Controller
                     'payment_status' => 'belum_bayar',
                     'status' => $newStatus,
                 ]);
+
+                $payment = $booking->payments()->where('status', 'pending')->first();
+                if ($payment) {
+                    $payment->update([
+                        'status' => 'ditolak',
+                    ]);
+                }
             }
         }
 
