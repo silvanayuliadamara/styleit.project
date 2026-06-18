@@ -35,14 +35,14 @@ class Booking extends Model
     ];
 
     protected $casts = [
-        'booking_date'   => 'date',
-        'tanggal_acara'  => 'date',
-        'softlens'       => 'boolean',
-        'subtotal'       => 'integer',
-        'addon_total'    => 'integer',
-        'total_price'    => 'integer',
-        'dp_amount'      => 'integer',
-        'total_dibayar'  => 'integer',
+        'booking_date' => 'date',
+        'tanggal_acara' => 'date',
+        'softlens' => 'boolean',
+        'subtotal' => 'integer',
+        'addon_total' => 'integer',
+        'total_price' => 'integer',
+        'dp_amount' => 'integer',
+        'total_dibayar' => 'integer',
         'remaining_payment' => 'integer',
         'sisa_pelunasan' => 'integer',
         'tanggal_fitting' => 'date',
@@ -67,17 +67,17 @@ class Booking extends Model
 
     public function checkout(): BelongsTo
     {
-        return $this->belongsTo(\App\Models\Checkout::class ?? Checkout::class, 'checkout_id');
+        return $this->belongsTo(Checkout::class ?? Checkout::class, 'checkout_id');
     }
 
     public function detail(): HasOne
     {
-        return $this->hasOne(\App\Models\BookingDetail::class ?? BookingDetail::class);
+        return $this->hasOne(BookingDetail::class ?? BookingDetail::class);
     }
 
     public function invoice(): HasOne
     {
-        return $this->hasOne(\App\Models\Invoice::class ?? Invoice::class);
+        return $this->hasOne(Invoice::class ?? Invoice::class);
     }
 
     public function addons(): BelongsToMany
@@ -117,12 +117,13 @@ class Booking extends Model
         if ($hasOnlinePayment) {
             return 4400;
         }
+
         return 0;
     }
 
     public function getFittingPriorityAttribute(): ?int
     {
-        if (!$this->tanggal_fitting) {
+        if (! $this->tanggal_fitting) {
             return null;
         }
 
@@ -135,6 +136,7 @@ class Booking extends Model
             ->toArray();
 
         $index = array_search($this->id, $bookingIds);
+
         return $index !== false ? $index + 1 : null;
     }
 }

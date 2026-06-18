@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Addon;
 use App\Models\BlockedDate;
+use App\Models\Booking;
 use App\Models\PortfolioItem;
+use App\Models\Schedule;
 use App\Models\ServiceCategory;
 use App\Models\ServicePackage;
-use App\Models\Booking;
-use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -72,6 +72,7 @@ class PublicPageController extends Controller
     public function portofolio()
     {
         $items = PortfolioItem::orderBy('sort_order')->get();
+
         return view('portofolio', compact('items'));
     }
 
@@ -110,7 +111,7 @@ class PublicPageController extends Controller
                 ->whereDate('tanggal_acara', '>=', Carbon::today())
                 ->whereDate('tanggal_acara', '<=', Carbon::today()->addDays(60))
                 ->get()
-                ->groupBy(fn($b) => $b->tanggal_acara->toDateString() . '_' . $b->slot_waktu)
+                ->groupBy(fn ($b) => $b->tanggal_acara->toDateString().'_'.$b->slot_waktu)
                 ->toArray();
 
             $blockedSchedules = Schedule::whereIn('category_id', $categoryIds)
@@ -118,7 +119,7 @@ class PublicPageController extends Controller
                 ->whereDate('tanggal', '<=', Carbon::today()->addDays(60))
                 ->where('status', 'diblokir')
                 ->get()
-                ->groupBy(fn($s) => $s->tanggal->toDateString() . '_' . $s->jenis_jadwal)
+                ->groupBy(fn ($s) => $s->tanggal->toDateString().'_'.$s->jenis_jadwal)
                 ->toArray();
         }
 
@@ -132,14 +133,14 @@ class PublicPageController extends Controller
                 ->whereDate('tanggal', '>=', Carbon::today())
                 ->whereDate('tanggal', '<=', Carbon::today()->addDays(60))
                 ->get()
-                ->groupBy(fn($s) => $s->tanggal->toDateString())
+                ->groupBy(fn ($s) => $s->tanggal->toDateString())
                 ->toArray();
 
             $regularBookings = Booking::whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
                 ->whereDate('tanggal_acara', '>=', Carbon::today())
                 ->whereDate('tanggal_acara', '<=', Carbon::today()->addDays(60))
                 ->get()
-                ->groupBy(fn($b) => $b->tanggal_acara->toDateString() . '_' . $b->slot_waktu)
+                ->groupBy(fn ($b) => $b->tanggal_acara->toDateString().'_'.$b->slot_waktu)
                 ->toArray();
         }
 
@@ -161,12 +162,12 @@ class PublicPageController extends Controller
             $isFull = false;
             $remaining = $package->quota_per_day;
 
-            if (!$isBlocked) {
+            if (! $isBlocked) {
                 if ($categorySlug === 'wedding' || $categorySlug === 'prewedding') {
                     // Check slots: pagi, siang, sore
                     $unavailableSlotsCount = 0;
                     foreach (['pagi', 'siang', 'sore'] as $slot) {
-                        $key = $dateStr . '_' . $slot;
+                        $key = $dateStr.'_'.$slot;
                         $booked = isset($weddingBookings[$key]) || Booking::whereDate('tanggal_acara', $dateStr)
                             ->where('slot_waktu', $slot)
                             ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
@@ -186,7 +187,7 @@ class PublicPageController extends Controller
                     foreach ($daySchedules as $sched) {
                         $schedObj = is_array($sched) ? (object) $sched : $sched;
                         if ($schedObj->status === 'tersedia') {
-                            $key = $dateStr . '_' . $schedObj->jenis_jadwal;
+                            $key = $dateStr.'_'.$schedObj->jenis_jadwal;
                             $activeCount = isset($regularBookings[$key]) ? count($regularBookings[$key]) : 0;
                             $availableCount += max(0, $schedObj->kuota - $activeCount);
                         }
@@ -204,13 +205,13 @@ class PublicPageController extends Controller
             }
 
             $dates[] = [
-                'date'      => $dateStr,
-                'day'       => $date->format('d'),
-                'month'     => $date->translatedFormat('M'),
-                'label'     => $date->translatedFormat('D, d M Y'),
-                'status'    => $isBlocked ? 'blocked' : ($isFull ? 'full' : 'available'),
+                'date' => $dateStr,
+                'day' => $date->format('d'),
+                'month' => $date->translatedFormat('M'),
+                'label' => $date->translatedFormat('D, d M Y'),
+                'status' => $isBlocked ? 'blocked' : ($isFull ? 'full' : 'available'),
                 'remaining' => $remaining,
-                'reason'    => $isBlocked
+                'reason' => $isBlocked
                     ? (BlockedDate::where('blocked_date', $dateStr)->value('reason') ?? 'Jadwal diblokir admin')
                     : null,
             ];
@@ -224,16 +225,16 @@ class PublicPageController extends Controller
         $package = ServicePackage::with('category')->where('code', $code)->firstOrFail();
         $dateStr = $request->input('date');
 
-        if (!$dateStr) {
+        if (! $dateStr) {
             return response()->json(['error' => 'Parameter tanggal wajib diisi.'], 400);
         }
 
         $categorySlug = $package->category->slug;
 
         $slots = [
-            'pagi'  => ['available' => true, 'label' => 'Pagi (06:00 - 11:00)', 'reason' => null],
+            'pagi' => ['available' => true, 'label' => 'Pagi (06:00 - 11:00)', 'reason' => null],
             'siang' => ['available' => true, 'label' => 'Siang (12:00 - 16:00)', 'reason' => null],
-            'sore'  => ['available' => true, 'label' => 'Sore (17:00 - 21:00)', 'reason' => null],
+            'sore' => ['available' => true, 'label' => 'Sore (17:00 - 21:00)', 'reason' => null],
         ];
 
         if ($categorySlug === 'wedding' || $categorySlug === 'prewedding') {
@@ -253,6 +254,7 @@ class PublicPageController extends Controller
                 if ($isBooked) {
                     $slotInfo['available'] = false;
                     $slotInfo['reason'] = 'Sudah dibooking pelanggan lain';
+
                     continue;
                 }
 
@@ -285,9 +287,9 @@ class PublicPageController extends Controller
                     ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
                     ->count();
 
-                if (!$schedule || $schedule->status !== 'tersedia' || $activeCount >= $schedule->kuota) {
+                if (! $schedule || $schedule->status !== 'tersedia' || $activeCount >= $schedule->kuota) {
                     $slotInfo['available'] = false;
-                    $slotInfo['reason'] = !$schedule ? 'Jadwal belum dibuka oleh MUA' : ($schedule->status === 'diblokir' ? 'Diblokir oleh MUA' : 'Kuota MUA sudah penuh di jam ini');
+                    $slotInfo['reason'] = ! $schedule ? 'Jadwal belum dibuka oleh MUA' : ($schedule->status === 'diblokir' ? 'Diblokir oleh MUA' : 'Kuota MUA sudah penuh di jam ini');
                 }
             }
         } else {

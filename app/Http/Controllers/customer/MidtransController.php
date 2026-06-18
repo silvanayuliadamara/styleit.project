@@ -13,9 +13,7 @@ use Midtrans\Notification;
 
 class MidtransController extends Controller
 {
-    public function __construct(protected MidtransService $midtrans)
-    {
-    }
+    public function __construct(protected MidtransService $midtrans) {}
 
     public function getSnapToken(Booking $booking)
     {
@@ -38,9 +36,10 @@ class MidtransController extends Controller
         Config::$is3ds = config('midtrans.is_3ds');
 
         try {
-            $notification = new Notification();
+            $notification = new Notification;
         } catch (\Exception $e) {
-            Log::error('Midtrans notification error: ' . $e->getMessage());
+            Log::error('Midtrans notification error: '.$e->getMessage());
+
             return response()->json(['message' => 'invalid notification'], 400);
         }
 
@@ -48,34 +47,50 @@ class MidtransController extends Controller
         $transactionStatus = $notification->transaction_status;
         $fraudStatus = $notification->fraud_status ?? null;
 
-        $bookingCode = preg_replace('/-\d+$/', '', $orderId);
-        $booking = Booking::where('booking_code', $bookingCode)->first();
+        $bookings = collect([]);
+        if (str_starts_with($orderId, 'LYB-GP-')) {
+            $parts = explode('-', $orderId);
+            // parts: [0 => "LYB", 1 => "GP", 2 => id1, 3 => id2, ..., last => timestamp]
+            $bookingIds = array_slice($parts, 2, count($parts) - 3);
+            $bookings = Booking::whereIn('id', $bookingIds)->get();
+        } else {
+            $bookingCode = preg_replace('/-\d+$/', '', $orderId);
+            $booking = Booking::where('booking_code', $bookingCode)->first();
+            if ($booking) {
+                $bookings->push($booking);
+            }
+        }
 
-        if (! $booking) {
-            Log::warning('Midtrans notification: booking not found', ['order_id' => $orderId]);
-            return response()->json(['message' => 'booking not found'], 404);
+        if ($bookings->isEmpty()) {
+            Log::warning('Midtrans notification: bookings not found', ['order_id' => $orderId]);
+
+            return response()->json(['message' => 'bookings not found'], 404);
         }
 
         if ($transactionStatus === 'capture' || $transactionStatus === 'settlement') {
             if ($fraudStatus === 'accept' || $fraudStatus === null) {
-                $booking->update([
-                    'payment_status' => 'dp_diterima',
-                    'status' => 'diterima',
-                ]);
+                foreach ($bookings as $booking) {
+                    $booking->update([
+                        'payment_status' => 'dp_diterima',
+                        'status' => 'diterima',
+                    ]);
 
-                $booking->payments()->create([
-                    'amount' => $booking->dp_amount,
-                    'proof_image' => null,
-                    'status' => 'diterima',
-                    'paid_at' => now(),
-                ]);
+                    $booking->payments()->create([
+                        'amount' => $booking->dp_amount,
+                        'proof_image' => null,
+                        'status' => 'diterima',
+                        'paid_at' => now(),
+                    ]);
+                }
             }
         } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
             $newStatus = ($transactionStatus === 'expire') ? 'expired' : 'dibatalkan';
-            $booking->update([
-                'payment_status' => 'belum_bayar',
-                'status' => $newStatus,
-            ]);
+            foreach ($bookings as $booking) {
+                $booking->update([
+                    'payment_status' => 'belum_bayar',
+                    'status' => $newStatus,
+                ]);
+            }
         }
 
         return response()->json(['message' => 'ok']);

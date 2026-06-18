@@ -20,7 +20,7 @@ class MidtransService
     {
         $params = [
             'transaction_details' => [
-                'order_id' => $booking->booking_code . '-' . time(),
+                'order_id' => $booking->booking_code.'-'.time(),
                 'gross_amount' => (int) $booking->dp_amount,
             ],
             'customer_details' => [
@@ -30,12 +30,52 @@ class MidtransService
             ],
             'item_details' => [
                 [
-                    'id' => 'DP-' . $booking->booking_code,
+                    'id' => 'DP-'.$booking->booking_code,
                     'price' => (int) $booking->dp_amount,
                     'quantity' => 1,
-                    'name' => 'DP Booking ' . $booking->booking_code,
+                    'name' => 'DP Booking '.$booking->booking_code,
                 ],
             ],
+            'custom_expiry' => [
+                'expiry_duration' => 60,
+                'unit' => 'minute',
+            ],
+        ];
+
+        return Snap::getSnapToken($params);
+    }
+
+    public function getSnapTokenForBookings($bookings): string
+    {
+        if (empty($bookings)) {
+            throw new \InvalidArgumentException('Bookings list cannot be empty.');
+        }
+
+        $bookingIds = collect($bookings)->pluck('id')->all();
+        $totalDp = collect($bookings)->sum('dp_amount');
+
+        // Order ID format: LYB-GP-{id1}-{id2}-...-{timestamp}
+        $orderId = 'LYB-GP-'.implode('-', $bookingIds).'-'.time();
+
+        $firstBooking = $bookings[0];
+        $user = $firstBooking->user;
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $orderId,
+                'gross_amount' => (int) $totalDp,
+            ],
+            'customer_details' => [
+                'first_name' => $user->name ?? 'Customer',
+                'email' => $user->email ?? '',
+                'phone' => $user->phone ?? '',
+            ],
+            'item_details' => collect($bookings)->map(fn ($b) => [
+                'id' => 'DP-'.$b->booking_code,
+                'price' => (int) $b->dp_amount,
+                'quantity' => 1,
+                'name' => 'DP '.($b->package->name ?? 'Booking'),
+            ])->all(),
             'custom_expiry' => [
                 'expiry_duration' => 60,
                 'unit' => 'minute',

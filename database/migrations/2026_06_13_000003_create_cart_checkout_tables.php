@@ -56,7 +56,7 @@ return new class extends Migration
             $table->unsignedInteger('sisa_pelunasan');
             $table->enum('status_checkout', [
                 'menunggu_dp', 'dp_diupload', 'dp_diterima',
-                'dp_ditolak', 'lunas', 'dibatalkan'
+                'dp_ditolak', 'lunas', 'dibatalkan',
             ])->default('menunggu_dp');
             $table->timestamps();
         });

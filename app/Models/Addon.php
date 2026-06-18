@@ -14,7 +14,7 @@ class Addon extends Model
         'harga_default',
         'is_pihak_lain',
         'biaya_pihak_lain',
-        'status'
+        'status',
     ];
 
     protected $casts = [

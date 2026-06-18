@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use App\Models\Payment;
-use Illuminate\Http\Request;
 
 class OwnerDashboardController extends Controller
 {
@@ -36,7 +34,7 @@ class OwnerDashboardController extends Controller
         $totalBiayaPihakLain = 0;
         $totalGatewayFee = 0;
         foreach ($allBookings as $booking) {
-            if (!in_array($booking->status, ['ditolak', 'dibatalkan'])) {
+            if (! in_array($booking->status, ['ditolak', 'dibatalkan'])) {
                 if ($booking->package) {
                     $totalBiayaPihakLain += $booking->package->items->where('is_pihak_lain', true)->sum('biaya_pihak_lain');
                 }

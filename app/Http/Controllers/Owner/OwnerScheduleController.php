@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-use App\Models\ServiceCategory;
-use App\Models\Schedule;
 use App\Models\Booking;
-use Illuminate\Http\Request;
+use App\Models\Schedule;
+use App\Models\ServiceCategory;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -22,7 +22,7 @@ class OwnerScheduleController extends Controller
         $endOfMonth = $startOfMonth->copy()->endOfMonth()->endOfDay();
 
         $days = [];
-        
+
         // Pad start of month
         $startDayOfWeek = $startOfMonth->dayOfWeek; // 0 (Sun) - 6 (Sat)
         for ($i = 0; $i < $startDayOfWeek; $i++) {
@@ -65,7 +65,7 @@ class OwnerScheduleController extends Controller
         $month = $request->input('month', now()->month);
 
         $grid1 = $this->getCalendarGrid($year, $month);
-        
+
         $nextMonthDate = Carbon::create($year, $month, 1)->addMonth();
         $grid2 = $this->getCalendarGrid($nextMonthDate->year, $nextMonthDate->month);
 
@@ -73,7 +73,7 @@ class OwnerScheduleController extends Controller
         $weddingCat = ServiceCategory::where('slug', 'wedding')->first();
         $preweddingCat = ServiceCategory::where('slug', 'prewedding')->first();
 
-        if (!$weddingCat || !$preweddingCat) {
+        if (! $weddingCat || ! $preweddingCat) {
             return redirect()->route('owner.dashboard')->with('error', 'Kategori Wedding/Prewedding belum dikonfigurasi di database.');
         }
 
@@ -84,25 +84,26 @@ class OwnerScheduleController extends Controller
         $schedules = Schedule::whereIn('category_id', [$weddingCat->id, $preweddingCat->id])
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->get()
-            ->groupBy(function($item) {
-                return $item->tanggal->toDateString() . '_' . $item->jenis_jadwal;
+            ->groupBy(function ($item) {
+                return $item->tanggal->toDateString().'_'.$item->jenis_jadwal;
             });
 
         // Get bookings (active only)
-        $bookings = Booking::whereIn('package_id', function($q) use ($weddingCat, $preweddingCat) {
-                $q->select('id')->from('service_packages')
-                  ->whereIn('category_id', [$weddingCat->id, $preweddingCat->id]);
-            })
+        $bookings = Booking::whereIn('package_id', function ($q) use ($weddingCat, $preweddingCat) {
+            $q->select('id')->from('service_packages')
+                ->whereIn('category_id', [$weddingCat->id, $preweddingCat->id]);
+        })
             ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
             ->whereBetween('tanggal_acara', [$startDate, $endDate])
             ->get()
-            ->groupBy(function($item) {
+            ->groupBy(function ($item) {
                 // assume booking_date or tanggal_acara. We use tanggal_acara as the real event date
                 $date = $item->tanggal_acara ? $item->tanggal_acara->toDateString() : ($item->booking_date ? $item->booking_date->toDateString() : null);
-                if (!$date && $item->schedule) {
+                if (! $date && $item->schedule) {
                     $date = $item->schedule->tanggal->toDateString();
                 }
-                return $date . '_' . ($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
+
+                return $date.'_'.($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
             });
 
         return view('owner.schedule.wedding', [
@@ -113,7 +114,7 @@ class OwnerScheduleController extends Controller
             'weddingCat' => $weddingCat,
             'preweddingCat' => $preweddingCat,
             'schedules' => $schedules,
-            'bookings' => $bookings
+            'bookings' => $bookings,
         ]);
     }
 
@@ -126,7 +127,7 @@ class OwnerScheduleController extends Controller
         $month = $request->input('month', now()->month);
 
         $grid1 = $this->getCalendarGrid($year, $month);
-        
+
         $nextMonthDate = Carbon::create($year, $month, 1)->addMonth();
         $grid2 = $this->getCalendarGrid($nextMonthDate->year, $nextMonthDate->month);
 
@@ -134,7 +135,7 @@ class OwnerScheduleController extends Controller
         $weddingCat = ServiceCategory::where('slug', 'wedding')->first();
         $preweddingCat = ServiceCategory::where('slug', 'prewedding')->first();
 
-        if (!$regularCat) {
+        if (! $regularCat) {
             return redirect()->route('owner.dashboard')->with('error', 'Kategori Regular belum dikonfigurasi.');
         }
 
@@ -145,39 +146,41 @@ class OwnerScheduleController extends Controller
         $schedules = Schedule::where('category_id', $regularCat->id)
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->get()
-            ->groupBy(function($item) {
-                return $item->tanggal->toDateString() . '_' . $item->jenis_jadwal;
+            ->groupBy(function ($item) {
+                return $item->tanggal->toDateString().'_'.$item->jenis_jadwal;
             });
 
         // Bookings for regular
-        $bookings = Booking::whereIn('package_id', function($q) use ($regularCat) {
-                $q->select('id')->from('service_packages')->where('category_id', $regularCat->id);
-            })
+        $bookings = Booking::whereIn('package_id', function ($q) use ($regularCat) {
+            $q->select('id')->from('service_packages')->where('category_id', $regularCat->id);
+        })
             ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
             ->whereBetween('tanggal_acara', [$startDate, $endDate])
             ->get()
-            ->groupBy(function($item) {
+            ->groupBy(function ($item) {
                 $date = $item->tanggal_acara ? $item->tanggal_acara->toDateString() : ($item->booking_date ? $item->booking_date->toDateString() : null);
-                if (!$date && $item->schedule) {
+                if (! $date && $item->schedule) {
                     $date = $item->schedule->tanggal->toDateString();
                 }
-                return $date . '_' . ($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
+
+                return $date.'_'.($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
             });
 
         // Wedding/Prewedding bookings on these days (to auto-block regular)
-        $weddingBookings = Booking::whereIn('package_id', function($q) use ($weddingCat, $preweddingCat) {
-                $q->select('id')->from('service_packages')
-                  ->whereIn('category_id', [$weddingCat?->id ?? 0, $preweddingCat?->id ?? 0]);
-            })
+        $weddingBookings = Booking::whereIn('package_id', function ($q) use ($weddingCat, $preweddingCat) {
+            $q->select('id')->from('service_packages')
+                ->whereIn('category_id', [$weddingCat?->id ?? 0, $preweddingCat?->id ?? 0]);
+        })
             ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
             ->whereBetween('tanggal_acara', [$startDate, $endDate])
             ->get()
-            ->groupBy(function($item) {
+            ->groupBy(function ($item) {
                 $date = $item->tanggal_acara ? $item->tanggal_acara->toDateString() : ($item->booking_date ? $item->booking_date->toDateString() : null);
-                if (!$date && $item->schedule) {
+                if (! $date && $item->schedule) {
                     $date = $item->schedule->tanggal->toDateString();
                 }
-                return $date . '_' . ($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
+
+                return $date.'_'.($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
             });
 
         return view('owner.schedule.regular', [
@@ -188,7 +191,7 @@ class OwnerScheduleController extends Controller
             'regularCat' => $regularCat,
             'schedules' => $schedules,
             'bookings' => $bookings,
-            'weddingBookings' => $weddingBookings
+            'weddingBookings' => $weddingBookings,
         ]);
     }
 
@@ -201,13 +204,13 @@ class OwnerScheduleController extends Controller
         $month = $request->input('month', now()->month);
 
         $grid1 = $this->getCalendarGrid($year, $month);
-        
+
         $nextMonthDate = Carbon::create($year, $month, 1)->addMonth();
         $grid2 = $this->getCalendarGrid($nextMonthDate->year, $nextMonthDate->month);
 
         $bajuCat = ServiceCategory::where('slug', 'baju')->first();
 
-        if (!$bajuCat) {
+        if (! $bajuCat) {
             return redirect()->route('owner.dashboard')->with('error', 'Kategori Khusus Baju belum dikonfigurasi.');
         }
 
@@ -219,21 +222,21 @@ class OwnerScheduleController extends Controller
             ->where('jenis_jadwal', 'baju')
             ->whereBetween('tanggal', [$startDate, $endDate])
             ->get()
-            ->groupBy(function($item) {
+            ->groupBy(function ($item) {
                 return $item->tanggal->toDateString();
             });
 
         // Bookings for baju (based on booking_date/tanggal_acara)
-        $bookings = Booking::whereIn('package_id', function($q) use ($bajuCat) {
-                $q->select('id')->from('service_packages')->where('category_id', $bajuCat->id);
-            })
+        $bookings = Booking::whereIn('package_id', function ($q) use ($bajuCat) {
+            $q->select('id')->from('service_packages')->where('category_id', $bajuCat->id);
+        })
             ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
-            ->where(function($query) use ($startDate, $endDate) {
+            ->where(function ($query) use ($startDate, $endDate) {
                 $query->whereBetween('tanggal_acara', [$startDate, $endDate])
-                      ->orWhereBetween('booking_date', [$startDate, $endDate]);
+                    ->orWhereBetween('booking_date', [$startDate, $endDate]);
             })
             ->get()
-            ->groupBy(function($item) {
+            ->groupBy(function ($item) {
                 return $item->tanggal_acara ? $item->tanggal_acara->toDateString() : ($item->booking_date ? $item->booking_date->toDateString() : null);
             });
 
@@ -244,7 +247,7 @@ class OwnerScheduleController extends Controller
             'month' => $month,
             'bajuCat' => $bajuCat,
             'schedules' => $schedules,
-            'bookings' => $bookings
+            'bookings' => $bookings,
         ]);
     }
 
@@ -273,21 +276,29 @@ class OwnerScheduleController extends Controller
         if ($categoryType === 'wedding_prewedding') {
             $w = ServiceCategory::where('slug', 'wedding')->first();
             $p = ServiceCategory::where('slug', 'prewedding')->first();
-            if ($w) $categoryIds[] = $w->id;
-            if ($p) $categoryIds[] = $p->id;
+            if ($w) {
+                $categoryIds[] = $w->id;
+            }
+            if ($p) {
+                $categoryIds[] = $p->id;
+            }
         } elseif ($categoryType === 'regular') {
             $r = ServiceCategory::where('slug', 'regular')->first();
-            if ($r) $categoryIds[] = $r->id;
+            if ($r) {
+                $categoryIds[] = $r->id;
+            }
         } elseif ($categoryType === 'baju') {
             $b = ServiceCategory::where('slug', 'baju')->first();
-            if ($b) $categoryIds[] = $b->id;
+            if ($b) {
+                $categoryIds[] = $b->id;
+            }
         }
 
         if (empty($categoryIds)) {
             return redirect()->back()->with('error', 'Kategori tidak valid.');
         }
 
-        DB::transaction(function() use ($categoryIds, $tanggal, $slots) {
+        DB::transaction(function () use ($categoryIds, $tanggal, $slots) {
             foreach ($categoryIds as $catId) {
                 foreach ($slots as $jenisJadwal => $slotData) {
                     // Cek jika schedule sudah ada
@@ -334,7 +345,7 @@ class OwnerScheduleController extends Controller
             }
         });
 
-        return redirect()->back()->with('success', 'Jadwal tanggal ' . Carbon::parse($tanggal)->translatedFormat('d F Y') . ' berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Jadwal tanggal '.Carbon::parse($tanggal)->translatedFormat('d F Y').' berhasil diperbarui.');
     }
 
     /**
@@ -358,30 +369,38 @@ class OwnerScheduleController extends Controller
         if ($categoryType === 'wedding_prewedding') {
             $w = ServiceCategory::where('slug', 'wedding')->first();
             $p = ServiceCategory::where('slug', 'prewedding')->first();
-            if ($w) $categoryIds[] = $w->id;
-            if ($p) $categoryIds[] = $p->id;
+            if ($w) {
+                $categoryIds[] = $w->id;
+            }
+            if ($p) {
+                $categoryIds[] = $p->id;
+            }
             $defaultSlots = [
                 'pagi' => ['start' => '06:00', 'end' => '11:00'],
                 'siang' => ['start' => '12:00', 'end' => '16:00'],
-                'sore' => ['start' => '17:00', 'end' => '21:00']
+                'sore' => ['start' => '17:00', 'end' => '21:00'],
             ];
         } elseif ($categoryType === 'regular') {
             $r = ServiceCategory::where('slug', 'regular')->first();
-            if ($r) $categoryIds[] = $r->id;
+            if ($r) {
+                $categoryIds[] = $r->id;
+            }
             $defaultSlots = [
                 'pagi' => ['start' => '06:00', 'end' => '11:00'],
                 'siang' => ['start' => '12:00', 'end' => '16:00'],
-                'sore' => ['start' => '17:00', 'end' => '21:00']
+                'sore' => ['start' => '17:00', 'end' => '21:00'],
             ];
         } elseif ($categoryType === 'baju') {
             $b = ServiceCategory::where('slug', 'baju')->first();
-            if ($b) $categoryIds[] = $b->id;
+            if ($b) {
+                $categoryIds[] = $b->id;
+            }
             $defaultSlots = [
-                'baju' => ['start' => '08:00', 'end' => '17:00']
+                'baju' => ['start' => '08:00', 'end' => '17:00'],
             ];
         }
 
-        DB::transaction(function() use ($categoryIds, $tanggal, $status, $defaultSlots, $categoryType) {
+        DB::transaction(function () use ($categoryIds, $tanggal, $status, $defaultSlots, $categoryType) {
             foreach ($categoryIds as $catId) {
                 foreach ($defaultSlots as $jenis => $times) {
                     $schedule = Schedule::where('category_id', $catId)
@@ -411,7 +430,8 @@ class OwnerScheduleController extends Controller
         });
 
         $msg = ($action === 'block') ? 'diblokir' : 'dibuka kembali';
-        return redirect()->back()->with('success', 'Jadwal tanggal ' . Carbon::parse($tanggal)->translatedFormat('d F Y') . ' berhasil ' . $msg . '.');
+
+        return redirect()->back()->with('success', 'Jadwal tanggal '.Carbon::parse($tanggal)->translatedFormat('d F Y').' berhasil '.$msg.'.');
     }
 
     /**
@@ -431,17 +451,25 @@ class OwnerScheduleController extends Controller
         if ($categoryType === 'wedding_prewedding') {
             $w = ServiceCategory::where('slug', 'wedding')->first();
             $p = ServiceCategory::where('slug', 'prewedding')->first();
-            if ($w) $categoryIds[] = $w->id;
-            if ($p) $categoryIds[] = $p->id;
+            if ($w) {
+                $categoryIds[] = $w->id;
+            }
+            if ($p) {
+                $categoryIds[] = $p->id;
+            }
         } elseif ($categoryType === 'regular') {
             $r = ServiceCategory::where('slug', 'regular')->first();
-            if ($r) $categoryIds[] = $r->id;
+            if ($r) {
+                $categoryIds[] = $r->id;
+            }
         } elseif ($categoryType === 'baju') {
             $b = ServiceCategory::where('slug', 'baju')->first();
-            if ($b) $categoryIds[] = $b->id;
+            if ($b) {
+                $categoryIds[] = $b->id;
+            }
         }
 
-        DB::transaction(function() use ($categoryIds, $tanggal) {
+        DB::transaction(function () use ($categoryIds, $tanggal) {
             // Kita hanya hapus schedule yang terpakai-nya 0 (tidak ada booking)
             Schedule::whereIn('category_id', $categoryIds)
                 ->where('tanggal', $tanggal)
@@ -449,6 +477,6 @@ class OwnerScheduleController extends Controller
                 ->delete();
         });
 
-        return redirect()->back()->with('success', 'Kustomisasi jadwal tanggal ' . Carbon::parse($tanggal)->translatedFormat('d F Y') . ' berhasil di-reset.');
+        return redirect()->back()->with('success', 'Kustomisasi jadwal tanggal '.Carbon::parse($tanggal)->translatedFormat('d F Y').' berhasil di-reset.');
     }
 }

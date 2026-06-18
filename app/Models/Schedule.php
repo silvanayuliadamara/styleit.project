@@ -21,11 +21,11 @@ class Schedule extends Model
     ];
 
     protected $casts = [
-        'tanggal'    => 'date',
-        'jam_mulai'  => 'datetime:H:i',
+        'tanggal' => 'date',
+        'jam_mulai' => 'datetime:H:i',
         'jam_selesai' => 'datetime:H:i',
-        'kuota'      => 'integer',
-        'terpakai'   => 'integer',
+        'kuota' => 'integer',
+        'terpakai' => 'integer',
     ];
 
     /* ---- Relationships ---- */
