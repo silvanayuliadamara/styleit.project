@@ -26,9 +26,9 @@
                             ];
                         } elseif ($category->slug === 'wedding') {
                             $brochures = [
-                                ['url' => asset('storage/packages/wedding_premium.png'), 'title' => 'Brosur Wedding Premium'],
-                                ['url' => asset('storage/packages/wedding_luxury.png'), 'title' => 'Brosur Wedding Luxury'],
-                                ['url' => asset('storage/packages/makeup_wedding.png'), 'title' => 'Brosur Jasa Makeup Wedding']
+                                ['url' => asset('storage/packages/wedding_premium.jpg'), 'title' => 'Brosur Wedding Premium'],
+                                ['url' => asset('storage/packages/wedding_luxury.jpg'), 'title' => 'Brosur Wedding Luxury'],
+                                ['url' => asset('storage/packages/makeup_wedding.jpg'), 'title' => 'Brosur Jasa Makeup Wedding']
                             ];
                         }
                     @endphp
@@ -38,9 +38,9 @@
                             <div class="col-12"><p class="small text-muted mb-2"><i class="bi bi-book-half"></i> Brosur Cetak / Buku Paket Resmi:</p></div>
                             @foreach ($brochures as $b)
                                 <div class="col-6 col-sm-4 col-md-3 text-center">
-                                    <div class="position-relative overflow-hidden rounded-3 shadow-sm border border-light" style="aspect-ratio: 3/4; background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important;">
+                                    <div class="position-relative overflow-hidden rounded-3 shadow-sm border border-light" style="background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important;">
                                         <a href="{{ $b['url'] }}" target="_blank" title="Klik untuk memperbesar {{ $b['title'] }}">
-                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100 h-100 object-fit-cover" style="transition: transform 0.3s ease; max-width: 100%;">
+                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100" style="transition: transform 0.3s ease; display: block;">
                                         </a>
                                     </div>
                                     <span class="d-block small fw-bold text-secondary mt-2" style="font-size: 11px;">{{ $b['title'] }}</span>
