@@ -40,6 +40,11 @@ class MidtransService
                 'expiry_duration' => 60,
                 'unit' => 'minute',
             ],
+            'callbacks' => [
+                'finish' => route('customer.payment.success', $booking->booking_code),
+                'unfinish' => route('customer.payment.instruction', $booking->booking_code),
+                'error' => route('customer.payment.instruction', $booking->booking_code),
+            ],
         ];
 
         return Snap::getSnapToken($params);
@@ -79,6 +84,11 @@ class MidtransService
             'custom_expiry' => [
                 'expiry_duration' => 60,
                 'unit' => 'minute',
+            ],
+            'callbacks' => [
+                'finish' => route('customer.payment.success', $firstBooking->booking_code),
+                'unfinish' => route('customer.payment.instruction', $firstBooking->booking_code),
+                'error' => route('customer.payment.instruction', $firstBooking->booking_code),
             ],
         ];
 
