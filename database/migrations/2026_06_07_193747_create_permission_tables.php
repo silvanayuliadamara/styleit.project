@@ -17,7 +17,6 @@ return new class extends Migration
         throw_if(empty($tableNames), 'Error: config/permission.php not loaded. Run [php artisan config:clear] and try again.');
         throw_if($teams && empty($columnNames['team_foreign_key'] ?? null), 'Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
 
-        // Tabel 1: permissions (Spatie)
         Schema::create($tableNames['permissions'], static function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -26,7 +25,6 @@ return new class extends Migration
             $table->unique(['name', 'guard_name']);
         });
 
-        // Tabel 1: roles (Spatie)
         Schema::create($tableNames['roles'], static function (Blueprint $table) use ($teams, $columnNames) {
             $table->id();
             if ($teams || config('permission.testing')) {
@@ -43,7 +41,6 @@ return new class extends Migration
             }
         });
 
-        // Tabel pendukung Spatie: model_has_permissions
         Schema::create($tableNames['model_has_permissions'], static function (Blueprint $table) use ($tableNames, $columnNames, $pivotPermission, $teams) {
             $table->unsignedBigInteger($pivotPermission);
             $table->string('model_type');
@@ -59,7 +56,6 @@ return new class extends Migration
             }
         });
 
-        // Tabel pendukung Spatie: model_has_roles
         Schema::create($tableNames['model_has_roles'], static function (Blueprint $table) use ($tableNames, $columnNames, $pivotRole, $teams) {
             $table->unsignedBigInteger($pivotRole);
             $table->string('model_type');
@@ -75,7 +71,6 @@ return new class extends Migration
             }
         });
 
-        // Tabel pendukung Spatie: role_has_permissions
         Schema::create($tableNames['role_has_permissions'], static function (Blueprint $table) use ($tableNames, $pivotRole, $pivotPermission) {
             $table->unsignedBigInteger($pivotPermission);
             $table->unsignedBigInteger($pivotRole);
@@ -84,9 +79,13 @@ return new class extends Migration
             $table->primary([$pivotPermission, $pivotRole], 'role_has_permissions_permission_id_role_id_primary');
         });
 
-        app('cache')
-            ->store(config('permission.cache.store') != 'default' ? config('permission.cache.store') : null)
-            ->forget(config('permission.cache.key'));
+        try {
+            app('cache')
+                ->store(config('permission.cache.store') != 'default' ? config('permission.cache.store') : null)
+                ->forget(config('permission.cache.key'));
+        } catch (\Exception $e) {
+            // Cache table may not exist yet during migration, skip silently
+        }
     }
 
     public function down(): void
