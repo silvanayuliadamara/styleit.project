@@ -162,12 +162,13 @@ Fitur checkout digunakan untuk memproses paket layanan yang telah dipilih custom
 - Customer
 
 ### Alur Fitur
-Customer membuka halaman checkout setelah memilih paket layanan. Sistem menampilkan detail pesanan, tanggal booking, total harga, DP, dan sisa pembayaran. Customer mengisi field Catatan untuk Admin (opsional, berisi request look, alamat acara, jam acara, dll.) dan mengupload bukti pembayaran DP dalam format jpg/png/webp maksimal 2 MB. Setelah data diisi, customer menekan tombol Buat Booking dan sistem menyimpan data booking ke database.
+Customer membuka halaman checkout setelah memilih paket layanan dari keranjang. Sistem menampilkan detail pesanan, tanggal booking, total harga, DP, dan sisa pelunasan. Customer mengisi Nomor WhatsApp, Username Instagram, catatan opsional, dan Alamat (Alamat wajib diisi hanya untuk layanan kategori Wedding dan Khusus Baju). Customer memilih salah satu metode pembayaran DP (Virtual Account, QRIS, atau E-Wallet) dan menekan tombol "Bayar DP". Sistem memproses pesanan dan menampilkan modal pembayaran online via Midtrans Snap. Setelah pembayaran sukses, status pembayaran otomatis terupdate menjadi "DP Diterima" secara real-time.
 
 ### Route / Controller Terkait
-- Route: `GET /customer/checkout`
-- Route: `POST /customer/checkout`
-- Controller: `CheckoutController`
+- Route: `GET /customer/checkout` (halaman checkout)
+- Route: `POST /customer/checkout` (menyimpan booking & memicu token Snap Midtrans)
+- Route: `POST /midtrans/notification` (webhook penanganan notifikasi transaksi Midtrans)
+- Controller: `CheckoutController`, `MidtransController`, `MidtransService`
 
 ### Screenshot Fitur
 ![Screenshot Checkout](screenshots/checkout.png)

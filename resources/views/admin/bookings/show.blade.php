@@ -170,16 +170,18 @@
             @if ($booking->payments->count() > 0)
                 <div class="lyb-admin-detail-card">
                     <h3 class="lyb-admin-detail-title">
-                        <i class="bi bi-image"></i> Bukti Pembayaran
+                        <i class="bi bi-image"></i> Bukti / Metode Pembayaran
                     </h3>
                     @foreach ($booking->payments as $payment)
                         <div class="lyb-payment-proof">
                             <div class="lyb-proof-meta">
-                                <span>Jumlah: <strong>Rp{{ number_format($payment->amount, 0, ',', '.') }}</strong></span>
-                                <span
-                                    class="lyb-admin-status {{ $payment->status }}">{{ ucfirst($payment->status) }}</span>
+                                <div>Jumlah: <strong>Rp{{ number_format($payment->amount, 0, ',', '.') }}</strong></div>
+                                <div>Status: <span class="lyb-admin-status {{ $payment->status }}">{{ ucfirst($payment->status) }}</span></div>
                                 @if ($payment->paid_at)
-                                    <span class="text-muted">{{ $payment->paid_at->translatedFormat('d M Y, H:i') }}</span>
+                                    <div class="text-muted small">Waktu Bayar: {{ $payment->paid_at->translatedFormat('d M Y, H:i') }}</div>
+                                @endif
+                                @if ($payment->metode_pembayaran)
+                                    <div class="mt-1 small">Metode: <strong class="text-dark">{{ $payment->metode_pembayaran }}</strong></div>
                                 @endif
                             </div>
                             @if ($payment->proof_image)

@@ -227,7 +227,7 @@ Format changelog mengikuti kategori:
 
 ---
 
-## Planned - Version 1.1.0
+## Released - Version 1.1.0 - 2026-06-18
 
 ### Added
 

@@ -181,6 +181,12 @@
                         <span>Sudah Dibayar:</span>
                         <span class="fw-bold">Rp{{ number_format($booking->total_dibayar, 0, ',', '.') }}</span>
                     </div>
+                    @if($booking->payments->count() > 0 && $booking->payments->first()->metode_pembayaran)
+                        <div class="d-flex justify-content-between mb-2 text-dark">
+                            <span class="text-muted">Metode Pembayaran DP:</span>
+                            <span class="fw-bold text-capitalize">{{ $booking->payments->first()->metode_pembayaran }}</span>
+                        </div>
+                    @endif
                     <div class="d-flex justify-content-between mb-3 text-danger pt-2 border-top">
                         <span class="fw-bold">Sisa Pelunasan:</span>
                         <span class="fw-bold">Rp{{ number_format($booking->sisa_pelunasan, 0, ',', '.') }}</span>
