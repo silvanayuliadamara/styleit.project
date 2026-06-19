@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\CancellationRequest;
-use App\Support\PreviewData;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerDashboardController extends Controller
@@ -14,16 +13,10 @@ class CustomerDashboardController extends Controller
     {
         $userId = Auth::id();
 
-        $dbBookings = Booking::where('user_id', $userId)
+        $bookings = Booking::where('user_id', $userId)
             ->with(['package', 'addons', 'payments', 'latestCancellationRequest'])
             ->latest()
             ->get();
-
-        if ($dbBookings->isEmpty()) {
-            $bookings = PreviewData::sessionBookings();
-        } else {
-            $bookings = $dbBookings;
-        }
 
         $totalBookingCount = $bookings->count();
         $activeBookingCount = $bookings->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima'])->count();
