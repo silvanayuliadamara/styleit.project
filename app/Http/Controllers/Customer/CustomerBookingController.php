@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\CancellationRequest;
-use App\Support\PreviewData;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -19,16 +19,10 @@ class CustomerBookingController extends Controller
 
     public function show(string $bookingCode)
     {
-        $dbBooking = Booking::where('booking_code', $bookingCode)
+        $booking = Booking::where('booking_code', $bookingCode)
             ->where('user_id', Auth::id())
             ->with(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest'])
             ->first();
-
-        if ($dbBooking) {
-            $booking = $dbBooking;
-        } else {
-            $booking = PreviewData::sessionBookings()->firstWhere('booking_code', $bookingCode);
-        }
 
         abort_if(! $booking, Response::HTTP_NOT_FOUND);
 
@@ -37,16 +31,10 @@ class CustomerBookingController extends Controller
 
     public function invoice(string $bookingCode)
     {
-        $dbBooking = Booking::where('booking_code', $bookingCode)
+        $booking = Booking::where('booking_code', $bookingCode)
             ->where('user_id', Auth::id())
             ->with(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest'])
             ->first();
-
-        if ($dbBooking) {
-            $booking = $dbBooking;
-        } else {
-            $booking = PreviewData::sessionBookings()->firstWhere('booking_code', $bookingCode);
-        }
 
         abort_if(! $booking, Response::HTTP_NOT_FOUND);
 
