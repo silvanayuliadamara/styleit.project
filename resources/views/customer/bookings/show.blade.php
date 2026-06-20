@@ -77,6 +77,56 @@
                     <i class="bi bi-whatsapp"></i> Tanya Admin
                 </a>
             </div>
+
+            {{-- Review Section --}}
+            @if(($booking->payment_status ?? '') === 'lunas' && ($booking->status ?? '') === 'selesai')
+                <div class="glass-card mt-4">
+                    @if($booking->review)
+                        {{-- Tampilan Review yang Sudah Diberikan --}}
+                        <h3><i class="bi bi-star-fill" style="color: #b08a42; font-size: 18px;"></i> Ulasan Anda</h3>
+                        <div class="review-display-card">
+                            <div class="star-display mb-2">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="bi {{ $i <= $booking->review->rating ? 'bi-star-fill' : 'bi-star' }}"></i>
+                                @endfor
+                                <span class="review-rating-text">{{ $booking->review->rating }}/5</span>
+                            </div>
+                            @if($booking->review->komentar)
+                                <p class="review-comment">"{{ $booking->review->komentar }}"</p>
+                            @endif
+                            <small class="text-muted" style="font-family: Arial, sans-serif; font-size: 11px;">
+                                <i class="bi bi-check-circle-fill text-success me-1"></i>
+                                Dikirim {{ $booking->review->created_at->translatedFormat('d M Y, H:i') }}
+                            </small>
+                        </div>
+                    @else
+                        {{-- Form Beri Review --}}
+                        <h3><i class="bi bi-chat-heart" style="color: #b08a42; font-size: 18px;"></i> Beri Penilaian</h3>
+                        <p class="text-muted" style="font-family: Arial, sans-serif; font-size: 13px; line-height: 1.5;">
+                            Bagaimana pengalaman Anda? Ulasan Anda sangat berarti bagi kami.
+                        </p>
+                        <form action="{{ route('customer.bookings.review', $booking->booking_code) }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small mb-2" style="color: #211313;">Rating <span class="text-danger">*</span></label>
+                                <div class="star-rating-input" id="starRatingInput">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <input type="radio" name="rating" value="{{ $i }}" id="star{{ $i }}" {{ old('rating') == $i ? 'checked' : '' }}>
+                                        <label for="star{{ $i }}" title="{{ $i }} bintang"><i class="bi bi-star-fill"></i></label>
+                                    @endfor
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small mb-1" style="color: #211313;">Komentar <span class="text-muted fw-normal">(opsional)</span></label>
+                                <textarea name="komentar" class="form-control rounded-4" rows="3" maxlength="1000" placeholder="Ceritakan pengalaman Anda..." style="border-color: #eadfd6; font-family: Arial, sans-serif; font-size: 13px;">{{ old('komentar') }}</textarea>
+                            </div>
+                            <button type="submit" class="btn w-100 rounded-pill py-2 fw-bold" style="background: #211313; color: #fff; font-family: Arial, sans-serif; font-size: 14px; border: none; transition: all 0.3s ease;" onmouseover="this.style.background='#3a2222'" onmouseout="this.style.background='#211313'">
+                                <i class="bi bi-send me-1"></i> Kirim Ulasan
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 @endsection

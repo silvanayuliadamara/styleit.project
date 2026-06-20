@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\CustomerBookingController;
+use App\Http\Controllers\Customer\ReviewController;
 use App\Http\Controllers\Customer\CustomerDashboardController;
 use App\Http\Controllers\Customer\MidtransController;
 use App\Http\Controllers\Owner\OwnerAddonController;
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'role:customer'])
         Route::get('/bookings/{booking}', [CustomerBookingController::class, 'show'])->name('bookings.show');
         Route::get('/bookings/{booking}/invoice', [CustomerBookingController::class, 'invoice'])->name('bookings.invoice');
         Route::patch('/bookings/{booking}/cancel', [CustomerBookingController::class, 'cancel'])->name('bookings.cancel');
+        Route::post('/bookings/{booking}/review', [ReviewController::class, 'store'])->name('bookings.review');
         Route::post('/cancellations/{id}/dismiss', [CustomerBookingController::class, 'dismissCancellationNotif'])->name('cancellations.dismiss');
         Route::get('/checkout/{booking}/snap-token', [MidtransController::class, 'getSnapToken'])->name('checkout.snap-token');
     });
