@@ -14,7 +14,7 @@ class CustomerDashboardController extends Controller
         $userId = Auth::id();
 
         $bookings = Booking::where('user_id', $userId)
-            ->with(['package', 'addons', 'payments', 'latestCancellationRequest'])
+            ->with(['package', 'addons', 'payments', 'latestCancellationRequest', 'review'])
             ->latest()
             ->get();
 

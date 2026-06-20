@@ -21,7 +21,7 @@ class CustomerBookingController extends Controller
     {
         $booking = Booking::where('booking_code', $bookingCode)
             ->where('user_id', Auth::id())
-            ->with(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest'])
+            ->with(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest', 'review'])
             ->first();
 
         abort_if(! $booking, Response::HTTP_NOT_FOUND);

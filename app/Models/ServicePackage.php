@@ -38,4 +38,9 @@ class ServicePackage extends Model
     {
         return $this->hasMany(Booking::class, 'package_id');
     }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'package_id');
+    }
 }

@@ -102,6 +102,11 @@ class Booking extends Model
         return $this->hasOne(CancellationRequest::class)->latestOfMany();
     }
 
+    public function review(): HasOne
+    {
+        return $this->hasOne(Review::class);
+    }
+
     /* ---- Dynamic Accessors ---- */
 
     public function getGatewayFeeAttribute(): int

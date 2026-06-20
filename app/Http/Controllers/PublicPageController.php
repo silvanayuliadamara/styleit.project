@@ -6,6 +6,7 @@ use App\Models\Addon;
 use App\Models\BlockedDate;
 use App\Models\Booking;
 use App\Models\PortfolioItem;
+use App\Models\Review;
 use App\Models\Schedule;
 use App\Models\ServiceCategory;
 use App\Models\ServicePackage;
@@ -20,7 +21,14 @@ class PublicPageController extends Controller
         $categories = ServiceCategory::orderBy('sort_order')->get();
         $portfolioItems = PortfolioItem::orderBy('sort_order')->take(4)->get();
 
-        return view('home', compact('categories', 'portfolioItems'));
+        $reviews = Review::where('status_review', 'tampil')
+            ->where('rating', '>=', 4)
+            ->with(['user', 'package'])
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('home', compact('categories', 'portfolioItems', 'reviews'));
     }
 
     public function profil()
