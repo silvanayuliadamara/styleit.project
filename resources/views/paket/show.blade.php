@@ -321,7 +321,7 @@
             <div class="col-lg-5">
                 <div class="position-sticky cover-image-sticky">
                     @if ($package->image)
-                        <img src="{{ asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="aspect-ratio: 3/4; object-fit: cover; border: 1px solid #eadfd6;">
+                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="aspect-ratio: 3/4; object-fit: cover; border: 1px solid #eadfd6;">
                     @else
                         <div class="w-100 rounded-4 d-flex align-items-center justify-content-center bg-light border text-muted" style="aspect-ratio: 3/4; border-color: #eadfd6 !important;">
                             <i class="bi bi-image" style="font-size: 48px;"></i>

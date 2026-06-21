@@ -59,7 +59,7 @@
                         
                         @if($package->image)
                             <div class="mb-3 overflow-hidden rounded-4 shadow-sm" style="aspect-ratio: 3/4; border: 1px solid var(--lyb-line) !important; background: #f9f5f0;">
-                                <img src="{{ asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 h-100" style="object-fit: cover; object-position: center; transition: transform 0.3s ease; display: block;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 h-100" style="object-fit: cover; object-position: center; transition: transform 0.3s ease; display: block;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                             </div>
                         @else
                             <div class="mb-3 overflow-hidden rounded-4 bg-light d-flex align-items-center justify-content-center text-muted shadow-sm" style="aspect-ratio: 3/4; border: 1px solid var(--lyb-line) !important;">

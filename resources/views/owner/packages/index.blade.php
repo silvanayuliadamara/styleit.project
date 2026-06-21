@@ -38,7 +38,7 @@
                                 <td><code>{{ $package->code }}</code></td>
                                 <td>
                                     @if($package->image)
-                                        <img src="{{ asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="rounded shadow-sm" style="width: 48px; height: 48px; object-fit: cover; border: 1px solid #eadfd6;">
+                                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="rounded shadow-sm" style="width: 48px; height: 48px; object-fit: cover; border: 1px solid #eadfd6;">
                                     @else
                                         <div class="rounded bg-light text-muted d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; border: 1px solid #eadfd6;">
                                             <i class="bi bi-image" style="font-size: 16px;"></i>
