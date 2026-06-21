@@ -35,17 +35,34 @@ class MidtransController extends Controller
         Config::$isSanitized = config('midtrans.is_sanitized');
         Config::$is3ds = config('midtrans.is_3ds');
 
-        try {
-            $notification = new Notification;
-        } catch (\Exception $e) {
-            Log::error('Midtrans notification error: '.$e->getMessage());
+        $rawContent = json_decode($request->getContent(), true) ?? [];
+        Log::info('Midtrans notification request received', [
+            'app_debug' => config('app.debug'),
+            'is_production' => config('midtrans.is_production'),
+            'raw_content' => $rawContent,
+            'input_order_id' => $request->input('order_id') ?? $rawContent['order_id'] ?? null,
+        ]);
 
-            return response()->json(['message' => 'invalid notification'], 400);
+        $orderId = $request->input('order_id') ?? $rawContent['order_id'] ?? null;
+        $transactionStatus = $request->input('transaction_status') ?? $rawContent['transaction_status'] ?? null;
+        $fraudStatus = $request->input('fraud_status') ?? $rawContent['fraud_status'] ?? null;
+
+        // Bypass validation on local/debug simulation to avoid Transaction::status() calling Midtrans API with a dummy transaction ID
+        if ((config('app.debug') || !config('midtrans.is_production')) && !empty($orderId) && !empty($transactionStatus)) {
+            // Log bypass
+            Log::info('Bypassing Midtrans API validation for simulation');
+        } else {
+            try {
+                $notification = new Notification;
+                $orderId = $notification->order_id;
+                $transactionStatus = $notification->transaction_status;
+                $fraudStatus = $notification->fraud_status ?? null;
+            } catch (\Exception $e) {
+                Log::error('Midtrans notification error: '.$e->getMessage());
+
+                return response()->json(['message' => 'invalid notification'], 400);
+            }
         }
-
-        $orderId = $notification->order_id;
-        $transactionStatus = $notification->transaction_status;
-        $fraudStatus = $notification->fraud_status ?? null;
 
         $bookings = collect([]);
         if (str_starts_with($orderId, 'LYB-GP-')) {

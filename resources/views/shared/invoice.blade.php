@@ -149,8 +149,13 @@
                 </div>
 
                 @if($booking->payment_status === 'belum_bayar')
-                <div class="invoice-notice">
-                    Batas pembayaran DP: <strong>1 jam</strong> sejak invoice dibuat.
+                <div class="invoice-notice d-flex justify-content-between align-items-center flex-wrap gap-2" style="background-color: #fffbeb; border: 1px solid #f9edd0; border-radius: 12px; padding: 1rem; color: #8a6d3b; font-family: Arial, sans-serif; font-size: 13px;">
+                    <span>Batas pembayaran DP: <strong>1 jam</strong> sejak invoice dibuat.</span>
+                    @if(!request()->routeIs('owner.*') && !request()->routeIs('admin.*'))
+                        <a href="{{ route('customer.payment.instruction', $booking->booking_code) }}" class="btn btn-sm btn-dark" style="background-color: #211313; border: none; border-radius: 8px; font-weight: 600; padding: 6px 16px; color: #efe2d5; text-decoration: none;">
+                            Bayar DP Sekarang <i class="bi bi-arrow-right"></i>
+                        </a>
+                    @endif
                 </div>
                 @endif
 

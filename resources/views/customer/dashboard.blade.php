@@ -143,7 +143,25 @@
                                     </span>
                                 </td>
                                 <td class="text-end text-nowrap">
-                                    <div class="d-flex justify-content-end gap-2">
+                                    <div class="d-flex justify-content-end gap-2 align-items-center">
+                                        @if(($booking->status ?? '') === 'selesai' && ($booking->payment_status ?? '') === 'lunas')
+                                            @if($booking->review)
+                                                <span class="badge py-2 px-3 text-dark d-inline-flex align-items-center gap-1" style="background-color: #fbf5ef; border: 1px solid #eadfd6; border-radius: 20px; font-weight: 600;">
+                                                    <i class="bi bi-star-fill" style="color: #b08a42;"></i> {{ $booking->review->rating }}
+                                                </span>
+                                            @else
+                                                <a href="{{ route('customer.bookings.show', $booking->booking_code) }}#review-section" class="lyb-admin-action-btn text-white" style="background-color: #b08a42; border: none;">
+                                                    <i class="bi bi-star"></i> Beri Review
+                                                </a>
+                                            @endif
+                                        @endif
+
+                                        @if(($booking->payment_status ?? '') === 'belum_bayar' && ($booking->status ?? '') === 'pending')
+                                            <a href="{{ route('customer.payment.instruction', $booking->booking_code) }}" class="lyb-admin-action-btn text-white" style="background-color: #b08a42; border: none;">
+                                                <i class="bi bi-wallet2"></i> Bayar DP
+                                            </a>
+                                        @endif
+
                                         <a href="{{ route('customer.bookings.invoice', $booking->booking_code) }}" class="lyb-admin-action-btn" style="background-color: #fbf8f1; border: 1px solid #eadfd6; color: #5c430e;">
                                             <i class="bi bi-receipt"></i> Invoice
                                         </a>

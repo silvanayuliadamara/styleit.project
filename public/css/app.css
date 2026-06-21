@@ -2523,3 +2523,76 @@ body {
 .dropdown-item:hover { background-color: #f5f0eb; color: #333; }
 .dropdown-item.text-danger:hover { background-color: #fff0f0; color: #dc3545; }
 .dropdown-header  { font-size: .8rem; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+
+/* --- FITUR RATING & TESTIMONI CUSTOMER --- */
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 6px;
+}
+.star-rating-input input {
+    display: none;
+}
+.star-rating-input label {
+    font-size: 26px;
+    color: #eadfd6;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.1s ease;
+}
+.star-rating-input label:hover {
+    transform: scale(1.15);
+}
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label,
+.star-rating-input input:checked ~ label {
+    color: #b08a42;
+}
+
+.star-display {
+    color: #b08a42;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 14px;
+}
+.star-display .review-rating-text {
+    margin-left: 6px;
+    font-size: 12px;
+    color: #7d776c;
+    font-weight: 500;
+}
+
+.review-display-card {
+    background: #fbf5ef;
+    border: 1px solid #eadfd6;
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 10px;
+}
+.review-comment {
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: #211313;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+/* Testimoni Section (Home Page) */
+.testimoni-section {
+    background-color: #211313 !important;
+}
+.testimoni-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(234, 223, 214, 0.08);
+    border-radius: 18px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.testimoni-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(176, 138, 66, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}

@@ -426,6 +426,16 @@
                     <button class="btn-reopen-snap" id="btnOpenSnap">Bayar Sekarang (Buka Snap Gateway)</button>
                     <a href="{{ route('customer.bookings.index') }}" class="btn-check-status">Cek Riwayat Booking</a>
                 </div>
+
+                @if(config('app.debug') || !config('midtrans.is_production'))
+                    <div class="mt-4 p-3 border border-warning rounded-4 bg-light text-center">
+                        <h6 class="text-warning fw-bold mb-2"><i class="bi bi-bug-fill"></i> Local Developer Sandbox Helper</h6>
+                        <p class="small text-muted mb-3" style="font-size: 0.8rem; line-height: 1.4;">Karena localhost tidak dapat menerima webhook dari server Midtrans di internet, klik tombol di bawah untuk mensimulasikan webhook POST secara lokal.</p>
+                        <button type="button" class="btn btn-warning btn-sm w-100 fw-bold py-2" onclick="simulateWebhookPayment(event)" style="border-radius: 10px; color: #211313;">
+                            <i class="bi bi-send-fill"></i> Simulasikan Webhook Bayar Berhasil (POST)
+                        </button>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -537,6 +547,47 @@
         }
     }
 
+    // Sandbox webhook simulation function
+    function simulateWebhookPayment(event) {
+        if (!confirm('Simulasikan pembayaran sukses via POST ke localhost?')) return;
+        
+        const btn = event.currentTarget;
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mengirim...';
+
+        fetch("{{ route('customer.payment.confirm', $booking->booking_code) }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                payment_type: 'qris',
+                transaction_id: 'dummy-simulation-123456'
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Server returned ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Simulasi pembayaran berhasil dikonfirmasi! Halaman akan otomatis beralih ke halaman sukses dalam beberapa detik.');
+            // Polling interval will automatically detect the DB change and redirect the page.
+        })
+        .catch(error => {
+            console.error('Error simulating payment:', error);
+            alert('Gagal mengirim simulasi pembayaran: ' + error.message);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         startTimer();
         
@@ -548,9 +599,9 @@
 
         // Polling simulation: check if payment status has changed to accepted
         // In real app, webhook will update booking status, and we check here every 5 seconds.
-        const bookingId = {{ $booking->id }};
+        const bookingCode = "{{ $booking->booking_code }}";
         const checkInterval = setInterval(() => {
-            fetch(`/customer/bookings/${bookingId}`)
+            fetch(`/customer/bookings/${bookingCode}`)
                 .then(r => r.text())
                 .then(html => {
                     // Simple check if the booking details show accepted status
