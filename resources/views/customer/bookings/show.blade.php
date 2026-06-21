@@ -80,7 +80,7 @@
 
             {{-- Review Section --}}
             @if(($booking->payment_status ?? '') === 'lunas' && ($booking->status ?? '') === 'selesai')
-                <div class="glass-card mt-4">
+                <div class="glass-card mt-4" id="review-section">
                     @if($booking->review)
                         {{-- Tampilan Review yang Sudah Diberikan --}}
                         <h3><i class="bi bi-star-fill" style="color: #b08a42; font-size: 18px;"></i> Ulasan Anda</h3>
@@ -110,7 +110,7 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold small mb-2" style="color: #211313;">Rating <span class="text-danger">*</span></label>
                                 <div class="star-rating-input" id="starRatingInput">
-                                    @for($i = 1; $i <= 5; $i++)
+                                    @for($i = 5; $i >= 1; $i--)
                                         <input type="radio" name="rating" value="{{ $i }}" id="star{{ $i }}" {{ old('rating') == $i ? 'checked' : '' }}>
                                         <label for="star{{ $i }}" title="{{ $i }} bintang"><i class="bi bi-star-fill"></i></label>
                                     @endfor

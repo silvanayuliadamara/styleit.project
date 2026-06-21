@@ -118,7 +118,7 @@ class Booking extends Model
             return 2500;
         }
 
-        $hasOnlinePayment = $this->payments()->whereNull('proof_image')->where('status', 'approved')->exists();
+        $hasOnlinePayment = $this->payments()->whereNull('proof_image')->where('status', 'diterima')->exists();
         if ($hasOnlinePayment) {
             return 4400;
         }

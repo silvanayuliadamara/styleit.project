@@ -62,7 +62,7 @@ class OwnerBookingController extends Controller
             $pendingPayment = $booking->payments()->where('status', 'pending')->first();
             if ($pendingPayment) {
                 $pendingPayment->update([
-                    'status' => 'approved',
+                    'status' => 'diterima',
                     'paid_at' => now(),
                 ]);
             }
@@ -102,7 +102,7 @@ class OwnerBookingController extends Controller
             Payment::create([
                 'booking_id' => $booking->id,
                 'amount' => $sisa,
-                'status' => 'approved',
+                'status' => 'diterima',
                 'paid_at' => now(),
                 'tipe_pembayaran' => 'pelunasan',
             ]);

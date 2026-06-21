@@ -21,10 +21,16 @@ class CustomerBookingController extends Controller
     {
         $booking = Booking::where('booking_code', $bookingCode)
             ->where('user_id', Auth::id())
-            ->with(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest', 'review'])
             ->first();
 
         abort_if(! $booking, Response::HTTP_NOT_FOUND);
+
+        // Auto-check Midtrans status
+        $midtransService = app(\App\Services\MidtransService::class);
+        $midtransService->checkAndConfirmPayment($booking);
+
+        // Reload relationships
+        $booking->load(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest', 'review']);
 
         return view('customer.bookings.show', compact('booking'));
     }

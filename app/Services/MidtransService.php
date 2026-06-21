@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Models\Booking;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Midtrans\Transaction;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class MidtransService
 {
@@ -18,9 +21,17 @@ class MidtransService
 
     public function getSnapToken(Booking $booking): string
     {
+        $cacheKey = "midtrans_snap_token_booking_{$booking->id}";
+        $cached = Cache::get($cacheKey);
+
+        if ($cached && isset($cached['snap_token'])) {
+            return $cached['snap_token'];
+        }
+
+        $orderId = $booking->booking_code.'-'.time();
         $params = [
             'transaction_details' => [
-                'order_id' => $booking->booking_code.'-'.time(),
+                'order_id' => $orderId,
                 'gross_amount' => (int) $booking->dp_amount,
             ],
             'customer_details' => [
@@ -47,7 +58,14 @@ class MidtransService
             ],
         ];
 
-        return Snap::getSnapToken($params);
+        $snapToken = Snap::getSnapToken($params);
+
+        Cache::put($cacheKey, [
+            'snap_token' => $snapToken,
+            'order_id' => $orderId,
+        ], now()->addHours(24));
+
+        return $snapToken;
     }
 
     public function getSnapTokenForBookings($bookings): string
@@ -58,6 +76,14 @@ class MidtransService
 
         $bookingIds = collect($bookings)->pluck('id')->all();
         $totalDp = collect($bookings)->sum('dp_amount');
+
+        sort($bookingIds);
+        $cacheKey = "midtrans_snap_token_group_" . implode('_', $bookingIds);
+
+        $cached = Cache::get($cacheKey);
+        if ($cached && isset($cached['snap_token'])) {
+            return $cached['snap_token'];
+        }
 
         // Order ID format: LYB-GP-{id1}-{id2}-...-{timestamp}
         $orderId = 'LYB-GP-'.implode('-', $bookingIds).'-'.time();
@@ -92,6 +118,112 @@ class MidtransService
             ],
         ];
 
-        return Snap::getSnapToken($params);
+        $snapToken = Snap::getSnapToken($params);
+
+        $groupData = [
+            'snap_token' => $snapToken,
+            'order_id' => $orderId,
+            'booking_ids' => $bookingIds,
+        ];
+
+        Cache::put($cacheKey, $groupData, now()->addHours(24));
+
+        // Also save maps for each individual booking so they look up the same order_id
+        foreach ($bookings as $b) {
+            Cache::put("midtrans_snap_token_booking_{$b->id}", [
+                'snap_token' => $snapToken,
+                'order_id' => $orderId,
+                'group_booking_ids' => $bookingIds,
+            ], now()->addHours(24));
+        }
+
+        return $snapToken;
+    }
+
+    /**
+     * Check transaction status directly from Midtrans and update DB if successful.
+     * Returns true if status was updated/already paid, false otherwise.
+     */
+    public function checkAndConfirmPayment(Booking $booking): bool
+    {
+        if (in_array($booking->payment_status, ['dp_diterima', 'lunas'])) {
+            return true;
+        }
+
+        $cacheKey = "midtrans_snap_token_booking_{$booking->id}";
+        $cached = Cache::get($cacheKey);
+
+        if (!$cached || !isset($cached['order_id'])) {
+            return false;
+        }
+
+        $orderId = $cached['order_id'];
+
+        try {
+            // Setup Config
+            Config::$serverKey = config('midtrans.server_key');
+            Config::$isProduction = config('midtrans.is_production');
+            Config::$isSanitized = config('midtrans.is_sanitized');
+            Config::$is3ds = config('midtrans.is_3ds');
+
+            $status = Transaction::status($orderId);
+            
+            // Convert status object to array if needed
+            $status = (array) $status;
+            
+            $transactionStatus = $status['transaction_status'] ?? null;
+            $fraudStatus = $status['fraud_status'] ?? null;
+
+            if ($transactionStatus === 'capture' || $transactionStatus === 'settlement') {
+                if ($fraudStatus === 'accept' || $fraudStatus === null) {
+                    
+                    // Identify which bookings to update
+                    $bookingsToConfirm = collect([]);
+                    if (!empty($cached['group_booking_ids'])) {
+                        // Group checkout
+                        $bookingsToConfirm = Booking::whereIn('id', $cached['group_booking_ids'])
+                            ->where('payment_status', 'belum_bayar')
+                            ->get();
+                    } else {
+                        // Single checkout
+                        if ($booking->payment_status === 'belum_bayar') {
+                            $bookingsToConfirm->push($booking);
+                        }
+                    }
+
+                    if ($bookingsToConfirm->isNotEmpty()) {
+                        foreach ($bookingsToConfirm as $b) {
+                            $b->update([
+                                'payment_status' => 'dp_diterima',
+                                'status' => 'diterima',
+                            ]);
+
+                            $payment = $b->payments()->where('status', 'pending')->first();
+                            if ($payment) {
+                                $payment->update([
+                                    'status' => 'diterima',
+                                    'paid_at' => now(),
+                                ]);
+                            } else {
+                                $b->payments()->create([
+                                    'amount' => $b->dp_amount,
+                                    'proof_image' => null,
+                                    'status' => 'diterima',
+                                    'metode_pembayaran' => $status['payment_type'] ?? 'Midtrans',
+                                    'paid_at' => now(),
+                                ]);
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning("Failed to auto-check Midtrans status for order {$orderId}: " . $e->getMessage());
+        }
+
+        return false;
     }
 }
+

@@ -229,13 +229,18 @@ class CheckoutController extends Controller
         // Ensure user is authorized
         abort_if($booking->user_id !== Auth::id(), 403);
 
+        // Auto-check Midtrans status directly
+        $midtransService = app(MidtransService::class);
+        $midtransService->checkAndConfirmPayment($booking);
+
+        $booking->refresh();
+
+        if (in_array($booking->payment_status, ['dp_diterima', 'lunas'])) {
+            return redirect()->route('customer.payment.success', $booking_code);
+        }
+
         $payment = $booking->payments()->where('status', 'pending')->first();
         if (! $payment) {
-            // If payment already confirmed, redirect to success
-            if (in_array($booking->payment_status, ['dp_diterima', 'lunas'])) {
-                return redirect()->route('customer.payment.success', $booking_code);
-            }
-
             return redirect()->route('customer.bookings.index')
                 ->with('warning', 'Pembayaran untuk booking ini tidak ditemukan atau sudah diproses.');
         }
