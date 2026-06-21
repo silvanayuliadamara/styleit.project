@@ -246,3 +246,35 @@ Format changelog mengikuti kategori:
 - Checkout Module
 - Payment Module
 - Booking Detail Module (Admin & Owner)
+
+---
+
+## Released - Version 1.2.0 - 2026-06-21
+
+### Added
+
+- Mengintegrasikan payment gateway Midtrans Snap untuk pembayaran DP online pada customer checkout.
+- Menambahkan class `app/Services/MidtransService.php` untuk mengelola pembuatan token Snap, pengecekan status transaksi, dan konfirmasi pembayaran.
+- Menambahkan `app/Http/Controllers/Customer/MidtransController.php` untuk mengelola endpoint token pembayaran dan menerima callback webhook dari server Midtrans.
+- Mengintegrasikan file `snap.js` dari Midtrans di halaman instruksi pembayaran (`payment-instruction.blade.php`) dan halaman checkout (`checkout.blade.php`).
+- Menambahkan helper tombol simulasi webhook lokal pada halaman instruksi pembayaran untuk kebutuhan pengujian developer tanpa internet publik.
+- Menambahkan statistik ringkasan booking (Total Booking, Aktif, Selesai) pada dashboard customer.
+
+### Changed
+
+- Memperbarui `CheckoutController.php` agar memproses token Snap Midtrans saat proses checkout dan mengembalikan respon JSON untuk membuka pop-up pembayaran secara langsung.
+- Memperbarui model `Booking.php` dan `User.php` untuk mendukung sinkronisasi status pembayaran dengan Midtrans.
+- Memperbarui halaman beranda (`home.blade.php`) dan penyesuaian layout CSS di `public/css/app.css` untuk memperindah tampilan visual.
+- Memperbarui dokumen `docs/dependency.md` untuk menandai semua modul integrasi Midtrans telah selesai (100% completed).
+
+### Dependency
+
+- Menyelesaikan dan meresmikan penggunaan dependency `midtrans/midtrans-php` ^2.6 dari rencana pengembangan menjadi terimplementasi penuh.
+
+### Impacted Modules
+
+- Checkout Module
+- Payment Module
+- Booking Detail Module (Customer & Owner)
+- Customer Dashboard Module
+- Public Landing Page (Home)

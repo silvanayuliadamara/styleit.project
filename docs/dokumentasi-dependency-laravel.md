@@ -151,24 +151,22 @@ https://github.com/barryvdh/laravel-dompdf
 
 ---
 
-# B. Dependency Rencana Pengembangan
-
-## 1. Midtrans PHP
+## 6. Midtrans PHP
 
 ### What
 Midtrans PHP adalah library untuk mengintegrasikan payment gateway Midtrans pada aplikasi PHP/Laravel.
 
 ### Why
-Package ini dibutuhkan karena sistem memiliki kebutuhan pembayaran DP secara online. Dengan Midtrans, customer dapat melakukan pembayaran digital tanpa harus transfer manual.
+Package ini dibutuhkan karena sistem memiliki kebutuhan pembayaran DP secara online. Dengan Midtrans, customer dapat melakukan pembayaran digital tanpa harus transfer manual dan statusnya terupdate secara otomatis (real-time).
 
 ### Who
-Digunakan oleh customer untuk melakukan pembayaran DP online, dan sistem untuk menerima serta memverifikasi status pembayaran dari Midtrans.
+Digunakan oleh customer untuk melakukan pembayaran DP online secara langsung, dan sistem untuk menerima serta memverifikasi status pembayaran dari Midtrans melalui webhook.
 
 ### When
-Digunakan saat customer melakukan checkout dan memilih metode pembayaran online, serta saat sistem menerima notifikasi callback dari Midtrans setelah pembayaran berhasil.
+Digunakan saat customer melakukan checkout dan memilih metode pembayaran online, serta saat sistem menerima notifikasi callback/webhook dari Midtrans setelah pembayaran diselesaikan.
 
 ### Where
-Digunakan pada fitur checkout, pembayaran DP, dan halaman status transaksi.
+Digunakan pada fitur checkout, pembayaran DP, halaman status transaksi, dan route webhook callback `/midtrans/notification`.
 
 ### How
 Package diinstal menggunakan Composer. Konfigurasi API key Midtrans disimpan di file `.env`. Sistem mengirim data transaksi ke Midtrans dan menerima callback untuk memperbarui status pembayaran.
@@ -183,7 +181,9 @@ https://github.com/Midtrans/midtrans-php
 
 ---
 
-## 2. Laravel Excel
+# B. Dependency Rencana Pengembangan
+
+## 1. Laravel Excel
 
 ### What
 Laravel Excel adalah package untuk melakukan export dan import data dalam format Excel (.xlsx) pada aplikasi Laravel.
@@ -213,7 +213,7 @@ https://laravel-excel.com
 
 ---
 
-## 3. Intervention Image
+## 2. Intervention Image
 
 ### What
 Intervention Image adalah package untuk memproses gambar pada aplikasi Laravel, seperti resize, crop, dan kompres.
@@ -243,7 +243,7 @@ https://image.intervention.io
 
 ---
 
-## 4. WhatsApp Integration
+## 3. WhatsApp Integration
 
 ### What
 WhatsApp Integration adalah integrasi sederhana menggunakan link `wa.me` untuk mengarahkan user ke WhatsApp tanpa membutuhkan package Composer tambahan.
@@ -273,7 +273,7 @@ https://faq.whatsapp.com/425247423114725
 
 ---
 
-## 5. Laravel Mail / Notification
+## 4. Laravel Mail / Notification
 
 ### What
 Laravel Mail adalah fitur bawaan Laravel untuk mengirim email, sedangkan Laravel Notification adalah sistem notifikasi yang dapat mengirim pesan melalui berbagai saluran seperti email, SMS, dan database.
