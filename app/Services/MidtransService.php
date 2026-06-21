@@ -12,12 +12,21 @@ use Illuminate\Support\Facades\Log;
 class MidtransService
 {
     public function __construct()
-    {
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$isProduction = config('midtrans.is_production');
-        Config::$isSanitized = config('midtrans.is_sanitized');
-        Config::$is3ds = config('midtrans.is_3ds');
-    }
+{
+    Config::$serverKey = config('midtrans.server_key');
+    Config::$isProduction = config('midtrans.is_production');
+    Config::$isSanitized = config('midtrans.is_sanitized');
+    Config::$is3ds = config('midtrans.is_3ds');
+
+    // Hanya bypass SSL di local development
+    if (app()->environment('local')) {
+    Config::$curlOptions = [
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => 0,
+        CURLOPT_HTTPHEADER => [],  // ← tambahkan ini
+    ];
+}
+}
 
     public function getSnapToken(Booking $booking): string
     {
@@ -167,16 +176,16 @@ class MidtransService
             Config::$is3ds = config('midtrans.is_3ds');
 
             $status = Transaction::status($orderId);
-            
+
             // Convert status object to array if needed
             $status = (array) $status;
-            
+
             $transactionStatus = $status['transaction_status'] ?? null;
             $fraudStatus = $status['fraud_status'] ?? null;
 
             if ($transactionStatus === 'capture' || $transactionStatus === 'settlement') {
                 if ($fraudStatus === 'accept' || $fraudStatus === null) {
-                    
+
                     // Identify which bookings to update
                     $bookingsToConfirm = collect([]);
                     if (!empty($cached['group_booking_ids'])) {
