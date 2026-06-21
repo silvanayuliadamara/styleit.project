@@ -815,6 +815,22 @@ body {
     font-size: 42px;
 }
 
+.portfolio-img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portfolio-card-lg .portfolio-img {
+    height: 260px;
+}
+
+.portfolio-card:hover .portfolio-img {
+    transform: scale(1.05);
+}
+
 .portfolio-card h4 {
     padding: 18px 20px 4px;
     margin: 0;
