@@ -798,9 +798,9 @@ Customer checkout
 | Service (Snap token) | `app/Services/MidtransService.php` | ✅ Selesai |
 | Controller (token + webhook) | `app/Http/Controllers/customer/MidtransController.php` | ✅ Selesai |
 | Routes & CSRF exclude | `routes/web.php`, `bootstrap/app.php` | ✅ Selesai |
-| Update CheckoutController | `app/Http/Controllers/customer/CheckoutController.php` | ⏳ Pending |
-| View checkout + Snap.js popup | `resources/views/customer/...` | ⏳ Pending |
-| Konfirmasi Lunas (owner) | `app/Http/Controllers/owner/...` | ⏳ Planned |
+| Update CheckoutController | `app/Http/Controllers/customer/CheckoutController.php` | ✅ Selesai |
+| View checkout + Snap.js popup | `resources/views/customer/...` | ✅ Selesai |
+| Konfirmasi Lunas (owner) | `app/Http/Controllers/owner/...` | ✅ Selesai |
 
 #### Risiko
 
