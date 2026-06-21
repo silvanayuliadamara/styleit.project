@@ -96,9 +96,13 @@
                 @foreach ($portfolioItems as $item)
                     <div class="col-md-6 col-lg-3">
                         <div class="portfolio-card">
-                            <div class="portfolio-placeholder"><i class="bi bi-image"></i></div>
+                            @if($item->image)
+                                <img src="{{ str_starts_with($item->image, 'images/') ? asset($item->image) : asset('storage/' . $item->image) }}" alt="{{ $item->title }}" class="portfolio-img">
+                            @else
+                                <div class="portfolio-placeholder"><i class="bi bi-image"></i></div>
+                            @endif
                             <h4>{{ $item->title }}</h4>
-                            <span>{{ $item->category }}</span>
+                            <span>{{ ['prewedding' => 'Prewedding', 'wedding' => 'Wedding', 'regular' => 'Regular', 'baju' => 'Khusus Baju'][$item->category] ?? ucfirst($item->category) }}</span>
                         </div>
                     </div>
                 @endforeach
