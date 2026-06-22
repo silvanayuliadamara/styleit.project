@@ -17,6 +17,13 @@ class MidtransService
         Config::$isProduction = config('midtrans.is_production');
         Config::$isSanitized = config('midtrans.is_sanitized');
         Config::$is3ds = config('midtrans.is_3ds');
+
+        // Prevent curl hanging by setting connect and total timeouts
+        Config::$curlOptions = [
+            CURLOPT_CONNECTTIMEOUT => 2,
+            CURLOPT_TIMEOUT => 3,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'], // Fix for Midtrans SDK key 10023 bug
+        ];
     }
 
     public function getSnapToken(Booking $booking): string
@@ -165,6 +172,11 @@ class MidtransService
             Config::$isProduction = config('midtrans.is_production');
             Config::$isSanitized = config('midtrans.is_sanitized');
             Config::$is3ds = config('midtrans.is_3ds');
+            Config::$curlOptions = [
+                CURLOPT_CONNECTTIMEOUT => 2,
+                CURLOPT_TIMEOUT => 3,
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json'], // Fix for Midtrans SDK key 10023 bug
+            ];
 
             $status = Transaction::status($orderId);
             
@@ -217,6 +229,29 @@ class MidtransService
                     }
 
                     return true;
+                }
+            } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
+                $newStatus = ($transactionStatus === 'expire') ? 'expired' : 'dibatalkan';
+                
+                $bookingsToUpdate = collect([]);
+                if (!empty($cached['group_booking_ids'])) {
+                    $bookingsToUpdate = Booking::whereIn('id', $cached['group_booking_ids'])->get();
+                } else {
+                    $bookingsToUpdate->push($booking);
+                }
+
+                foreach ($bookingsToUpdate as $b) {
+                    $b->update([
+                        'payment_status' => 'belum_bayar',
+                        'status' => $newStatus,
+                    ]);
+
+                    $payment = $b->payments()->where('status', 'pending')->first();
+                    if ($payment) {
+                        $payment->update([
+                            'status' => 'ditolak',
+                        ]);
+                    }
                 }
             }
         } catch (\Exception $e) {
