@@ -12,21 +12,25 @@ use Illuminate\Support\Facades\Log;
 class MidtransService
 {
     public function __construct()
-{
-    Config::$serverKey = config('midtrans.server_key');
-    Config::$isProduction = config('midtrans.is_production');
-    Config::$isSanitized = config('midtrans.is_sanitized');
-    Config::$is3ds = config('midtrans.is_3ds');
+    {
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized = config('midtrans.is_sanitized');
+        Config::$is3ds = config('midtrans.is_3ds');
 
-    // Hanya bypass SSL di local development
-    if (app()->environment('local')) {
-    Config::$curlOptions = [
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_SSL_VERIFYHOST => 0,
-        CURLOPT_HTTPHEADER => [],  // ← tambahkan ini
-    ];
-}
-}
+        // Prevent curl hanging by setting connect and total timeouts, and fix SDK key 10023 bug
+        Config::$curlOptions = [
+            CURLOPT_CONNECTTIMEOUT => 2,
+            CURLOPT_TIMEOUT => 3,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        ];
+
+        // Hanya bypass SSL di local development
+        if (app()->environment('local')) {
+            Config::$curlOptions[CURLOPT_SSL_VERIFYPEER] = false;
+            Config::$curlOptions[CURLOPT_SSL_VERIFYHOST] = 0;
+        }
+    }
 
     public function getSnapToken(Booking $booking): string
     {
@@ -174,6 +178,17 @@ class MidtransService
             Config::$isProduction = config('midtrans.is_production');
             Config::$isSanitized = config('midtrans.is_sanitized');
             Config::$is3ds = config('midtrans.is_3ds');
+            Config::$curlOptions = [
+                CURLOPT_CONNECTTIMEOUT => 2,
+                CURLOPT_TIMEOUT => 3,
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json'], // Fix for Midtrans SDK key 10023 bug
+            ];
+
+            // Hanya bypass SSL di local development
+            if (app()->environment('local')) {
+                Config::$curlOptions[CURLOPT_SSL_VERIFYPEER] = false;
+                Config::$curlOptions[CURLOPT_SSL_VERIFYHOST] = 0;
+            }
 
             $status = Transaction::status($orderId);
 
@@ -226,6 +241,29 @@ class MidtransService
                     }
 
                     return true;
+                }
+            } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
+                $newStatus = ($transactionStatus === 'expire') ? 'expired' : 'dibatalkan';
+                
+                $bookingsToUpdate = collect([]);
+                if (!empty($cached['group_booking_ids'])) {
+                    $bookingsToUpdate = Booking::whereIn('id', $cached['group_booking_ids'])->get();
+                } else {
+                    $bookingsToUpdate->push($booking);
+                }
+
+                foreach ($bookingsToUpdate as $b) {
+                    $b->update([
+                        'payment_status' => 'belum_bayar',
+                        'status' => $newStatus,
+                    ]);
+
+                    $payment = $b->payments()->where('status', 'pending')->first();
+                    if ($payment) {
+                        $payment->update([
+                            'status' => 'ditolak',
+                        ]);
+                    }
                 }
             }
         } catch (\Exception $e) {
