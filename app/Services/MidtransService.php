@@ -18,12 +18,18 @@ class MidtransService
         Config::$isSanitized = config('midtrans.is_sanitized');
         Config::$is3ds = config('midtrans.is_3ds');
 
-        // Prevent curl hanging by setting connect and total timeouts
+        // Prevent curl hanging by setting connect and total timeouts, and fix SDK key 10023 bug
         Config::$curlOptions = [
             CURLOPT_CONNECTTIMEOUT => 2,
             CURLOPT_TIMEOUT => 3,
-            CURLOPT_HTTPHEADER => ['Content-Type: application/json'], // Fix for Midtrans SDK key 10023 bug
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
         ];
+
+        // Hanya bypass SSL di local development
+        if (app()->environment('local')) {
+            Config::$curlOptions[CURLOPT_SSL_VERIFYPEER] = false;
+            Config::$curlOptions[CURLOPT_SSL_VERIFYHOST] = 0;
+        }
     }
 
     public function getSnapToken(Booking $booking): string
@@ -178,17 +184,23 @@ class MidtransService
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json'], // Fix for Midtrans SDK key 10023 bug
             ];
 
+            // Hanya bypass SSL di local development
+            if (app()->environment('local')) {
+                Config::$curlOptions[CURLOPT_SSL_VERIFYPEER] = false;
+                Config::$curlOptions[CURLOPT_SSL_VERIFYHOST] = 0;
+            }
+
             $status = Transaction::status($orderId);
-            
+
             // Convert status object to array if needed
             $status = (array) $status;
-            
+
             $transactionStatus = $status['transaction_status'] ?? null;
             $fraudStatus = $status['fraud_status'] ?? null;
 
             if ($transactionStatus === 'capture' || $transactionStatus === 'settlement') {
                 if ($fraudStatus === 'accept' || $fraudStatus === null) {
-                    
+
                     // Identify which bookings to update
                     $bookingsToConfirm = collect([]);
                     if (!empty($cached['group_booking_ids'])) {
