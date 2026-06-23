@@ -54,7 +54,7 @@
 
                         $categoryImages = [
                             'prewedding' => 'images/categories/wedding/cover.jpeg',
-                            'wedding' => 'images/categories/wedding/cover.jpeg',
+                            'wedding' => 'storage/packages/wedding11.jpg',
                             'regular' => 'images/categories/regular/cover.jpeg',
                             'baju' => 'images/categories/khusus-baju/cover.jpeg',
                         ];
@@ -97,7 +97,7 @@
                     <div class="col-md-6 col-lg-3">
                         <div class="portfolio-card">
                             @if($item->image)
-                                <img src="{{ str_starts_with($item->image, 'images/') ? asset($item->image) : asset('storage/' . $item->image) }}" alt="{{ $item->title }}" class="portfolio-img">
+                                <img src="{{ str_starts_with($item->image, 'images/') ? asset($item->image) : asset('storage/' . $item->image) }}" alt="{{ $item->title }}" class="portfolio-img portfolio-img-{{ $item->category }}">
                             @else
                                 <div class="portfolio-placeholder"><i class="bi bi-image"></i></div>
                             @endif

@@ -21,7 +21,7 @@
                 <div class="col-md-6 col-lg-4 portfolio-item" data-category="{{ $item->category }}">
                     <div class="portfolio-card portfolio-card-lg">
                         @if($item->image)
-                            <img src="{{ str_starts_with($item->image, 'images/') ? asset($item->image) : asset('storage/' . $item->image) }}" alt="{{ $item->title }}" class="portfolio-img">
+                            <img src="{{ str_starts_with($item->image, 'images/') ? asset($item->image) : asset('storage/' . $item->image) }}" alt="{{ $item->title }}" class="portfolio-img portfolio-img-{{ $item->category }}">
                         @else
                             <div class="portfolio-placeholder"><i class="bi bi-image"></i></div>
                         @endif
