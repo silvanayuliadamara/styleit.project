@@ -321,7 +321,7 @@
             <div class="col-lg-5">
                 <div class="position-sticky cover-image-sticky">
                     @if ($package->image)
-                        <img src="{{ asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="aspect-ratio: 3/4; object-fit: cover; border: 1px solid #eadfd6;">
+                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="aspect-ratio: 3/4; object-fit: cover; border: 1px solid #eadfd6;">
                     @else
                         <div class="w-100 rounded-4 d-flex align-items-center justify-content-center bg-light border text-muted" style="aspect-ratio: 3/4; border-color: #eadfd6 !important;">
                             <i class="bi bi-image" style="font-size: 48px;"></i>
@@ -473,6 +473,7 @@
                     </div>
                 </div>
 
+                @if($package->category->slug !== 'baju')
                 <div class="mb-4">
                     <label class="form-label fw-bold" style="color: var(--lyb-dark); font-size: 15px;">Penggunaan Softlens <span class="text-danger">*</span></label>
                     <div class="softlens-container">
@@ -486,6 +487,9 @@
                         </label>
                     </div>
                 </div>
+                @else
+                    <input type="hidden" name="softlens" value="0">
+                @endif
 
                 {{-- Dynamic Fitting Date Selection --}}
                 <div id="fittingDateContainer" class="mb-4 d-none">
@@ -711,20 +715,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         fittingContainer.classList.remove('d-none');
                         fittingInput.required = true;
                         
-                        // Min date is today
-                        const todayStr = new Date().toISOString().split('T')[0];
-                        fittingInput.min = todayStr;
+                        // No minimum date constraint (all dates before booking date are available)
+                        fittingInput.removeAttribute('min');
                         
                         // Max date is event_date - 1 day
                         const eventDate = new Date(dateVal);
                         eventDate.setDate(eventDate.getDate() - 1);
                         
-                        if (eventDate >= new Date()) {
-                            const maxDateStr = eventDate.toISOString().split('T')[0];
-                            fittingInput.max = maxDateStr;
-                        } else {
-                            fittingInput.max = todayStr;
-                        }
+                        const maxDateStr = eventDate.toISOString().split('T')[0];
+                        fittingInput.max = maxDateStr;
                         
                         if (editTanggalFitting) {
                             fittingInput.value = editTanggalFitting;
@@ -771,12 +770,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
+            @if($package->category->slug !== 'baju')
             const selectedSoftlens = document.querySelector('input[name="softlens"]:checked');
             if (!selectedSoftlens) {
                 e.preventDefault();
                 alert('Silakan pilih apakah Anda menggunakan softlens atau tidak.');
                 return false;
             }
+            @endif
 
             const fittingContainer = document.getElementById('fittingDateContainer');
             if (fittingContainer && !fittingContainer.classList.contains('d-none')) {

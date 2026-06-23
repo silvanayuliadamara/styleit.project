@@ -45,7 +45,7 @@ class CartController extends Controller
         }
 
         if ($categorySlug === 'baju') {
-            $rules['tanggal_fitting'] = ['required', 'date', 'after_or_equal:today', 'before:booking_date'];
+            $rules['tanggal_fitting'] = ['required', 'date', 'before:booking_date'];
         } else {
             $rules['tanggal_fitting'] = ['nullable', 'date'];
         }

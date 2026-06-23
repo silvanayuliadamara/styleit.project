@@ -329,9 +329,11 @@
                                         @endif
                                     </span>
                                     
+                                    @if(strtolower($item['category_name']) !== 'khusus baju' && strtolower($item['category_name']) !== 'baju' && strtolower($item['category_name']) !== 'baju pengantin')
                                     <span class="detail-text">
                                         <i class="bi bi-eye"></i> Softlens: {{ $item['softlens'] ? 'Ya' : 'Tidak' }}
                                     </span>
+                                    @endif
                                     
                                     @if(!empty($item['tanggal_fitting']))
                                         <span class="detail-text">
