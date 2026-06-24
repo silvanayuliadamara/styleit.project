@@ -2,6 +2,21 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Sembunyikan scrollbar di semua browser secara global namun tetap bisa scroll */
+*::-webkit-scrollbar {
+    display: none;
+}
+* {
+    -ms-overflow-style: none; /* IE & Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+
+/* Global Smooth Transitions */
+a, button, .btn {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 body {
     margin: 0;
     font-family: Georgia, "Times New Roman", serif;
@@ -449,6 +464,7 @@ body {
     height: 1px;
     background: #c9a96e;
 }
+
 
 .pricelist-hero-title {
     font-family: Georgia, "Times New Roman", serif;
@@ -959,12 +975,27 @@ body {
     border: 1px solid var(--lyb-line);
     border-radius: 28px;
     padding: 28px;
-    box-shadow: 0 18px 45px rgba(33, 19, 19, 0.07);
+    box-shadow: 0 14px 40px rgba(33, 19, 19, 0.05);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.price-card:hover,
+.glass-card:hover,
+.feature-card:hover,
+.stat-card:hover,
+.cart-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 50px rgba(95, 64, 54, 0.1);
+    border-color: var(--lyb-gold);
 }
 
 .price-card.popular {
     border-color: var(--lyb-gold);
-    box-shadow: 0 22px 55px rgba(176, 138, 66, 0.2);
+    box-shadow: 0 20px 48px rgba(176, 138, 66, 0.15);
+}
+
+.price-card.popular:hover {
+    box-shadow: 0 26px 56px rgba(176, 138, 66, 0.25);
 }
 
 .popular-badge {
@@ -1009,6 +1040,13 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 50px rgba(95, 64, 54, 0.1);
+    border-color: var(--lyb-gold);
 }
 
 .portfolio-placeholder {
@@ -1366,38 +1404,45 @@ body {
 }
 
 .status-badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     border-radius: 999px;
-    padding: 7px 12px;
+    padding: 5px 14px;
     background: #eee4da;
     color: var(--lyb-dark);
     font-family: Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 800;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: capitalize;
+    letter-spacing: 0.5px;
+    border: 1px solid transparent;
 }
 
 .status-badge.menunggu_konfirmasi,
 .status-badge.pending {
-    background: #fff1cc;
-    color: #896414;
+    background: #fdf6e2;
+    color: #b27a00;
+    border-color: #f7e3b8;
 }
 
 .status-badge.diterima,
 .status-badge.selesai {
-    background: #dff0dc;
-    color: #376b31;
+    background: #eafaf1;
+    color: #219653;
+    border-color: #d1f2e1;
 }
 
 .status-badge.ditolak,
 .status-badge.dibatalkan {
-    background: #f3d7d7;
-    color: #843232;
+    background: #fdf2f2;
+    color: #eb5757;
+    border-color: #fbd5d5;
 }
 
 .status-badge.payment {
-    background: #e8e2f6;
-    color: #533d83;
+    background: #f2f0f9;
+    color: #9b51e0;
+    border-color: #e3dff4;
 }
 
 .customer-table {
@@ -1447,8 +1492,8 @@ body {
 }
 
 .category-photo-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 24px 50px rgba(42, 26, 22, 0.18);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 26px 54px rgba(42, 26, 22, 0.2);
 }
 
 .category-photo-overlay {
@@ -1956,7 +2001,7 @@ body {
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .lyb-admin-nav-link span {
@@ -1965,10 +2010,17 @@ body {
     gap: 10px;
 }
 
-.lyb-admin-nav-link:hover,
+.lyb-admin-nav-link:hover {
+    background: #3a2222;
+    color: #fff;
+    transform: translateX(4px);
+}
+
 .lyb-admin-nav-link.active {
     background: #3a2222;
     color: #fff;
+    box-shadow: inset 4px 0 0 var(--lyb-gold, #b08a42);
+    padding-left: 20px;
 }
 
 .lyb-admin-nav-link i {
@@ -2245,47 +2297,56 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    padding: 5px 12px;
+    padding: 5px 14px;
     font-family: Arial, sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
+    letter-spacing: 0.5px;
+    border: 1px solid transparent;
 }
 
 .lyb-admin-status.pending {
-    background: #fff4cc;
-    color: #896414;
+    background: #fdf6e2;
+    color: #b27a00;
+    border-color: #f7e3b8;
 }
 
 .lyb-admin-status.confirmed {
-    background: #e8f4fe;
+    background: #eaf6fe;
     color: #1d6ea6;
+    border-color: #d2e9fc;
 }
 
 .lyb-admin-status.process {
-    background: #e8e2f6;
-    color: #533d83;
+    background: #f2f0f9;
+    color: #9b51e0;
+    border-color: #e3dff4;
 }
 
 .lyb-admin-status.completed {
-    background: #dff0dc;
-    color: #376b31;
+    background: #eafaf1;
+    color: #219653;
+    border-color: #d1f2e1;
 }
 
 .lyb-admin-status.cancelled {
-    background: #f3d7d7;
-    color: #843232;
+    background: #fdf2f2;
+    color: #eb5757;
+    border-color: #fbd5d5;
 }
 
 .lyb-admin-status.expired {
-    background: #ffe1e8;
-    color: #c91c4a;
+    background: #fff0f3;
+    color: #eb5757;
+    border-color: #ffd5dd;
 }
 
 .lyb-admin-status.paid {
-    background: #dff0dc;
-    color: #376b31;
+    background: #eafaf1;
+    color: #219653;
+    border-color: #d1f2e1;
 }
 
 .lyb-status-lg {
@@ -2917,16 +2978,17 @@ body {
 .step-number {
     width: 48px;
     height: 48px;
-    background: var(--lyb-gold);
+    background: linear-gradient(135deg, var(--lyb-gold) 0%, #d8a84f 100%);
     color: #fff;
-    border-radius: 50%;
+    border-radius: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 20px;
-    font-weight: bold;
+    font-weight: 800;
     margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(176, 138, 66, 0.3);
+    box-shadow: 0 8px 20px rgba(176, 138, 66, 0.25);
+    font-family: Arial, sans-serif;
 }
 
 .step-card h4 {
@@ -2941,4 +3003,426 @@ body {
     color: #6f625c;
     line-height: 1.6;
     margin-bottom: 0;
+}
+
+/* ==========================================================================
+   PREMIUM UX ADDITIONS (PORTFOLIO FILTER, GLASS TESTIMONIAL, GOLD GRADIENT, ZOOM BROCHURES)
+   ========================================================================== */
+
+/* 1. Portfolio grid filtering transition */
+.portfolio-item {
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 2. Glassmorphic Filter Buttons */
+.filter-btn {
+    border: 1px solid var(--lyb-line);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--lyb-dark);
+    padding: 9px 22px;
+    border-radius: 999px;
+    margin: 4px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 15px rgba(95, 64, 54, 0.03);
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+    background: var(--lyb-dark);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(33, 19, 19, 0.16);
+    transform: translateY(-2px);
+    border-color: var(--lyb-dark);
+}
+
+/* 3. Gold Gradient Text */
+.gold-gradient-text {
+    background: linear-gradient(135deg, var(--lyb-dark) 35%, var(--lyb-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* 4. Testimoni Card Glassmorphism */
+.testimoni-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(234, 223, 214, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.testimoni-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: rgba(176, 138, 66, 0.3) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* 5. Brochure image hover zoom */
+.brochure-card-img {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.brochure-card-img:hover {
+    transform: scale(1.06);
+}
+
+/* 6. Carousel Hero Slideshow */
+.hero-carousel-wrap {
+    border: 1px solid var(--lyb-line);
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 26px 70px rgba(33, 19, 19, 0.1);
+    overflow: hidden;
+    padding: 12px;
+}
+
+.hero-slide-card {
+    height: 480px;
+    border-radius: 24px;
+    background-size: cover;
+    background-position: center top;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(33, 19, 19, 0.85) 0%, rgba(33, 19, 19, 0.3) 50%, rgba(33, 19, 19, 0.1) 100%);
+    z-index: 1;
+}
+
+.slide-content {
+    position: relative;
+    z-index: 2;
+    padding: 30px;
+    color: #fff;
+    width: 100%;
+}
+
+.slide-content blockquote {
+    font-size: 20px;
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.slide-content p {
+    font-size: 13px;
+    color: #f7d98b;
+    margin-bottom: 0;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.carousel-indicators-custom {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.carousel-indicators-custom button {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background: #eadfd6;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.carousel-indicators-custom button.active {
+    background: var(--lyb-gold);
+    width: 24px;
+    border-radius: 4px;
+}
+
+/* 7. Profile MUA Section */
+.profile-image-wrap {
+    position: relative;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(42, 26, 22, 0.1);
+}
+
+.profile-img-main {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-image-wrap:hover .profile-img-main {
+    transform: scale(1.04);
+}
+
+.profile-badge {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    background: rgba(33, 19, 19, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(176, 138, 66, 0.3);
+    padding: 10px 18px;
+    border-radius: 99px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
+}
+
+.profile-badge:hover {
+    background: var(--lyb-gold);
+    color: var(--lyb-dark) !important;
+    border-color: var(--lyb-gold);
+    transform: translateY(-2px);
+}
+
+.profile-badge i {
+    color: var(--lyb-gold);
+    transition: color 0.3s ease;
+}
+
+.profile-badge:hover i {
+    color: var(--lyb-dark) !important;
+}
+
+.profile-content .profile-title {
+    font-family: Georgia, serif;
+    font-size: 40px;
+    color: var(--lyb-dark);
+    margin-top: 8px;
+}
+
+.profile-divider {
+    width: 60px;
+    height: 3px;
+    background: var(--lyb-gold);
+    margin: 20px 0 24px;
+    border-radius: 2px;
+}
+
+.lead-text {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #4e3a30;
+    font-family: Arial, sans-serif;
+}
+
+.profile-content p {
+    color: #6f625c;
+    line-height: 1.7;
+}
+
+.artist-quote {
+    background: #fffdf9;
+    border-left: 3px solid var(--lyb-gold);
+    padding: 16px 24px;
+    border-radius: 0 20px 20px 0;
+}
+
+.quote-text {
+    font-style: italic;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    color: var(--lyb-dark);
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.artist-signature {
+    font-family: 'Georgia', cursive;
+    font-size: 20px;
+    color: var(--lyb-gold);
+    margin-bottom: 0;
+}
+
+/* 8. FAQ Accordion Custom */
+.accordion-custom {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.accordion-custom .accordion-item {
+    border: 1px solid var(--lyb-line);
+    border-radius: 16px !important;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(78, 47, 35, 0.02);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.accordion-custom .accordion-item:hover {
+    border-color: var(--lyb-gold);
+    box-shadow: 0 10px 25px rgba(95, 64, 54, 0.05);
+}
+
+.accordion-custom .accordion-button {
+    font-family: Georgia, serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--lyb-dark);
+    padding: 18px 24px;
+    background: #fff;
+    border: none;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.accordion-custom .accordion-button:not(.collapsed) {
+    color: #b08a42;
+    background: #fffdfa;
+    font-weight: 700;
+}
+
+.accordion-custom .accordion-button::after {
+    background-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.accordion-custom .accordion-body {
+    padding: 0 24px 20px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #6f625c;
+    line-height: 1.7;
+    background: #fff;
+}
+
+/* 9. Instagram Feed Mockup Grid */
+.instagram-grid-card {
+    display: block;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 1;
+    box-shadow: 0 10px 24px rgba(33, 19, 19, 0.06);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.instagram-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.instagram-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(33, 19, 19, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.instagram-overlay i {
+    color: #fff;
+    font-size: 28px;
+    transform: scale(0.8);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.instagram-grid-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(176, 138, 66, 0.15);
+}
+
+.instagram-grid-card:hover .instagram-img {
+    transform: scale(1.05);
+}
+
+.instagram-grid-card:hover .instagram-overlay {
+    opacity: 1;
+}
+
+.instagram-grid-card:hover .instagram-overlay i {
+    transform: scale(1);
+}
+
+/* 10. CTA Banner Section */
+.cta-glass-card {
+    background: linear-gradient(135deg, rgba(33, 19, 19, 0.98) 0%, rgba(58, 34, 34, 0.95) 100%);
+    border-radius: 28px;
+    border: 1px solid rgba(176, 138, 66, 0.2);
+    box-shadow: 0 20px 50px rgba(33, 19, 19, 0.25);
+    overflow: hidden;
+    position: relative;
+}
+
+.cta-title {
+    font-family: Georgia, serif;
+    font-size: 32px;
+    color: #fff;
+    margin-bottom: 12px;
+}
+
+.cta-desc {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    color: #efe2d5;
+    line-height: 1.6;
+}
+
+.btn-cta-gold {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #b08a42 0%, #d8a84f 100%);
+    color: #fff;
+    border-radius: 14px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(176, 138, 66, 0.3);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-cta-gold:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(176, 138, 66, 0.45);
+}
+
+.btn-cta-gold:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 991px) {
+    .profile-img-main {
+        height: 380px;
+    }
+    .profile-content .profile-title {
+        font-size: 32px;
+    }
+    .hero-slide-card {
+        height: 380px;
+    }
 }

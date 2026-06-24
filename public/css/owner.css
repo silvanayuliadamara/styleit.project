@@ -198,17 +198,17 @@
     min-height: 105px;
     background: #fff;
     border: 1px solid #eadfd6;
-    border-radius: 14px;
-    padding: 10px;
+    border-radius: 16px;
+    padding: 12px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
 }
 
 .lyb-cal-cell:hover {
     border-color: #b08a42;
-    box-shadow: 0 6px 18px rgba(176, 138, 66, 0.12);
-    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(176, 138, 66, 0.12);
+    transform: translateY(-3px);
 }
 
 .lyb-cal-cell.today {
@@ -424,19 +424,19 @@
 
 .lyb-sched-input {
     border: 1px solid #eadfd6;
-    border-radius: 10px;
-    padding: 8px 12px;
+    border-radius: 12px;
+    padding: 10px 14px;
     font-family: Arial, sans-serif;
     font-size: 13px;
     color: #211313;
     width: 100%;
-    transition: border-color 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .lyb-sched-input:focus {
     outline: none;
     border-color: #b08a42;
-    box-shadow: 0 0 0 3px rgba(176, 138, 66, 0.12);
+    box-shadow: 0 0 0 3px rgba(176, 138, 66, 0.15);
 }
 
 .lyb-sched-switch {
@@ -596,25 +596,29 @@
 ========================= */
 .lyb-admin-status.selesai,
 .lyb-admin-status.completed {
-    background: #dff0dc;
-    color: #376b31;
+    background: #eafaf1;
+    color: #219653;
+    border-color: #d1f2e1;
 }
 
 .lyb-admin-status.aktif,
 .lyb-admin-status.confirmed {
-    background: #e8f4fe;
+    background: #eaf6fe;
     color: #1d6ea6;
+    border-color: #d2e9fc;
 }
 
 .lyb-admin-status.ditolak,
 .lyb-admin-status.cancelled {
-    background: #f3d7d7;
-    color: #843232;
+    background: #fdf2f2;
+    color: #eb5757;
+    border-color: #fbd5d5;
 }
 
 .lyb-admin-status.diterima {
-    background: #e8f4fe;
+    background: #eaf6fe;
     color: #1d6ea6;
+    border-color: #d2e9fc;
 }
 
 /* =========================
