@@ -1,8 +1,24 @@
 @extends('layouts.app', ['title' => $category->name . ' - Lisa Yuli Belti'])
 
 @section('content')
+<style>
+    .back-link {
+        transition: all 0.3s ease;
+        color: #88746a !important;
+    }
+    .back-link:hover {
+        color: #b08a42 !important;
+        transform: translateX(-4px);
+    }
+</style>
+
 <section class="page-hero">
     <div class="container text-center">
+        <div class="mb-3 text-start">
+            <a href="{{ route('layanan.index') }}" class="text-decoration-none d-inline-flex align-items-center gap-2 back-link" style="font-size: 14px; font-weight: 500;">
+                <i class="bi bi-arrow-left"></i> Kembali ke Kategori Layanan
+            </a>
+        </div>
         <p class="hero-label">{{ strtoupper($category->headline) }}</p>
         <h1>{{ $category->name }}</h1>
         <p>{{ $category->description }}</p>

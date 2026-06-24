@@ -244,10 +244,23 @@
             font-size: 1.2rem;
         }
     }
+    .back-link {
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .back-link:hover {
+        color: #b08a42 !important;
+        transform: translateX(-4px);
+    }
 </style>
 
 <section class="payment-success-section">
-    <div class="container d-flex justify-content-center">
+    <div class="container d-flex flex-column align-items-center">
+        <div class="w-100 mb-3 text-start" style="max-width: 520px;">
+            <a href="{{ route('customer.dashboard') }}" class="text-decoration-none d-inline-flex align-items-center gap-2 back-link" style="font-size: 14px; font-weight: 500; color: #9c9587;">
+                <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
+            </a>
+        </div>
         <div class="success-card">
             {{-- Green Header with Check Icon --}}
             <div class="success-header">
