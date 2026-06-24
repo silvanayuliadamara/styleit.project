@@ -7,7 +7,7 @@ Dokumen ini menjelaskan fitur-fitur utama pada project StyleIt / Lisa Yuli Belti
 ## 1. Login
 
 ### Tujuan Fitur
-Fitur login digunakan agar user dapat masuk ke sistem menggunakan akun yang sudah terdaftar.
+Fitur login digunakan agar user dapat masuk ke sistem menggunakan akun yang sudah terdaftar secara aman.
 
 ### Aktor
 - Customer
@@ -15,11 +15,12 @@ Fitur login digunakan agar user dapat masuk ke sistem menggunakan akun yang suda
 - Owner
 
 ### Alur Fitur
-User membuka halaman login, lalu memasukkan email dan kata sandi. Sistem akan memvalidasi data login. Jika data benar, user diarahkan ke halaman dashboard sesuai role masing-masing. Jika data salah, sistem menampilkan pesan error.
+User membuka halaman login, lalu memasukkan email, kata sandi, dan kode captcha yang tertera. Sistem akan memvalidasi kecocokan kredensial dan kevalidan kode captcha. Jika data benar dan captcha sesuai, user diarahkan ke halaman dashboard sesuai role masing-masing. Jika kredensial salah atau captcha tidak cocok, sistem menampilkan pesan error. User juga dapat menekan tombol refresh captcha untuk menyegarkan kode yang ditampilkan.
 
 ### Route / Controller Terkait
-- Route: `GET /login`
-- Route: `POST /login`
+- Route: `GET /login` (tampilan login)
+- Route: `POST /login` (proses autentikasi dan validasi captcha)
+- Route: `GET /refresh-captcha` (refresh gambar captcha secara asinkron)
 - Controller: `AuthController`
 
 ### Screenshot Fitur
@@ -184,7 +185,7 @@ Fitur booking customer digunakan untuk menampilkan daftar booking yang telah dib
 - Customer
 
 ### Alur Fitur
-Customer membuka halaman booking. Sistem menampilkan daftar booking yang dimiliki customer dalam bentuk tabel yang berisi kolom Kode (kode unik booking seperti LYB-PREV-xxxxx), Paket, Tanggal, Total, Status booking (contoh: Pending, Menunggu Konfirmasi), dan Status Pembayaran (contoh: Belum Bayar, Dp Diupload). Customer dapat menekan tombol Detail untuk melihat informasi lengkap booking yang sudah dibuat.
+Customer membuka halaman booking. Sistem menampilkan daftar booking yang dimiliki customer dalam bentuk tabel yang berisi kolom Kode (kode unik booking seperti LYB-PREV-xxxxx), Paket, Tanggal Acara (beserta detail slot waktu seperti Pagi, Siang, Sore), Total, Status booking (contoh: Pending, Menunggu Konfirmasi), dan Status Pembayaran (contoh: Belum Bayar, Dp Diupload). Customer dapat menekan tombol Detail untuk melihat informasi lengkap booking yang sudah dibuat.
 
 ### Route / Controller Terkait
 - Route: `GET /customer/bookings`
@@ -205,7 +206,7 @@ Dashboard customer digunakan untuk menampilkan ringkasan aktivitas customer sete
 - Customer
 
 ### Alur Fitur
-Customer berhasil login ke sistem, lalu diarahkan ke dashboard customer. Sistem menampilkan informasi ringkasan seperti data akun customer, jumlah booking, status booking terbaru, dan akses cepat menuju halaman booking atau layanan.
+Customer berhasil login ke sistem, lalu diarahkan ke dashboard customer. Sistem menampilkan informasi ringkasan seperti data akun customer, jumlah booking, status booking terbaru (termasuk tanggal acara dan slot waktu yang dipilih), dan akses cepat menuju halaman booking atau layanan. Jika proses checkout dibatalkan atau pembayaran tidak ditemukan, customer diarahkan ke dashboard ini disertai notifikasi peringatan (*warning alert*).
 
 ### Route / Controller Terkait
 - Route: `GET /customer/dashboard`
@@ -213,3 +214,21 @@ Customer berhasil login ke sistem, lalu diarahkan ke dashboard customer. Sistem 
 
 ### Screenshot Fitur
 ![Screenshot Dashboard Customer](screenshots/dashboard-customer.png)
+
+---
+
+## 11. Pembatalan Otomatis Booking Expired
+
+### Tujuan Fitur
+Fitur pembatalan otomatis digunakan untuk mendeteksi dan membatalkan pesanan booking yang pembayarannya (DP) tidak diselesaikan oleh customer dalam batas waktu 1 jam.
+
+### Aktor
+- Sistem
+
+### Alur Fitur
+Setiap kali ada request web masuk (melalui middleware) atau setiap menit lewat Scheduler Laravel, sistem akan mengecek seluruh booking berstatus `pending` dan berstatus pembayaran `belum_bayar` yang umurnya melebihi 1 jam sejak dibuat. Jika ditemukan, sistem akan mengubah status booking tersebut menjadi `dibatalkan`, status layanan menjadi `dibatalkan`, dan status transaksi pembayaran terkait menjadi `ditolak` secara otomatis.
+
+### Route / Controller Terkait
+- Middleware: `App\Http\Middleware\CancelExpiredBookings` (mengecek secara dinamis di setiap request web)
+- Scheduler: Pemicu scheduler di `bootstrap/app.php` (`Booking::cancelExpiredBookings()` dijalankan `everyMinute()`)
+- Model: `App\Models\Booking` (metode `cancelExpiredBookings()`)

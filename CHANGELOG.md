@@ -278,3 +278,38 @@ Format changelog mengikuti kategori:
 - Booking Detail Module (Customer & Owner)
 - Customer Dashboard Module
 - Public Landing Page (Home)
+
+---
+
+## Released - Version 1.3.0 - 2026-06-24
+
+### Added
+
+- Menambahkan fitur verifikasi Captcha pada halaman login menggunakan library `mews/captcha` untuk mencegah serangan otomatis (brute force).
+- Menambahkan tombol refresh captcha dengan transisi animasi ikon putar (`bi-spin`).
+- Menambahkan fitur otomatisasi pembatalan booking kedaluwarsa setelah 1 jam jika belum melakukan pembayaran DP (`payment_status = belum_bayar`).
+- Menambahkan middleware `CancelExpiredBookings` untuk memicu pembatalan otomatis di setiap request web.
+- Menambahkan scheduler di `bootstrap/app.php` untuk menjalankan pembatalan otomatis setiap menit.
+
+### Changed
+
+- Memperbarui `AuthController.php` untuk memvalidasi captcha saat proses login dan menangani endpoint refresh captcha.
+- Memperbarui file view `resources/views/auth/login.blade.php` dengan input captcha dan JavaScript AJAX untuk refresh captcha.
+- Memperbarui stylesheet `public/css/auth.css` untuk menyesuaikan layout dan animasi putar tombol refresh captcha.
+- Memperbarui tampilan tanggal acara pada dasbor customer, tabel booking admin, dan tabel booking owner agar menampilkan informasi slot waktu (`slot_waktu`) jika ada.
+- Memperbarui tampilan file cetak invoice (`shared/invoice.blade.php`) untuk menyertakan informasi slot waktu.
+- Mengubah alur redirect pada `CheckoutController.php` ketika pembayaran tidak ditemukan atau sudah diproses agar langsung diarahkan ke dasbor customer.
+- Memperbarui tata letak customer `resources/views/layouts/customer.blade.php` agar mendukung penampilan alert bertipe `warning`.
+
+### Dependency
+
+- Menambahkan dependency `mews/captcha` ^3.5 untuk memproses pembuatan gambar captcha.
+- Meresmikan integrasi penuh payment gateway `midtrans/midtrans-php` ^2.6 baik dari sisi backend maupun integrasi frontend Snap.js.
+
+### Impacted Modules
+
+- Auth Module (Login)
+- Booking Module (Admin, Owner, Customer)
+- Invoice Module
+- Checkout & Payment Module
+
