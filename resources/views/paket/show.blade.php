@@ -118,8 +118,19 @@
         background-color: var(--lyb-gold) !important;
         color: #fff !important;
         border-color: var(--lyb-gold) !important;
-        box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4);
         transform: scale(1.12);
+        animation: activePulse 1.2s infinite;
+    }
+    @keyframes activePulse {
+        0% {
+            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 0 rgba(176, 138, 66, 0.4);
+        }
+        70% {
+            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 8px rgba(176, 138, 66, 0);
+        }
+        100% {
+            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 0 rgba(176, 138, 66, 0);
+        }
     }
     /* Full day */
     .calendar-day-cell.full {
@@ -361,12 +372,72 @@
         color: #fff;
         font-weight: 700;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-lyb-dark::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            to right,
+            transparent,
+            rgba(176, 138, 66, 0.3),
+            rgba(251, 248, 241, 0.5),
+            rgba(176, 138, 66, 0.3),
+            transparent
+        );
+        transform: skewX(-25deg);
+        animation: goldShimmer 4s infinite ease-in-out;
     }
     .btn-lyb-dark:hover {
         background-color: #3d2525;
         border-color: #3d2525;
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(33, 19, 19, 0.25);
+    }
+    @keyframes goldShimmer {
+        0% {
+            left: -150%;
+        }
+        30% {
+            left: 150%;
+        }
+        100% {
+            left: 150%;
+        }
+    }
+
+    /* Dynamic section load transitions */
+    .animate-slide-fade {
+        animation: slideFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slideFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Spinner rotation */
+    .spinner-icon {
+        display: inline-block;
+        animation: spin 1.2s linear infinite;
+    }
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
     }
     .link-whatsapp-gold {
         color: var(--lyb-gold) !important;
@@ -709,14 +780,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const editSlotWaktu = @json($editItem['slot_waktu'] ?? null);
     const editTanggalFitting = @json($editItem['tanggal_fitting'] ?? null);
     
+    function animateNumber(elementId, targetValue, prefix = 'Rp') {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        
+        let currentValue = parseInt(el.getAttribute('data-value'), 10);
+        if (isNaN(currentValue)) {
+            const text = el.textContent.replace(/\D/g, '');
+            currentValue = parseInt(text, 10) || 0;
+        }
+        
+        if (currentValue === targetValue) {
+            el.setAttribute('data-value', targetValue);
+            return;
+        }
+        
+        const duration = 400; // 400ms duration
+        const start = performance.now();
+        
+        function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Ease out quad
+            const easeProgress = progress * (2 - progress);
+            
+            const currentValueNow = Math.floor(currentValue + (targetValue - currentValue) * easeProgress);
+            
+            const formatter = new Intl.NumberFormat('id-ID');
+            el.textContent = prefix + formatter.format(currentValueNow);
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            } else {
+                el.setAttribute('data-value', targetValue);
+                el.textContent = prefix + formatter.format(targetValue);
+            }
+        }
+        
+        requestAnimationFrame(update);
+    }
+
     function updateTotals() {
         const addonTotal = [...document.querySelectorAll('input[name="addons[]"]:checked')].reduce((sum, item) => sum + Number(item.dataset.price), 0);
         const grandTotal = basePrice + addonTotal;
         const sisaTotal = grandTotal - baseDp;
         
-        const formatter = new Intl.NumberFormat('id-ID');
-        document.getElementById('grandTotal').textContent = 'Rp' + formatter.format(grandTotal);
-        document.getElementById('sisaTotal').textContent = 'Rp' + formatter.format(sisaTotal);
+        animateNumber('grandTotal', grandTotal, 'Rp');
+        animateNumber('sisaTotal', sisaTotal, 'Rp');
     }
     
     // Addon calculation
@@ -737,6 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const slotList = document.getElementById('slotList');
             slotList.innerHTML = '<div class="text-muted small p-2"><i class="bi bi-arrow-clockwise spinner-icon"></i> Mencari slot tersedia...</div>';
             slotContainer.classList.remove('d-none');
+            slotContainer.classList.add('animate-slide-fade');
 
             fetch(`/paket/{{ $package->code }}/slots?date=${dateVal}`)
                 .then(r => r.json())
@@ -746,6 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Populate slots
                     if (data.slots && Object.keys(data.slots).length > 0) {
                         slotContainer.classList.remove('d-none');
+                        slotContainer.classList.add('animate-slide-fade');
                         for (const [key, value] of Object.entries(data.slots)) {
                             const item = document.createElement('label');
                             item.className = 'd-flex align-items-center justify-content-between p-3 rounded-4 border slot-row-clickable ' + 
@@ -796,6 +909,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } else {
                         slotContainer.classList.add('d-none');
+                        slotContainer.classList.remove('animate-slide-fade');
                     }
                     
                     // Fitting date logic
@@ -803,6 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const fittingInput = document.getElementById('tanggalFittingInput');
                     if (data.needs_fitting) {
                         fittingContainer.classList.remove('d-none');
+                        fittingContainer.classList.add('animate-slide-fade');
                         fittingInput.required = true;
                         
                         // No minimum date constraint (all dates before booking date are available)
@@ -822,6 +937,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } else {
                         fittingContainer.classList.add('d-none');
+                        fittingContainer.classList.remove('animate-slide-fade');
                         fittingInput.required = false;
                         fittingInput.value = '';
                     }
