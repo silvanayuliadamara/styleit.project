@@ -66,7 +66,7 @@
     .calendar-grid-7 {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 10px;
+        gap: 12px 8px;
         text-align: center;
         align-items: center;
     }
@@ -76,12 +76,15 @@
         color: #a3958e;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        padding-bottom: 4px;
     }
     .calendar-day-cell {
-        aspect-ratio: 1;
         width: 100%;
-        max-width: 40px;
+        max-width: 38px;
+        aspect-ratio: 1;
         margin: 0 auto;
+        align-self: center;
+        justify-self: center;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -108,15 +111,26 @@
         color: #fff;
         border-color: #1a7a42;
         box-shadow: 0 4px 10px rgba(26, 122, 66, 0.15);
-        transform: scale(1.05);
+        transform: scale(1.08);
     }
     /* When selected (radio checked) */
     .calendar-day-cell.available:has(input:checked) {
         background-color: var(--lyb-gold) !important;
         color: #fff !important;
         border-color: var(--lyb-gold) !important;
-        box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4);
-        transform: scale(1.1);
+        transform: scale(1.12);
+        animation: activePulse 1.2s infinite;
+    }
+    @keyframes activePulse {
+        0% {
+            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 0 rgba(176, 138, 66, 0.4);
+        }
+        70% {
+            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 8px rgba(176, 138, 66, 0);
+        }
+        100% {
+            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 0 rgba(176, 138, 66, 0);
+        }
     }
     /* Full day */
     .calendar-day-cell.full {
@@ -143,6 +157,7 @@
     .calendar-day-cell.empty {
         background: transparent;
         border: none;
+        pointer-events: none;
     }
     /* Disabled cell (not in 60-day range) */
     .calendar-day-cell.disabled {
@@ -150,6 +165,83 @@
         background: transparent;
         border: none;
         cursor: not-allowed;
+    }
+
+    /* Month Navigation Buttons */
+    .calendar-nav-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 1px solid var(--lyb-gold-border);
+        border-radius: 50%;
+        background-color: #fff;
+        color: var(--lyb-dark);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .calendar-nav-btn:hover:not(:disabled) {
+        background-color: var(--lyb-gold-light);
+        border-color: var(--lyb-gold);
+        color: var(--lyb-gold);
+        transform: scale(1.05);
+    }
+    .calendar-nav-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+    }
+
+    /* Calendar Legend Premium */
+    .calendar-legend-custom {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+    .calendar-legend-custom .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6f625c;
+    }
+    .calendar-legend-custom .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    .calendar-legend-custom .available-dot {
+        background-color: #1a7a42;
+        box-shadow: 0 0 6px rgba(26, 122, 66, 0.4);
+    }
+    .calendar-legend-custom .full-dot {
+        background-color: #dc3545;
+        box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);
+    }
+    .calendar-legend-custom .blocked-dot {
+        background-color: #a3958e;
+        box-shadow: 0 0 6px rgba(163, 149, 142, 0.4);
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 576px) {
+        .calendar-month-card {
+            padding: 16px;
+        }
+        .calendar-grid-7 {
+            gap: 8px 4px;
+        }
+        .calendar-day-cell {
+            max-width: 32px;
+            font-size: 12px;
+        }
+        .calendar-legend-custom {
+            gap: 16px;
+            margin-top: 16px;
+        }
     }
 
     /* Interactive Radio & Checkbox Containers (Capsule shape) */
@@ -187,10 +279,38 @@
         transform: translateY(-1px);
     }
     
-    .addon-row-clickable input[type="checkbox"], 
-    .slot-row-clickable input[type="radio"] {
+    .addon-row-clickable input[type="checkbox"] {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        max-width: 20px !important;
+        max-height: 20px !important;
+        border-radius: 4px !important;
+        flex-shrink: 0 !important;
+        aspect-ratio: 1 / 1 !important;
         border-color: var(--lyb-gold-border) !important;
         transition: all 0.2s ease;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    .slot-row-clickable input[type="radio"] {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        max-width: 20px !important;
+        max-height: 20px !important;
+        border-radius: 50% !important;
+        flex-shrink: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        border-color: var(--lyb-gold-border) !important;
+        transition: all 0.2s ease;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
     }
     
     /* Make custom styling for radios/checkboxes inside active elements */
@@ -222,12 +342,21 @@
         background-color: var(--lyb-gold-light);
     }
     .softlens-pill input[type="radio"] {
-        width: 20px;
-        height: 20px;
-        border-color: var(--lyb-gold-border);
-        margin-right: 12px;
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        max-width: 20px !important;
+        max-height: 20px !important;
+        border-radius: 50% !important;
+        flex-shrink: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        border-color: var(--lyb-gold-border) !important;
+        margin: 0 !important;
+        margin-right: 12px !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
         cursor: pointer;
-        flex-shrink: 0;
     }
     .softlens-pill:has(input:checked) {
         border-color: var(--lyb-gold) !important;
@@ -280,12 +409,72 @@
         color: #fff;
         font-weight: 700;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-lyb-dark::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            to right,
+            transparent,
+            rgba(176, 138, 66, 0.3),
+            rgba(251, 248, 241, 0.5),
+            rgba(176, 138, 66, 0.3),
+            transparent
+        );
+        transform: skewX(-25deg);
+        animation: goldShimmer 4s infinite ease-in-out;
     }
     .btn-lyb-dark:hover {
         background-color: #3d2525;
         border-color: #3d2525;
         transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(33, 19, 19, 0.25);
+    }
+    @keyframes goldShimmer {
+        0% {
+            left: -150%;
+        }
+        30% {
+            left: 150%;
+        }
+        100% {
+            left: 150%;
+        }
+    }
+
+    /* Dynamic section load transitions */
+    .animate-slide-fade {
+        animation: slideFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slideFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Spinner rotation */
+    .spinner-icon {
+        display: inline-block;
+        animation: spin 1.2s linear infinite;
+    }
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
     }
     .link-whatsapp-gold {
         color: var(--lyb-gold) !important;
@@ -382,10 +571,10 @@
                             <i class="bi bi-calendar3" style="color: var(--lyb-gold); font-size: 16px;"></i> Pilih Tanggal Booking
                         </h5>
                         <div class="calendar-nav-buttons d-flex gap-2">
-                            <button type="button" class="btn btn-sm btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" id="prevMonthBtn" style="width: 32px; height: 32px; border-color: var(--lyb-gold-border); color: var(--lyb-dark);" onclick="navigateCalendar(-1)" disabled>
+                            <button type="button" class="btn calendar-nav-btn d-flex align-items-center justify-content-center" id="prevMonthBtn" onclick="navigateCalendar(-1)" disabled>
                                 <i class="bi bi-chevron-left" style="font-size: 12px; -webkit-text-stroke: 0.5px;"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" id="nextMonthBtn" style="width: 32px; height: 32px; border-color: var(--lyb-gold-border); color: var(--lyb-dark);" onclick="navigateCalendar(1)">
+                            <button type="button" class="btn calendar-nav-btn d-flex align-items-center justify-content-center" id="nextMonthBtn" onclick="navigateCalendar(1)">
                                 <i class="bi bi-chevron-right" style="font-size: 12px; -webkit-text-stroke: 0.5px;"></i>
                             </button>
                         </div>
@@ -458,10 +647,19 @@
                     </div>
 
                     {{-- Calendar Legend --}}
-                    <div class="calendar-legend d-flex justify-content-center gap-4 mt-4 flex-wrap" style="font-size: 12px; font-weight: 500;">
-                        <span class="d-flex align-items-center gap-2 text-secondary"><span style="width: 10px; height: 10px; border-radius: 50%; background-color: #1a7a42; display: inline-block; box-shadow: 0 0 6px rgba(26, 122, 66, 0.4);"></span> Tersedia</span>
-                        <span class="d-flex align-items-center gap-2 text-secondary"><span style="width: 10px; height: 10px; border-radius: 50%; background-color: #dc3545; display: inline-block; box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);"></span> Penuh</span>
-                        <span class="d-flex align-items-center gap-2 text-secondary"><span style="width: 10px; height: 10px; border-radius: 50%; background-color: #a3958e; display: inline-block; box-shadow: 0 0 6px rgba(163, 149, 142, 0.4);"></span> Diblokir</span>
+                    <div class="calendar-legend-custom">
+                        <div class="legend-item">
+                            <span class="legend-dot available-dot"></span>
+                            <span>Tersedia</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot full-dot"></span>
+                            <span>Penuh</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot blocked-dot"></span>
+                            <span>Diblokir</span>
+                        </div>
                     </div>
                 </div>
 
@@ -619,14 +817,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const editSlotWaktu = @json($editItem['slot_waktu'] ?? null);
     const editTanggalFitting = @json($editItem['tanggal_fitting'] ?? null);
     
+    function animateNumber(elementId, targetValue, prefix = 'Rp') {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        
+        let currentValue = parseInt(el.getAttribute('data-value'), 10);
+        if (isNaN(currentValue)) {
+            const text = el.textContent.replace(/\D/g, '');
+            currentValue = parseInt(text, 10) || 0;
+        }
+        
+        if (currentValue === targetValue) {
+            el.setAttribute('data-value', targetValue);
+            return;
+        }
+        
+        const duration = 400; // 400ms duration
+        const start = performance.now();
+        
+        function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Ease out quad
+            const easeProgress = progress * (2 - progress);
+            
+            const currentValueNow = Math.floor(currentValue + (targetValue - currentValue) * easeProgress);
+            
+            const formatter = new Intl.NumberFormat('id-ID');
+            el.textContent = prefix + formatter.format(currentValueNow);
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            } else {
+                el.setAttribute('data-value', targetValue);
+                el.textContent = prefix + formatter.format(targetValue);
+            }
+        }
+        
+        requestAnimationFrame(update);
+    }
+
     function updateTotals() {
         const addonTotal = [...document.querySelectorAll('input[name="addons[]"]:checked')].reduce((sum, item) => sum + Number(item.dataset.price), 0);
         const grandTotal = basePrice + addonTotal;
         const sisaTotal = grandTotal - baseDp;
         
-        const formatter = new Intl.NumberFormat('id-ID');
-        document.getElementById('grandTotal').textContent = 'Rp' + formatter.format(grandTotal);
-        document.getElementById('sisaTotal').textContent = 'Rp' + formatter.format(sisaTotal);
+        animateNumber('grandTotal', grandTotal, 'Rp');
+        animateNumber('sisaTotal', sisaTotal, 'Rp');
     }
     
     // Addon calculation
@@ -647,6 +885,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const slotList = document.getElementById('slotList');
             slotList.innerHTML = '<div class="text-muted small p-2"><i class="bi bi-arrow-clockwise spinner-icon"></i> Mencari slot tersedia...</div>';
             slotContainer.classList.remove('d-none');
+            slotContainer.classList.add('animate-slide-fade');
 
             fetch(`/paket/{{ $package->code }}/slots?date=${dateVal}`)
                 .then(r => r.json())
@@ -656,6 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Populate slots
                     if (data.slots && Object.keys(data.slots).length > 0) {
                         slotContainer.classList.remove('d-none');
+                        slotContainer.classList.add('animate-slide-fade');
                         for (const [key, value] of Object.entries(data.slots)) {
                             const item = document.createElement('label');
                             item.className = 'd-flex align-items-center justify-content-between p-3 rounded-4 border slot-row-clickable ' + 
@@ -672,6 +912,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             radioInput.className = 'form-check-input flex-shrink-0';
                             radioInput.style.width = '20px';
                             radioInput.style.height = '20px';
+                            radioInput.style.minWidth = '20px';
+                            radioInput.style.minHeight = '20px';
+                            radioInput.style.maxWidth = '20px';
+                            radioInput.style.maxHeight = '20px';
                             radioInput.required = true;
                             if (!value.available) {
                                 radioInput.disabled = true;
@@ -706,6 +950,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } else {
                         slotContainer.classList.add('d-none');
+                        slotContainer.classList.remove('animate-slide-fade');
                     }
                     
                     // Fitting date logic
@@ -713,6 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const fittingInput = document.getElementById('tanggalFittingInput');
                     if (data.needs_fitting) {
                         fittingContainer.classList.remove('d-none');
+                        fittingContainer.classList.add('animate-slide-fade');
                         fittingInput.required = true;
                         
                         // No minimum date constraint (all dates before booking date are available)
@@ -732,6 +978,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } else {
                         fittingContainer.classList.add('d-none');
+                        fittingContainer.classList.remove('animate-slide-fade');
                         fittingInput.required = false;
                         fittingInput.value = '';
                     }
