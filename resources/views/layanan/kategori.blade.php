@@ -11,45 +11,7 @@
 
 <section class="section-padding">
     <div class="container">
-        {{-- Pricelist Book / Manual Brochure Section --}}
-        @php
-            $brochures = [];
-            if ($category->slug === 'baju') {
-                $brochures = [
-                    ['url' => asset('storage/packages/attire_packages.jpg'), 'title' => 'Buku Paket Attire'],
-                    ['url' => asset('storage/packages/attire_items.jpg'), 'title' => 'Brosur Satuan Attire (Premium & Luxury)']
-                ];
-            } elseif ($category->slug === 'wedding') {
-                $brochures = [
-                    ['url' => asset('storage/packages/wedding_premium.jpg'), 'title' => 'Brosur Wedding Premium'],
-                    ['url' => asset('storage/packages/wedding_luxury.jpg'), 'title' => 'Brosur Wedding Luxury'],
-                    ['url' => asset('storage/packages/makeup_wedding.jpg'), 'title' => 'Brosur Jasa Makeup Wedding']
-                ];
-            }
-        @endphp
 
-        @if (!empty($brochures))
-            <div class="row mb-5 justify-content-center">
-                <div class="col-lg-10">
-                    <div class="glass-card p-4 rounded-4 shadow-sm border border-gold-light" style="background: rgba(251, 248, 241, 0.5); border: 1px solid #eadfd6 !important;">
-                        <h4 class="fw-bold mb-3 text-gold-dark text-center"><i class="bi bi-book-half me-2"></i> Buku Paket Manual / Pricelist Resmi</h4>
-                        <p class="text-secondary text-center small mb-4">Berikut adalah brosur/pricelist cetak resmi dari Lisa Yuli Belti. Klik gambar untuk memperbesar.</p>
-                        <div class="row g-3 justify-content-center">
-                            @foreach ($brochures as $b)
-                                <div class="col-6 col-sm-4 text-center">
-                                    <div class="position-relative overflow-hidden rounded-3 shadow-sm border border-light" style="background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important;">
-                                        <a href="{{ $b['url'] }}" target="_blank" title="Klik untuk memperbesar {{ $b['title'] }}">
-                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100" style="transition: transform 0.3s ease; display: block;">
-                                        </a>
-                                    </div>
-                                    <span class="d-block small fw-bold text-secondary mt-2" style="font-size: 11px;">{{ $b['title'] }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
 
         <div class="row g-4">
             @foreach($category->packages as $package)
