@@ -9,6 +9,7 @@
             id="{{ $id ?? 'password' }}"
             name="{{ $name ?? 'password' }}"
             class="@error($name ?? 'password') is-invalid @enderror"
+            placeholder="{{ $placeholder ?? '' }}"
         >
 
         <button
