@@ -38,9 +38,9 @@
                             <div class="col-12"><p class="small text-muted mb-2"><i class="bi bi-book-half"></i> Brosur Cetak / Buku Paket Resmi:</p></div>
                             @foreach ($brochures as $b)
                                 <div class="col-6 col-sm-4 col-md-3 text-center">
-                                    <div class="position-relative overflow-hidden rounded-3 shadow-sm border border-light" style="background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important;">
+                                    <div class="position-relative overflow-hidden rounded-4 shadow-sm" style="background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important; border-radius: 16px !important;">
                                         <a href="{{ $b['url'] }}" target="_blank" title="Klik untuk memperbesar {{ $b['title'] }}">
-                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100" style="transition: transform 0.3s ease; display: block;">
+                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100 brochure-card-img" style="transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: block;">
                                         </a>
                                     </div>
                                     <span class="d-block small fw-bold text-secondary mt-2" style="font-size: 11px;">{{ $b['title'] }}</span>
