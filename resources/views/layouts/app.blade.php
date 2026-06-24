@@ -49,6 +49,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            // Scroll Reveal Observer
             const reveals = document.querySelectorAll(".scroll-reveal");
             
             const observer = new IntersectionObserver((entries) => {
@@ -65,6 +66,20 @@
             reveals.forEach((element) => {
                 observer.observe(element);
             });
+
+            // Navbar shrink on scroll
+            const navbar = document.querySelector(".public-navbar");
+            if (navbar) {
+                const checkScroll = () => {
+                    if (window.scrollY > 40) {
+                        navbar.classList.add("scrolled");
+                    } else {
+                        navbar.classList.remove("scrolled");
+                    }
+                };
+                window.addEventListener("scroll", checkScroll);
+                checkScroll(); // Run immediately on load
+            }
         });
     </script>
     @stack('scripts')
