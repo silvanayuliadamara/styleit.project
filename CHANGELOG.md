@@ -290,6 +290,7 @@ Format changelog mengikuti kategori:
 - Menambahkan fitur otomatisasi pembatalan booking kedaluwarsa setelah 1 jam jika belum melakukan pembayaran DP (`payment_status = belum_bayar`).
 - Menambahkan middleware `CancelExpiredBookings` untuk memicu pembatalan otomatis di setiap request web.
 - Menambahkan scheduler di `bootstrap/app.php` untuk menjalankan pembatalan otomatis setiap menit.
+- Menambahkan fitur kompresi gambar otomatis untuk file gambar paket layanan yang diunggah oleh owner (lebar maksimal 800px, kualitas JPEG 80%).
 
 ### Changed
 
@@ -300,11 +301,13 @@ Format changelog mengikuti kategori:
 - Memperbarui tampilan file cetak invoice (`shared/invoice.blade.php`) untuk menyertakan informasi slot waktu.
 - Mengubah alur redirect pada `CheckoutController.php` ketika pembayaran tidak ditemukan atau sudah diproses agar langsung diarahkan ke dasbor customer.
 - Memperbarui tata letak customer `resources/views/layouts/customer.blade.php` agar mendukung penampilan alert bertipe `warning`.
+- Memperbarui `OwnerPackageController.php` pada method `store` dan `update` untuk memproses kompresi gambar menggunakan `ImageManager` sebelum disimpan.
 
 ### Dependency
 
 - Menambahkan dependency `mews/captcha` ^3.5 untuk memproses pembuatan gambar captcha.
 - Meresmikan integrasi penuh payment gateway `midtrans/midtrans-php` ^2.6 baik dari sisi backend maupun integrasi frontend Snap.js.
+- Menambahkan dependency `intervention/image` ^4.1 untuk pemrosesan dan optimasi gambar.
 
 ### Impacted Modules
 
@@ -312,4 +315,5 @@ Format changelog mengikuti kategori:
 - Booking Module (Admin, Owner, Customer)
 - Invoice Module
 - Checkout & Payment Module
+- Owner Package Module (Image Compression)
 
