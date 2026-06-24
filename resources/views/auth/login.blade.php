@@ -26,7 +26,7 @@
             </div>
         @endif
 
-        <form action="{{ route('login.process') }}" method="POST">
+        <form action="{{ route('login.process') }}" method="POST" class="login-form">
     @csrf
 
     <div class="form-group">
@@ -49,6 +49,30 @@
 
     @include('components.forgot-password-link')
 
+    <div class="form-group">
+        <label for="captcha">Captcha</label>
+        <div class="captcha-wrapper">
+            <div class="captcha-img" id="captcha-img-container">
+                {!! captcha_img('login') !!}
+            </div>
+            <button type="button" class="btn-refresh-captcha" id="btn-refresh" title="Segarkan Captcha">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+        <input
+            type="text"
+            id="captcha"
+            name="captcha"
+            placeholder="Masukkan kode di atas"
+            class="@error('captcha') is-invalid @enderror"
+            required
+            autocomplete="off"
+        >
+        @error('captcha')
+            <div class="error">{{ $message }}</div>
+        @enderror
+    </div>
+
     <button type="submit" class="btn-primary">Masuk</button>
 </form>
 
@@ -57,4 +81,25 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.getElementById('btn-refresh').addEventListener('click', function() {
+        const btn = this;
+        const icon = btn.querySelector('i');
+        
+        icon.classList.add('bi-spin');
+        btn.disabled = true;
+        
+        fetch('{{ route("captcha.refresh") }}')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('captcha-img-container').innerHTML = data.captcha;
+            })
+            .catch(error => console.error('Error refreshing captcha:', error))
+            .finally(() => {
+                icon.classList.remove('bi-spin');
+                btn.disabled = false;
+            });
+    });
+</script>
 @endsection
