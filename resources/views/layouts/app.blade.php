@@ -56,6 +56,8 @@
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add("revealed");
+                    } else if (entry.boundingClientRect.top > (window.innerHeight || document.documentElement.clientHeight)) {
+                        entry.target.classList.remove("revealed");
                     }
                 });
             }, {
