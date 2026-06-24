@@ -47,6 +47,26 @@
 
     @include('components.auth-footer')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const reveals = document.querySelectorAll(".scroll-reveal");
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("revealed");
+                    }
+                });
+            }, {
+                threshold: 0.05, // Trigger when at least 5% of the element is visible
+                rootMargin: "0px 0px -40px 0px" // Trigger slightly before it hits viewport center
+            });
+            
+            reveals.forEach((element) => {
+                observer.observe(element);
+            });
+        });
+    </script>
     @stack('scripts')
 </body>
 </html>
