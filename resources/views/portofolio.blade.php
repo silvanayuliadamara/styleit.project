@@ -35,13 +35,41 @@
     </div>
 </section>
 <script>
-document.querySelectorAll('.filter-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        document.querySelectorAll('.portfolio-item').forEach(item => {
-            item.style.display = filter === 'semua' || item.dataset.category === filter ? '' : 'none';
+document.addEventListener("DOMContentLoaded", function () {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+    filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            // 1. Hilangkan kelas 'active' dari semua tombol, lalu aktifkan tombol yang diklik
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filterValue = btn.dataset.filter;
+
+            // 2. Animasikan mengecil dan memudar keluar (fade out & scale down) semua gambar terlebih dahulu
+            portfolioItems.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'scale(0.92)';
+            });
+
+            // 3. Setelah 250ms (ketika efek memudar selesai), saring gambar mana yang akan ditampilkan
+            setTimeout(() => {
+                portfolioItems.forEach(item => {
+                    const isMatched = filterValue === 'semua' || item.dataset.category === filterValue;
+                    
+                    if (isMatched) {
+                        item.style.display = '';
+                        // Berikan sedikit jeda (20ms) agar browser sempat merender perpindahan display sebelum memicu animasi masuk
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'scale(1)';
+                        }, 20);
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }, 250);
         });
     });
 });
