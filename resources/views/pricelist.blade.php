@@ -3,18 +3,31 @@
 @section('title', 'Pricelist')
 
 @section('content')
-<section class="price-page py-5">
-    <div class="container price-container">
+{{-- Hero Header Section --}}
+<section class="pricelist-hero">
+    <div class="container text-center">
+        <div class="pricelist-hero-label">
+            <span class="pricelist-hero-line"></span>
+            <span>PRICELIST</span>
+            <span class="pricelist-hero-line"></span>
+        </div>
+        <h1 class="pricelist-hero-title">Daftar Harga</h1>
+    </div>
+</section>
+
+{{-- Price Categories --}}
+<section class="pricelist-body">
+    <div class="container pricelist-container">
 
         @foreach ($categories as $category)
             @if ($category->packages->isNotEmpty())
-                <div class="price-category mb-5">
+                <div class="pricelist-category scroll-reveal">
                     @if ($category->headline)
-                        <p class="section-kicker mb-1">{{ strtoupper($category->headline) }}</p>
+                        <p class="pricelist-kicker">{{ strtoupper($category->headline) }}</p>
                     @endif
 
-                    <h2 class="price-category-title">{{ $category->name }}</h2>
-                    <div class="price-line mb-4"></div>
+                    <h2 class="pricelist-category-title">{{ $category->name }}</h2>
+                    <div class="pricelist-divider"></div>
 
                     {{-- Brosur Manual untuk kategori ini --}}
                     @php
@@ -50,27 +63,27 @@
                     @endif
 
                     @foreach ($category->packages as $package)
-                        <div class="price-card mb-4">
-                            <div class="price-card-left">
-                                <h5>{{ $package->name }}</h5>
-                                <p>{{ $package->description }}</p>
+                        <div class="pricelist-card scroll-reveal">
+                            <div class="pricelist-card-info">
+                                <h5 class="pricelist-card-name">{{ $package->name }}</h5>
+                                <p class="pricelist-card-desc">{{ $package->description }}</p>
 
                                 @if ($package->items->isNotEmpty())
-                                    <small>Termasuk: 
+                                    <small class="pricelist-card-includes">Termasuk: 
                                         {{ $package->items->map(fn($it) => $it->name . ' (' . $it->quantity . ' ' . $it->unit . ')')->implode(', ') }}
                                     </small>
                                 @endif
 
-                                <div class="mt-3">
+                                <div class="pricelist-card-action">
                                     <a href="{{ route('paket.show', $package->code) }}" class="btn btn-dark btn-sm rounded-pill px-3">
                                         Pesan Sekarang
                                     </a>
                                 </div>
                             </div>
 
-                            <div class="price-card-right">
-                                <h4>Rp{{ number_format($package->price, 0, ',', '.') }}</h4>
-                                <small>DP Rp{{ number_format($package->dp_amount, 0, ',', '.') }}</small>
+                            <div class="pricelist-card-price">
+                                <h4 class="pricelist-price-amount">Rp{{ number_format($package->price, 0, ',', '.') }}</h4>
+                                <small class="pricelist-price-dp">DP Rp{{ number_format($package->dp_amount, 0, ',', '.') }}</small>
                             </div>
                         </div>
                     @endforeach
