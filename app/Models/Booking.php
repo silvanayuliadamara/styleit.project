@@ -144,4 +144,25 @@ class Booking extends Model
 
         return $index !== false ? $index + 1 : null;
     }
+
+    public static function cancelExpiredBookings()
+    {
+        $expiredIds = self::where('status', 'pending')
+            ->where('payment_status', 'belum_bayar')
+            ->where('created_at', '<=', now()->subHour())
+            ->pluck('id');
+
+        if ($expiredIds->isNotEmpty()) {
+            self::whereIn('id', $expiredIds)->update([
+                'status' => 'dibatalkan',
+                'status_layanan' => 'dibatalkan',
+            ]);
+
+            Payment::whereIn('booking_id', $expiredIds)
+                ->where('status', 'pending')
+                ->update([
+                    'status' => 'ditolak',
+                ]);
+        }
+    }
 }
