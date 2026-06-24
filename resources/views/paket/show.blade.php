@@ -279,10 +279,38 @@
         transform: translateY(-1px);
     }
     
-    .addon-row-clickable input[type="checkbox"], 
-    .slot-row-clickable input[type="radio"] {
+    .addon-row-clickable input[type="checkbox"] {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        max-width: 20px !important;
+        max-height: 20px !important;
+        border-radius: 4px !important;
+        flex-shrink: 0 !important;
+        aspect-ratio: 1 / 1 !important;
         border-color: var(--lyb-gold-border) !important;
         transition: all 0.2s ease;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    .slot-row-clickable input[type="radio"] {
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        max-width: 20px !important;
+        max-height: 20px !important;
+        border-radius: 50% !important;
+        flex-shrink: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        border-color: var(--lyb-gold-border) !important;
+        transition: all 0.2s ease;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
     }
     
     /* Make custom styling for radios/checkboxes inside active elements */
@@ -314,12 +342,21 @@
         background-color: var(--lyb-gold-light);
     }
     .softlens-pill input[type="radio"] {
-        width: 20px;
-        height: 20px;
-        border-color: var(--lyb-gold-border);
-        margin-right: 12px;
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        max-width: 20px !important;
+        max-height: 20px !important;
+        border-radius: 50% !important;
+        flex-shrink: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        border-color: var(--lyb-gold-border) !important;
+        margin: 0 !important;
+        margin-right: 12px !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
         cursor: pointer;
-        flex-shrink: 0;
     }
     .softlens-pill:has(input:checked) {
         border-color: var(--lyb-gold) !important;
@@ -875,6 +912,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             radioInput.className = 'form-check-input flex-shrink-0';
                             radioInput.style.width = '20px';
                             radioInput.style.height = '20px';
+                            radioInput.style.minWidth = '20px';
+                            radioInput.style.minHeight = '20px';
+                            radioInput.style.maxWidth = '20px';
+                            radioInput.style.maxHeight = '20px';
                             radioInput.required = true;
                             if (!value.available) {
                                 radioInput.disabled = true;
