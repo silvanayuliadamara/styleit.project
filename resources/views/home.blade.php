@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="hero-section premium-hero">
+    <section class="hero-section premium-hero overflow-hidden">
         <div class="container">
             <div class="row align-items-center g-5">
-                <div class="col-lg-7">
-                    <p class="hero-label">Wedding Galery And Makeup Artist</p>
+                <div class="col-lg-7 scroll-reveal fade-left">
+                    <p class="hero-label">Wedding Gallery And Makeup Artist</p>
                     <h1>LISA YULI<br>BELTI</h1>
                     <p>Setiap riasan adalah karya. Setiap pengantin adalah cerita. Wujudkan momen sakral Anda dengan
                         sentuhan elegan dan glamor lembut LYB.</p>
@@ -27,7 +27,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="col-lg-5">
+                <div class="col-lg-5 scroll-reveal fade-right">
                     <div class="hero-card">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo LYB">
                         <blockquote>“Hari paling bahagia hidup saya.”</blockquote>
@@ -41,7 +41,7 @@
 
     <section class="section-padding">
         <div class="container">
-            <div class="section-heading text-center">
+            <div class="section-heading text-center scroll-reveal">
                 <span>Kategori Layanan</span>
                 <h2>Pilih Momen Spesial Anda</h2>
                 <p>Empat kategori riasan dan koleksi baju untuk setiap perayaan.</p>
@@ -62,9 +62,9 @@
                         $imagePath = $categoryImages[$slug] ?? 'images/categories/wedding/cover.jpeg';
                     @endphp
 
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-3 scroll-reveal delay-{{ ($loop->index + 1) * 100 }}">
                         <a href="{{ route('layanan.kategori', $category->slug) }}" class="category-photo-card h-100"
-                            style="background-image: url('{{ asset($imagePath) }}');">
+                             style="background-image: url('{{ asset($imagePath) }}');">
 
                             <div class="category-photo-overlay"></div>
 
@@ -85,7 +85,7 @@
 
     <section class="section-padding bg-soft">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+            <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4 scroll-reveal">
                 <div class="section-heading mb-0">
                     <span>Portofolio</span>
                     <h2>Karya Terbaru</h2>
@@ -94,7 +94,7 @@
             </div>
             <div class="row g-4">
                 @foreach ($portfolioItems as $item)
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-6 col-lg-3 scroll-reveal delay-{{ ($loop->index + 1) * 100 }}">
                         <div class="portfolio-card">
                             @if($item->image)
                                 <img src="{{ str_starts_with($item->image, 'images/') ? asset($item->image) : asset('storage/' . $item->image) }}" alt="{{ $item->title }}" class="portfolio-img portfolio-img-{{ $item->category }}">
@@ -110,22 +110,64 @@
         </div>
     </section>
 
+    <!-- Seksi Alur Pemesanan Baru -->
+    <section class="section-padding bg-white">
+        <div class="container">
+            <div class="section-heading text-center scroll-reveal">
+                <span>Cara Kerja</span>
+                <h2>Alur Pemesanan Layanan</h2>
+                <p>Langkah mudah dan transparan untuk memesan jasa riasan dan gaun impian Anda.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3 scroll-reveal delay-100">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h4>Pilih Layanan & Tanggal</h4>
+                        <p>Pilih paket riasan/gaun pengantin yang Anda butuhkan, lalu tentukan slot tanggal dan jam acara pada kalender.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 scroll-reveal delay-200">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h4>Bayar DP Instan</h4>
+                        <p>Konfirmasi pemesanan Anda dengan membayar Down Payment (DP) secara aman via Midtrans Snap (Virtual Account, QRIS, E-Wallet).</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 scroll-reveal delay-300">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h4>Fitting & Konsultasi</h4>
+                        <p>Datang ke galeri kami untuk melakukan fitting busana pengantin dan konsultasi look riasan gratis dengan tim kami.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 scroll-reveal delay-400">
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h4>Hari Bahagia Anda</h4>
+                        <p>Tim MUA dan asisten kami siap melayani Anda di lokasi acara untuk memastikan penampilan terbaik Anda di hari istimewa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="section-padding testimoni-section bg-dark text-white" style="background-color: #211313;">
         <div class="container">
-            <div class="section-heading text-center mb-5">
+            <div class="section-heading text-center mb-5 scroll-reveal">
                 <span class="text-gold" style="color: #b08a42; letter-spacing: 2px; text-transform: uppercase; font-size: 0.85rem; font-weight: 700;">Ulasan Pelanggan</span>
                 <h2 class="text-white" style="color: #efe2d5; font-family: Georgia, serif; font-size: 2.25rem; font-weight: 500; margin-top: 0.5rem;">Apa Kata Mereka?</h2>
                 <p class="text-muted" style="color: #a39b8f !important;">Kisah nyata kebahagiaan dari para pelanggan setia Lisa Yuli Belti.</p>
             </div>
 
             @if($reviews->isEmpty())
-                <div class="text-center py-5">
+                <div class="text-center py-5 scroll-reveal">
                     <p class="text-muted" style="font-family: Arial, sans-serif; font-size: 15px;">Belum ada ulasan untuk ditampilkan.</p>
                 </div>
             @else
                 <div class="row g-4">
                     @foreach($reviews as $review)
-                        <div class="col-md-6 col-lg-4">
+                        <div class="col-md-6 col-lg-4 scroll-reveal scale-up delay-{{ ($loop->index + 1) * 100 }}">
                             <div class="testimoni-card p-4 h-100 d-flex flex-column justify-content-between" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(234, 223, 214, 0.1); border-radius: 18px; transition: transform 0.3s ease, border-color 0.3s ease;">
                                 <div>
                                     <div class="star-display mb-3" style="color: #b08a42;">
@@ -156,19 +198,19 @@
     <section class="section-padding">
         <div class="container">
             <div class="row g-4">
-                <div class="col-md-4">
+                <div class="col-md-4 scroll-reveal delay-100">
                     <div class="feature-card"><i class="bi bi-shield-check"></i>
                         <h3>Riasan Tahan Lama</h3>
                         <p>Produk premium yang aman dan hasil flawless seharian.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 scroll-reveal delay-200">
                     <div class="feature-card"><i class="bi bi-chat-heart"></i>
                         <h3>Sentuhan Personal</h3>
                         <p>Konsultasi gratis untuk look yang sesuai karakter Anda.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 scroll-reveal delay-300">
                     <div class="feature-card"><i class="bi bi-people"></i>
                         <h3>Tim Profesional</h3>
                         <p>Berpengalaman menangani ratusan pernikahan dan event.</p>
