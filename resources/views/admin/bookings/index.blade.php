@@ -76,7 +76,12 @@
                                         {{ $booking->package->name ?? '-' }}
                                     </span>
                                 </td>
-                                <td class="text-nowrap">{{ $booking->tanggal_acara ? $booking->tanggal_acara->translatedFormat('D, d M Y') : ($booking->booking_date ? $booking->booking_date->translatedFormat('D, d M Y') : '-') }}</td>
+                                <td class="text-nowrap">
+                                    {{ $booking->tanggal_acara ? $booking->tanggal_acara->translatedFormat('D, d M Y') : ($booking->booking_date ? $booking->booking_date->translatedFormat('D, d M Y') : '-') }}
+                                    @if($booking->slot_waktu)
+                                        <div class="small text-secondary mt-1">({{ ucfirst($booking->slot_waktu) }})</div>
+                                    @endif
+                                </td>
                                 <td>Rp{{ number_format($booking->total_price, 0, ',', '.') }}</td>
                                 <td>Rp{{ number_format($booking->dp_amount, 0, ',', '.') }}</td>
                                 <td class="text-nowrap" style="color: #2d6e25; font-weight: 600;">Rp{{ number_format($booking->total_dibayar, 0, ',', '.') }}</td>
