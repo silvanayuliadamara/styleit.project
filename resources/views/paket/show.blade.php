@@ -66,7 +66,7 @@
     .calendar-grid-7 {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: 10px;
+        gap: 12px 8px;
         text-align: center;
         align-items: center;
     }
@@ -76,12 +76,15 @@
         color: #a3958e;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        padding-bottom: 4px;
     }
     .calendar-day-cell {
-        aspect-ratio: 1;
         width: 100%;
-        max-width: 40px;
+        max-width: 38px;
+        aspect-ratio: 1;
         margin: 0 auto;
+        align-self: center;
+        justify-self: center;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -108,7 +111,7 @@
         color: #fff;
         border-color: #1a7a42;
         box-shadow: 0 4px 10px rgba(26, 122, 66, 0.15);
-        transform: scale(1.05);
+        transform: scale(1.08);
     }
     /* When selected (radio checked) */
     .calendar-day-cell.available:has(input:checked) {
@@ -116,7 +119,7 @@
         color: #fff !important;
         border-color: var(--lyb-gold) !important;
         box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4);
-        transform: scale(1.1);
+        transform: scale(1.12);
     }
     /* Full day */
     .calendar-day-cell.full {
@@ -143,6 +146,7 @@
     .calendar-day-cell.empty {
         background: transparent;
         border: none;
+        pointer-events: none;
     }
     /* Disabled cell (not in 60-day range) */
     .calendar-day-cell.disabled {
@@ -150,6 +154,83 @@
         background: transparent;
         border: none;
         cursor: not-allowed;
+    }
+
+    /* Month Navigation Buttons */
+    .calendar-nav-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 1px solid var(--lyb-gold-border);
+        border-radius: 50%;
+        background-color: #fff;
+        color: var(--lyb-dark);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .calendar-nav-btn:hover:not(:disabled) {
+        background-color: var(--lyb-gold-light);
+        border-color: var(--lyb-gold);
+        color: var(--lyb-gold);
+        transform: scale(1.05);
+    }
+    .calendar-nav-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background-color: #f8f9fa;
+        border-color: #e9ecef;
+    }
+
+    /* Calendar Legend Premium */
+    .calendar-legend-custom {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+    .calendar-legend-custom .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6f625c;
+    }
+    .calendar-legend-custom .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+    .calendar-legend-custom .available-dot {
+        background-color: #1a7a42;
+        box-shadow: 0 0 6px rgba(26, 122, 66, 0.4);
+    }
+    .calendar-legend-custom .full-dot {
+        background-color: #dc3545;
+        box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);
+    }
+    .calendar-legend-custom .blocked-dot {
+        background-color: #a3958e;
+        box-shadow: 0 0 6px rgba(163, 149, 142, 0.4);
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 576px) {
+        .calendar-month-card {
+            padding: 16px;
+        }
+        .calendar-grid-7 {
+            gap: 8px 4px;
+        }
+        .calendar-day-cell {
+            max-width: 32px;
+            font-size: 12px;
+        }
+        .calendar-legend-custom {
+            gap: 16px;
+            margin-top: 16px;
+        }
     }
 
     /* Interactive Radio & Checkbox Containers (Capsule shape) */
@@ -382,10 +463,10 @@
                             <i class="bi bi-calendar3" style="color: var(--lyb-gold); font-size: 16px;"></i> Pilih Tanggal Booking
                         </h5>
                         <div class="calendar-nav-buttons d-flex gap-2">
-                            <button type="button" class="btn btn-sm btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" id="prevMonthBtn" style="width: 32px; height: 32px; border-color: var(--lyb-gold-border); color: var(--lyb-dark);" onclick="navigateCalendar(-1)" disabled>
+                            <button type="button" class="btn calendar-nav-btn d-flex align-items-center justify-content-center" id="prevMonthBtn" onclick="navigateCalendar(-1)" disabled>
                                 <i class="bi bi-chevron-left" style="font-size: 12px; -webkit-text-stroke: 0.5px;"></i>
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" id="nextMonthBtn" style="width: 32px; height: 32px; border-color: var(--lyb-gold-border); color: var(--lyb-dark);" onclick="navigateCalendar(1)">
+                            <button type="button" class="btn calendar-nav-btn d-flex align-items-center justify-content-center" id="nextMonthBtn" onclick="navigateCalendar(1)">
                                 <i class="bi bi-chevron-right" style="font-size: 12px; -webkit-text-stroke: 0.5px;"></i>
                             </button>
                         </div>
@@ -458,10 +539,19 @@
                     </div>
 
                     {{-- Calendar Legend --}}
-                    <div class="calendar-legend d-flex justify-content-center gap-4 mt-4 flex-wrap" style="font-size: 12px; font-weight: 500;">
-                        <span class="d-flex align-items-center gap-2 text-secondary"><span style="width: 10px; height: 10px; border-radius: 50%; background-color: #1a7a42; display: inline-block; box-shadow: 0 0 6px rgba(26, 122, 66, 0.4);"></span> Tersedia</span>
-                        <span class="d-flex align-items-center gap-2 text-secondary"><span style="width: 10px; height: 10px; border-radius: 50%; background-color: #dc3545; display: inline-block; box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);"></span> Penuh</span>
-                        <span class="d-flex align-items-center gap-2 text-secondary"><span style="width: 10px; height: 10px; border-radius: 50%; background-color: #a3958e; display: inline-block; box-shadow: 0 0 6px rgba(163, 149, 142, 0.4);"></span> Diblokir</span>
+                    <div class="calendar-legend-custom">
+                        <div class="legend-item">
+                            <span class="legend-dot available-dot"></span>
+                            <span>Tersedia</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot full-dot"></span>
+                            <span>Penuh</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot blocked-dot"></span>
+                            <span>Diblokir</span>
+                        </div>
                     </div>
                 </div>
 
