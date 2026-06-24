@@ -64,7 +64,15 @@ class PublicPageController extends Controller
 
         abort_if(! $package, Response::HTTP_NOT_FOUND);
 
-        $addons = Addon::where('is_active', true)->get();
+        $addons = Addon::where('is_active', true)
+            ->where(function ($q) use ($package) {
+                $q->whereDoesntHave('categories')
+                  ->orWhereHas('categories', function ($catQ) use ($package) {
+                      $catQ->where('service_categories.id', $package->category_id)
+                           ->where('category_addons.status', 'aktif');
+                  });
+            })
+            ->get();
         $calendar = $this->buildCalendar($package);
 
         // Prepopulate edit data if editing cart item
@@ -176,10 +184,7 @@ class PublicPageController extends Controller
                     $unavailableSlotsCount = 0;
                     foreach (['pagi', 'siang', 'sore'] as $slot) {
                         $key = $dateStr.'_'.$slot;
-                        $booked = isset($weddingBookings[$key]) || Booking::whereDate('tanggal_acara', $dateStr)
-                            ->where('slot_waktu', $slot)
-                            ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
-                            ->exists(); // fallback check
+                        $booked = isset($weddingBookings[$key]);
 
                         $blocked = isset($blockedSchedules[$key]);
                         if ($booked || $blocked) {
