@@ -16,7 +16,7 @@ Dokumen ini berisi daftar dependency/package yang digunakan dan direncanakan pad
 |   6 | Midtrans PHP                | Integrasi payment gateway                        | Dibutuhkan untuk pembayaran DP online via Snap                                  | ^2.6             | Perlu konfigurasi API key dan keamanan transaksi                         |
 |   7 | Mews Captcha                | Pembuatan dan validasi captcha                   | Keamanan tambahan pada form login untuk mencegah brute force                    | ^3.5             | Membutuhkan ekstensi PHP GD terinstall di server                         |
 |   8 | Laravel Excel               | Export/import data Excel                         | Dibutuhkan untuk laporan keuangan dan rekap transaksi                           | Rencana/Opsional | Perlu maintenance package dan format data                                |
-|   9 | Intervention Image          | Resize, crop, dan kompres gambar                 | Dibutuhkan untuk optimasi gambar upload                                         | Rencana/Opsional | Perlu konfigurasi ukuran gambar                                          |
+|   9 | Intervention Image          | Resize, crop, dan kompres gambar                 | Dibutuhkan untuk optimasi gambar upload                                         | ^4.1             | Membutuhkan ekstensi PHP GD terinstall di server                         |
 |  10 | WhatsApp Integration        | Mengarahkan user ke WhatsApp                     | Dibutuhkan untuk komunikasi customer dengan pihak usaha                         | Link/Integrasi   | Nomor WhatsApp harus valid                                               |
 |  11 | Laravel Mail / Notification | Mengirim email atau notifikasi                   | Rencana pengembangan untuk notifikasi booking/invoice                           | Bawaan Laravel   | Perlu konfigurasi mail server                                            |
 
@@ -141,6 +141,29 @@ routes/web.php                   ← tambah route refresh-captcha
 
 ---
 
+### 2.5 intervention/image
+
+#### Fungsi
+`intervention/image` adalah library manipulasi gambar PHP yang digunakan untuk membuat, mengedit, dan mengompresi gambar.
+
+#### Alasan Digunakan
+Untuk mengoptimalkan ukuran gambar paket layanan yang diunggah oleh owner. Gambar diubah ukurannya (*scale*) ke lebar maksimal 800px dan dikompresi ke format JPEG dengan kualitas 80% guna menghemat ruang penyimpanan server dan mempercepat pemuatan halaman web.
+
+#### Cara Install
+```bash
+composer require intervention/image
+```
+
+#### Perubahan File
+Setelah dependency ditambahkan, file yang berubah adalah:
+```text
+composer.json
+composer.lock
+app/Http/Controllers/Owner/OwnerPackageController.php ← implementasi kompresi gambar saat simpan & update paket
+```
+
+---
+
 ## 3. Dependency Bawaan Laravel
 
 ### 3.1 Laravel Authentication
@@ -159,13 +182,10 @@ Mengelola berkas gambar upload seperti portofolio, logo banner, dan berkas trans
 ### 4.1 Laravel Excel
 Direncanakan untuk mengekspor rekap laporan transaksi keuangan milik owner ke dalam format Excel (.xlsx).
 
-### 4.2 Intervention Image
-Direncanakan untuk memproses kompresi gambar portofolio agar meminimalkan pemakaian disk penyimpanan dan mempercepat loading web.
-
-### 4.3 WhatsApp Integration
+### 4.2 WhatsApp Integration
 Menggunakan tautan langsung (`https://wa.me/...`) untuk mempermudah customer berkonsultasi langsung dengan admin.
 
-### 4.4 Laravel Mail / Notification
+### 4.3 Laravel Mail / Notification
 Fitur notifikasi email untuk mengabarkan status booking terbaru ke customer secara otomatis.
 
 ---
@@ -193,3 +213,4 @@ Pada tahapan project StyleIt saat ini, dependency yang telah sukses diimplementa
 - `spatie/laravel-permission` — Pembagian hak akses akun.
 - `midtrans/midtrans-php` — Pembayaran DP digital via Midtrans Snap.
 - `mews/captcha` — Keamanan autentikasi halaman login.
+- `intervention/image` — Kompresi dan manipulasi gambar paket layanan.

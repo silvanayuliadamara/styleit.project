@@ -16,23 +16,19 @@
             <form action="{{ route('password.update') }}" method="POST">
                 @csrf
 
-                <div class="form-group">
-                    <label for="password">Kata Sandi Baru</label>
+                @include('components.password-input', [
+                    'label' => 'Kata Sandi Baru',
+                    'id' => 'password',
+                    'name' => 'password',
+                    'placeholder' => 'Minimal 8 karakter'
+                ])
 
-                    <input type="password" id="password" name="password" placeholder="Minimal 8 karakter"
-                        class="@error('password') is-invalid @enderror">
-
-                    @error('password')
-                        <div class="error">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="password_confirmation">Konfirmasi Kata Sandi</label>
-
-                    <input type="password" id="password_confirmation" name="password_confirmation"
-                        placeholder="Ulangi kata sandi baru">
-                </div>
+                @include('components.password-input', [
+                    'label' => 'Konfirmasi Kata Sandi',
+                    'id' => 'password_confirmation',
+                    'name' => 'password_confirmation',
+                    'placeholder' => 'Ulangi kata sandi baru'
+                ])
 
                 <button type="submit" class="btn-primary forgot-submit">
                     Simpan Kata Sandi

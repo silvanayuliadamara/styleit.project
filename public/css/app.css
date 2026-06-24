@@ -2629,3 +2629,22 @@ body {
     border-color: rgba(176, 138, 66, 0.3);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
+
+/* Floating hover animation for price cards, glass cards, panels, features, and stats */
+.price-card,
+.glass-card,
+.booking-panel,
+.feature-card,
+.stat-card {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.price-card:hover,
+.glass-card:hover,
+.booking-panel:hover,
+.feature-card:hover,
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 60px rgba(56, 37, 20, 0.12);
+    border-color: #d8c29e;
+}

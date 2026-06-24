@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 
 class OwnerPackageController extends Controller
 {
@@ -62,7 +65,14 @@ class OwnerPackageController extends Controller
             $validated['softlens_wajib_pilih'] = $request->has('softlens_wajib_pilih');
 
             if ($request->hasFile('image')) {
-                $validated['image'] = $request->file('image')->store('packages', 'public');
+                $manager = new ImageManager(new Driver());
+                $img = $manager->decode($request->file('image'));
+                $img->scale(width: 800);
+                $encoded = $img->encode(new JpegEncoder(80));
+
+                $filename = 'packages/' . Str::random(40) . '.jpg';
+                Storage::disk('public')->put($filename, (string)$encoded);
+                $validated['image'] = $filename;
             }
 
             $package = ServicePackage::create($validated);
@@ -133,7 +143,15 @@ class OwnerPackageController extends Controller
                 if ($package->image) {
                     Storage::disk('public')->delete($package->image);
                 }
-                $validated['image'] = $request->file('image')->store('packages', 'public');
+
+                $manager = new ImageManager(new Driver());
+                $img = $manager->decode($request->file('image'));
+                $img->scale(width: 800);
+                $encoded = $img->encode(new JpegEncoder(80));
+
+                $filename = 'packages/' . Str::random(40) . '.jpg';
+                Storage::disk('public')->put($filename, (string)$encoded);
+                $validated['image'] = $filename;
             }
 
             $package->update($validated);
