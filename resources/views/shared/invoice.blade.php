@@ -99,6 +99,9 @@
                                 @if($booking->tanggal_acara ?? null)
                                     <p class="invoice-item-desc">Tgl Acara: {{ $booking->tanggal_acara->translatedFormat('d M Y') }}</p>
                                 @endif
+                                @if($booking->slot_waktu ?? null)
+                                    <p class="invoice-item-desc">Slot Waktu: {{ ucfirst($booking->slot_waktu) }}</p>
+                                @endif
                                 @if($booking->softlens ?? null)
                                     <p class="invoice-item-desc">Softlens: Ya</p>
                                 @endif

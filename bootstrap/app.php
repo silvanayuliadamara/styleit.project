@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(append: [
+            \App\Http\Middleware\CancelExpiredBookings::class,
+        ]);
+
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
@@ -23,6 +27,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'midtrans/notification',
         ]);
+    })
+    ->withSchedule(function ($schedule) {
+        $schedule->call(function () {
+            \App\Models\Booking::cancelExpiredBookings();
+        })->everyMinute();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

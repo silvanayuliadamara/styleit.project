@@ -15,6 +15,13 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+    public function refreshCaptcha()
+    {
+        return response()->json([
+            'captcha' => captcha_img('login')
+        ]);
+    }
+
     public function showRegister()
     {
         return view('auth.register');
@@ -149,14 +156,19 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+            'captcha' => ['required', 'captcha'],
         ], [
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Kata sandi wajib diisi.',
+            'captcha.required' => 'Captcha wajib diisi.',
+            'captcha.captcha' => 'Kode captcha salah.',
         ]);
+
+        $credentials = $request->only('email', 'password');
 
         if (! Auth::attempt($credentials)) {
             return back()

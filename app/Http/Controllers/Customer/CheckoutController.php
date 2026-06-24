@@ -241,7 +241,7 @@ class CheckoutController extends Controller
 
         $payment = $booking->payments()->where('status', 'pending')->first();
         if (! $payment) {
-            return redirect()->route('customer.bookings.index')
+            return redirect()->route('customer.dashboard')
                 ->with('warning', 'Pembayaran untuk booking ini tidak ditemukan atau sudah diproses.');
         }
 
@@ -267,7 +267,7 @@ class CheckoutController extends Controller
         $payment = $booking->payments()->latest()->first();
 
         if (! $payment) {
-            return redirect()->route('customer.bookings.index')
+            return redirect()->route('customer.dashboard')
                 ->with('warning', 'Data pembayaran tidak ditemukan.');
         }
 

@@ -110,7 +110,12 @@
                             <tr>
                                 <td><strong>{{ $booking->booking_code }}</strong></td>
                                 <td>{{ $booking->package->name ?? '-' }}</td>
-                                <td class="text-nowrap">{{ ($booking->tanggal_acara ?? null) ? $booking->tanggal_acara->translatedFormat('d M Y') : (($booking->booking_date ?? null) ? $booking->booking_date->translatedFormat('d M Y') : '-') }}</td>
+                                <td class="text-nowrap">
+                                    {{ ($booking->tanggal_acara ?? null) ? $booking->tanggal_acara->translatedFormat('d M Y') : (($booking->booking_date ?? null) ? $booking->booking_date->translatedFormat('d M Y') : '-') }}
+                                    @if($booking->slot_waktu)
+                                        <div class="small text-secondary mt-1">({{ ucfirst($booking->slot_waktu) }})</div>
+                                    @endif
+                                </td>
                                 <td>Rp{{ number_format($booking->total_price ?? 0, 0, ',', '.') }}</td>
                                 <td>
                                     @php
