@@ -262,10 +262,23 @@
     @keyframes spin {
         to { transform: rotate(360deg); }
     }
+    .back-link {
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .back-link:hover {
+        color: #b08a42 !important;
+        transform: translateX(-4px);
+    }
 </style>
 
 <section class="payment-instruction-section">
     <div class="container">
+        <div class="mb-4">
+            <a href="{{ route('customer.dashboard') }}" class="text-decoration-none d-inline-flex align-items-center gap-2 back-link" style="font-size: 14px; font-weight: 500; color: #7d776c;">
+                <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
+            </a>
+        </div>
         <span class="instruction-kicker">Instruksi Pembayaran</span>
         <h1 class="instruction-title">Selesaikan Pembayaran DP</h1>
         <div class="instruction-subtitle">Kode Booking: <strong>{{ $booking->booking_code }}</strong></div>

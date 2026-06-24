@@ -219,10 +219,21 @@
         margin-top: 1rem;
         line-height: 1.4;
     }
+    .back-link {
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .back-link:hover {
+        color: #b08a42 !important;
+        transform: translateX(-4px);
+    }
 </style>
 
 <section class="checkout-section">
     <div class="container">
+        <a href="{{ route('customer.cart.index') }}" class="text-decoration-none d-inline-flex align-items-center gap-2 back-link mb-4" style="font-size: 14px; font-weight: 500; color: #7d776c;">
+            <i class="bi bi-arrow-left"></i> Kembali ke Keranjang
+        </a>
         <h1 class="checkout-title">Checkout</h1>
         
         <form id="checkoutForm" action="{{ route('customer.checkout.store') }}" method="POST">

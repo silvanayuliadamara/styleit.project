@@ -263,10 +263,22 @@
         margin-top: 12px;
         line-height: 1.4;
     }
+
+    .back-link {
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .back-link:hover {
+        color: var(--lyb-gold) !important;
+        transform: translateX(-4px);
+    }
 </style>
 
 <section class="page-hero-compact">
     <div class="container">
+        <a href="{{ route('layanan.index') }}" class="text-decoration-none d-inline-flex align-items-center gap-2 back-link mb-3" style="font-size: 14px; font-weight: 500; color: var(--lyb-muted);">
+            <i class="bi bi-arrow-left"></i> Kembali ke Layanan
+        </a>
         <h1>Keranjang</h1>
         <p>{{ count($cart) }} item dalam keranjang Anda</p>
     </div>
