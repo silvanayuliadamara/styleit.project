@@ -760,11 +760,8 @@
                             <i class="bi bi-whatsapp" style="font-size: 16px;"></i> Tanya via WhatsApp (Owner Makeup)
                         </a>
                     </div>
+                    </div>
                 </div>
-
-                <p class="text-muted text-center mt-3 mb-0" style="font-size: 11px;">
-                    Mode preview: booking hanya tersimpan sementara di session, belum masuk database.
-                </p>
             </div>
         </div>
     </form>
