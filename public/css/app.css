@@ -1153,10 +1153,25 @@ body {
     gap: 8px;
     font-family: Arial, sans-serif;
     color: #6f625c;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s, box-shadow 0.4s;
+}
+
+.info-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(33, 19, 19, 0.08);
+    border-color: var(--lyb-gold);
 }
 
 .info-card strong {
     color: var(--lyb-dark);
+}
+
+.info-card i {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.info-card:hover i {
+    transform: scale(1.15) translateY(-2px);
 }
 
 .image-panel {
@@ -1164,6 +1179,12 @@ body {
     border-radius: 32px;
     border: 1px solid var(--lyb-line);
     box-shadow: 0 20px 50px rgba(33, 19, 19, 0.08);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s;
+}
+
+.image-panel:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 24px 60px rgba(33, 19, 19, 0.16);
 }
 
 .image-panel span {
@@ -3425,4 +3446,813 @@ body {
     .hero-slide-card {
         height: 380px;
     }
+}
+
+/* Certificate Zoom & Hover Effects */
+.certificate-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+.certificate-wrapper img {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.certificate-wrapper:hover img {
+    transform: scale(1.03);
+}
+.certificate-hover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(33, 19, 19, 0.4);
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+    border-radius: 12px;
+}
+.certificate-wrapper:hover .certificate-hover-overlay {
+    opacity: 1;
+}
+
+/* Hero Welcome Text */
+.hero-welcome-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #5f5650;
+}
+.hero-welcome-text strong {
+    color: var(--lyb-gold, #b08a42);
+    font-weight: 700;
+}
+
+/* Hero Stats Redesign */
+.hero-stat-item {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 70px;
+}
+.hero-stat-item i {
+    font-size: 18px;
+    color: var(--lyb-gold, #b08a42);
+    margin-bottom: 2px;
+}
+.hero-stat-item strong {
+    font-family: Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--lyb-dark, #211313);
+    line-height: 1;
+}
+.hero-stat-label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #9a8d85;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.hero-stat-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--lyb-line, #eadfd6);
+    display: inline-block;
+    margin: 0 8px;
+}
+
+/* Steps Timeline Connector */
+.steps-timeline-wrapper {
+    position: relative;
+}
+.steps-connector-line {
+    position: absolute;
+    top: 54px;
+    left: 12.5%;
+    right: 12.5%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--lyb-gold, #b08a42) 0%, #d8c29e 50%, var(--lyb-gold, #b08a42) 100%);
+    z-index: 0;
+    opacity: 0.4;
+}
+
+/* Step Icon Wrap */
+.step-icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.step-icon-bg {
+    position: absolute;
+    font-size: 48px;
+    color: var(--lyb-gold, #b08a42);
+    opacity: 0.08;
+    z-index: 0;
+}
+.step-icon-wrap .step-number {
+    position: relative;
+    z-index: 1;
+}
+
+/* Why Choose Us Card */
+.why-card {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--lyb-line, #eadfd6);
+    border-radius: 28px;
+    padding: 40px 28px;
+    box-shadow: 0 14px 40px rgba(33, 19, 19, 0.05);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s, border-color 0.4s;
+}
+.why-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 24px 60px rgba(176, 138, 66, 0.12);
+    border-color: var(--lyb-gold, #b08a42);
+}
+.why-icon-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(176, 138, 66, 0.12) 0%, rgba(216, 168, 79, 0.08) 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s;
+}
+.why-icon-wrap i {
+    font-size: 32px;
+    color: var(--lyb-gold, #b08a42);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.why-card:hover .why-icon-wrap {
+    background: linear-gradient(135deg, var(--lyb-gold, #b08a42) 0%, #d8a84f 100%);
+    transform: scale(1.08);
+}
+.why-card:hover .why-icon-wrap i {
+    color: #fff;
+    transform: scale(1.1);
+}
+.why-card h3 {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    color: var(--lyb-dark, #211313);
+    margin-bottom: 14px;
+}
+.why-card p {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #6f625c;
+    line-height: 1.7;
+    margin-bottom: 0;
+}
+.why-card p strong {
+    color: var(--lyb-dark, #211313);
+}
+
+/* =============================================
+   PREMIUM REDESIGN ADDITIONS (HOME PAGE)
+   ============================================= */
+
+/* Ambient glows in hero background */
+.premium-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 100px 0 80px;
+}
+.ambient-glow-1, .ambient-glow-2 {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(140px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.45;
+}
+.ambient-glow-1 {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(176, 138, 66, 0.3) 0%, rgba(251, 245, 239, 0) 70%);
+    top: -12%;
+    left: -8%;
+    animation: float-glow-1 12s ease-in-out infinite alternate;
+}
+.ambient-glow-2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(95, 64, 54, 0.16) 0%, rgba(251, 245, 239, 0) 70%);
+    bottom: -15%;
+    right: -8%;
+    animation: float-glow-2 15s ease-in-out infinite alternate;
+}
+@keyframes float-glow-1 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(40px, 30px) scale(1.1); }
+}
+@keyframes float-glow-2 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-30px, -30px) scale(0.9); }
+}
+
+/* Gold Gradient text for main headings */
+.gold-gradient-text {
+    background: linear-gradient(135deg, #a37c36 0%, #d8a84f 40%, #b08a42 70%, #876223 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-family: Georgia, serif;
+    font-size: clamp(42px, 6vw, 68px);
+    font-weight: 500;
+    line-height: 1.12;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+}
+
+/* Hero elements */
+.hero-label {
+    color: var(--lyb-gold);
+    letter-spacing: 4px;
+    font-size: 11px;
+    font-family: Arial, sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: block;
+}
+.hero-welcome-text {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #6f625c;
+    margin-bottom: 36px;
+}
+.hero-welcome-text strong {
+    color: var(--lyb-dark);
+    font-weight: 700;
+}
+.hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+.hero-actions .btn-dark-custom,
+.hero-actions .btn-outline-custom {
+    padding: 16px 32px;
+    border-radius: 16px;
+    font-size: 14.5px;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-actions .btn-dark-custom {
+    background: var(--lyb-dark);
+    color: #fff;
+    border: 1.5px solid var(--lyb-dark);
+    box-shadow: 0 10px 25px rgba(33, 19, 19, 0.12);
+}
+.hero-actions .btn-dark-custom:hover {
+    background: #3c2424;
+    border-color: #3c2424;
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(33, 19, 19, 0.22);
+}
+.hero-actions .btn-outline-custom {
+    border: 1.5px solid var(--lyb-gold);
+    color: var(--lyb-dark);
+    background: transparent;
+}
+.hero-actions .btn-outline-custom:hover {
+    background: rgba(176, 138, 66, 0.06);
+    color: var(--lyb-gold);
+    border-color: var(--lyb-gold);
+    transform: translateY(-3px);
+}
+
+/* Glassmorphism stats panel */
+.glass-stats-card {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(234, 223, 214, 0.5);
+    border-radius: 24px;
+    padding: 16px 28px;
+    margin-top: 10px;
+    box-shadow: 0 15px 35px rgba(95, 64, 54, 0.04);
+    display: inline-flex;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    z-index: 5;
+}
+.hero-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+.hero-stat-item i {
+    color: var(--lyb-gold);
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+.hero-stat-item strong {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--lyb-dark);
+    line-height: 1;
+    font-family: Georgia, serif;
+}
+.hero-stat-label {
+    font-size: 11px !important;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #7a6a62 !important;
+    font-weight: 600;
+    margin-top: 2px;
+    font-family: Arial, sans-serif;
+}
+.hero-stat-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(176, 138, 66, 0.25);
+}
+
+/* Hero Editorial Carousel Frame */
+.hero-carousel-wrap {
+    position: relative;
+    padding: 12px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    z-index: 1;
+    overflow: visible !important;
+}
+.hero-carousel-wrap::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    border: 1.5px solid var(--lyb-gold);
+    border-radius: 28px;
+    z-index: -1;
+    pointer-events: none;
+    transform: translate(14px, 14px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-carousel-wrap:hover::before {
+    transform: translate(20px, 20px);
+}
+.hero-slide-card {
+    border-radius: 28px;
+    height: 480px;
+    background-size: cover;
+    background-position: center top !important;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(33, 19, 19, 0.15);
+}
+
+/* Category card dynamic changes */
+.category-photo-card {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 380px;
+    padding: 32px;
+    border-radius: 28px;
+    overflow: hidden;
+    text-decoration: none;
+    box-shadow: 0 18px 40px rgba(42, 26, 22, 0.08);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+.category-card-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.category-photo-card:hover .category-card-img {
+    transform: scale(1.08);
+}
+.category-photo-card::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    border: 1px solid rgba(240, 207, 138, 0.4);
+    border-radius: 20px;
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: scale(1.04);
+}
+.category-photo-card:hover::after {
+    opacity: 1;
+    transform: scale(1);
+}
+.category-photo-card .category-photo-overlay {
+    transition: background 0.4s ease;
+}
+.category-photo-card:hover .category-photo-overlay {
+    background: linear-gradient(to top,
+            rgba(33, 19, 19, 0.94) 0%,
+            rgba(33, 19, 19, 0.65) 45%,
+            rgba(33, 19, 19, 0.15) 100%);
+}
+
+/* Profile Double Image styling */
+.profile-images-container {
+    position: relative;
+    padding: 30px 30px 30px 0;
+    height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.profile-img-back {
+    position: absolute;
+    width: 80%;
+    height: 85%;
+    left: 0;
+    top: 0;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(33, 19, 19, 0.08);
+    z-index: 1;
+    transition: transform 0.5s ease;
+}
+.profile-img-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top !important;
+}
+.profile-img-front {
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    right: 0;
+    bottom: 10px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 45px rgba(33, 19, 19, 0.16);
+    z-index: 3;
+    border: 6px solid #fff;
+    transition: transform 0.5s ease;
+}
+.profile-img-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top !important;
+}
+.profile-decorative-frame {
+    position: absolute;
+    width: 80%;
+    height: 85%;
+    left: 0;
+    top: 0;
+    border: 1.5px solid var(--lyb-gold);
+    border-radius: 32px;
+    z-index: 0;
+    pointer-events: none;
+    transform: translate(16px, 16px);
+    transition: transform 0.5s ease;
+}
+.profile-images-container:hover .profile-img-back {
+    transform: translateY(-5px);
+}
+.profile-images-container:hover .profile-img-front {
+    transform: translateY(-10px) scale(1.02);
+}
+.profile-images-container:hover .profile-decorative-frame {
+    transform: translate(22px, 22px);
+}
+.profile-images-container .profile-badge {
+    position: absolute;
+    top: auto !important;
+    bottom: 15% !important;
+    left: -15px !important;
+    z-index: 4;
+    background: var(--lyb-dark) !important;
+    color: var(--lyb-gold) !important;
+    border: 1px solid rgba(176, 138, 66, 0.4) !important;
+    box-shadow: 0 12px 28px rgba(33, 19, 19, 0.25) !important;
+    transition: all 0.3s ease !important;
+}
+.profile-images-container .profile-badge:hover {
+    background: var(--lyb-gold) !important;
+    color: var(--lyb-dark) !important;
+    transform: scale(1.05) translateY(-2px) !important;
+}
+
+
+/* Timeline/Steps Glowing Line */
+.steps-timeline-wrapper {
+    position: relative;
+}
+.step-card {
+    background: #fffdfb;
+    border: 1px solid rgba(234, 223, 214, 0.6);
+    border-radius: 28px;
+    padding: 40px 30px;
+    box-shadow: 0 12px 30px rgba(95, 64, 54, 0.03);
+    position: relative;
+    z-index: 2;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.step-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 45px rgba(176, 138, 66, 0.08);
+    border-color: rgba(176, 138, 66, 0.35);
+}
+.step-number {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--lyb-gold) 0%, #d8a84f 100%);
+    color: #fff;
+    font-family: Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 15px rgba(176, 138, 66, 0.3);
+    margin-bottom: 24px;
+}
+.steps-connector-line {
+    background: linear-gradient(90deg, transparent 0%, rgba(176, 138, 66, 0.35) 20%, rgba(176, 138, 66, 0.35) 80%, transparent 100%);
+}
+
+/* FAQ Accordion Styling overrides */
+.accordion-custom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.accordion-custom .accordion-item {
+    border: 1px solid rgba(234, 223, 214, 0.7) !important;
+    border-radius: 20px !important;
+    background: #fffdfb;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(95, 64, 54, 0.03);
+    transition: all 0.35s ease;
+}
+.accordion-custom .accordion-item:hover {
+    border-color: rgba(176, 138, 66, 0.45) !important;
+    box-shadow: 0 12px 30px rgba(176, 138, 66, 0.06);
+}
+.accordion-custom .accordion-button {
+    font-family: Georgia, serif;
+    color: var(--lyb-dark);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 22px 28px;
+    background: transparent;
+    border: none;
+    box-shadow: none !important;
+    transition: color 0.3s ease;
+}
+.accordion-custom .accordion-button:not(.collapsed) {
+    color: var(--lyb-gold);
+    background: transparent;
+}
+.accordion-custom .accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23211313'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") !important;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+.accordion-custom .accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23b08a42'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") !important;
+}
+.accordion-custom .accordion-body {
+    padding: 0 28px 24px;
+    color: #6f625c;
+    font-family: Arial, sans-serif;
+    font-size: 14.5px;
+    line-height: 1.7;
+}
+
+/* CTA Glass Banner */
+.cta-glass-card {
+    background: #211313 !important;
+    border: 1.5px solid rgba(176, 138, 66, 0.3) !important;
+    border-radius: 32px;
+    box-shadow: 0 20px 50px rgba(33, 19, 19, 0.18) !important;
+}
+.cta-title {
+    color: #ffffff !important;
+}
+.cta-desc {
+    color: #efe2d5 !important;
+}
+.btn-cta-gold {
+    background: linear-gradient(135deg, var(--lyb-gold) 0%, #c59d51 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 16px !important;
+    font-family: Arial, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 8px 20px rgba(176, 138, 66, 0.25);
+}
+.btn-cta-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(176, 138, 66, 0.35);
+}
+
+@media (max-width: 991px) {
+    .profile-images-container {
+        height: 480px;
+        padding-right: 0;
+        margin-bottom: 40px;
+    }
+}
+
+/* ── ULTRA-PREMIUM & ELEGANT HOME REDESIGN ENHANCEMENTS ── */
+
+/* 1. Elegant Section Heading Dividers & Kickers */
+.heading-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--lyb-gold) !important;
+    margin: 18px 0 20px;
+    position: relative;
+    opacity: 0.85;
+}
+.heading-divider::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: var(--lyb-gold);
+    border: 1px solid #fff;
+    left: 0;
+    top: 50%;
+    transform: translate(0, -50%) rotate(45deg);
+}
+.text-center .heading-divider {
+    margin: 18px auto 20px !important;
+}
+.text-center .heading-divider::after {
+    left: 50% !important;
+    transform: translate(-50%, -50%) rotate(45deg) !important;
+}
+
+.section-kicker,
+.section-heading span {
+    color: var(--lyb-gold) !important;
+    letter-spacing: 4px !important;
+    font-size: 11px !important;
+    font-family: Arial, sans-serif !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    display: inline-block !important;
+    margin-bottom: 8px !important;
+}
+
+.section-heading h2 {
+    font-family: Georgia, serif !important;
+    color: var(--lyb-dark);
+    font-weight: 500 !important;
+    letter-spacing: -0.5px !important;
+}
+.bg-dark .section-heading h2,
+.text-white .section-heading h2,
+.section-heading h2.text-white {
+    color: #efe2d5 !important;
+}
+
+/* 2. Glassmorphic Advantages (Why Choose Us) Cards */
+.why-card {
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1.5px solid rgba(176, 138, 66, 0.15) !important;
+    border-radius: 32px !important;
+    padding: 44px 32px !important;
+    box-shadow: 0 15px 35px rgba(95, 64, 54, 0.03) !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.why-card:hover {
+    background: rgba(255, 255, 255, 0.88) !important;
+    transform: translateY(-8px) !important;
+    box-shadow: 0 25px 50px rgba(176, 138, 66, 0.15) !important;
+    border-color: rgba(176, 138, 66, 0.45) !important;
+}
+.why-icon-wrap {
+    width: 84px !important;
+    height: 84px !important;
+    background: linear-gradient(135deg, rgba(176, 138, 66, 0.08) 0%, rgba(216, 168, 79, 0.04) 100%) !important;
+    border: 1px solid rgba(176, 138, 66, 0.12) !important;
+    margin-bottom: 28px !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.why-card:hover .why-icon-wrap {
+    background: linear-gradient(135deg, var(--lyb-gold) 0%, #d8a84f 100%) !important;
+    border-color: transparent !important;
+    box-shadow: 0 8px 20px rgba(176, 138, 66, 0.25) !important;
+}
+
+/* 3. Luxury Editorial Quote watermark for Profile Section */
+.artist-quote {
+    background: linear-gradient(135deg, rgba(176, 138, 66, 0.04) 0%, rgba(176, 138, 66, 0.01) 100%) !important;
+    border-left: 3.5px solid var(--lyb-gold) !important;
+    padding: 26px 32px !important;
+    border-radius: 0 28px 28px 0 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin-top: 36px !important;
+    box-shadow: 0 8px 25px rgba(95, 64, 54, 0.02) !important;
+}
+.artist-quote::after {
+    content: '“' !important;
+    position: absolute !important;
+    right: 20px !important;
+    bottom: -50px !important;
+    font-size: 160px !important;
+    font-family: Georgia, serif !important;
+    color: rgba(176, 138, 66, 0.07) !important;
+    line-height: 1 !important;
+    font-weight: 900 !important;
+    pointer-events: none !important;
+}
+
+/* 4. Luxury Testimonial Watermark & Enhancements */
+.testimoni-card {
+    position: relative !important;
+    overflow: hidden !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(234, 223, 214, 0.08) !important;
+    border-radius: 24px !important;
+    padding: 32px !important;
+}
+.testimoni-card::after {
+    content: '”' !important;
+    position: absolute !important;
+    right: 24px !important;
+    top: 10px !important;
+    font-size: 110px !important;
+    font-family: Georgia, serif !important;
+    color: rgba(176, 138, 66, 0.04) !important;
+    line-height: 1 !important;
+    font-weight: 900 !important;
+    pointer-events: none !important;
+}
+.testimoni-card:hover {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(176, 138, 66, 0.35) !important;
+}
+.testimoni-card .star-display i {
+    color: var(--lyb-gold) !important;
+    text-shadow: 0 0 8px rgba(176, 138, 66, 0.4);
+}
+
+/* 5. Button Shimmer / Glow Hover Effects */
+.btn-dark-custom,
+.btn-cta-gold {
+    position: relative;
+    overflow: hidden;
+}
+.btn-dark-custom::before,
+.btn-cta-gold::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    transition: none;
+}
+.btn-dark-custom:hover::before,
+.btn-cta-gold:hover::before {
+    animation: button-shimmer 1.5s infinite;
+}
+@keyframes button-shimmer {
+    0% { left: -100%; }
+    100% { left: 150%; }
 }
