@@ -47,7 +47,7 @@
                             <p class="invoice-customer-detail">{{ $booking->user->phone }}</p>
                         @endif
                         @if(($booking->user ?? null) && ($booking->user->instagram ?? null))
-                            <p class="invoice-customer-detail">IG: {{ '@' . $booking->user->instagram }}</p>
+                            <p class="invoice-customer-detail">IG: {{ '@' . ltrim($booking->user->instagram, '@') }}</p>
                         @endif
                         @if(($booking->user ?? null) && ($booking->user->address ?? null))
                             <p class="invoice-customer-detail">{{ $booking->user->address }}</p>
@@ -147,11 +147,17 @@
                     </div>
                     <div class="invoice-summary-row">
                         <span>Sisa Pelunasan</span>
-                        <span>Rp{{ number_format($booking->sisa_pelunasan ?? ($booking->total_price - ($booking->total_dibayar ?? 0)), 0, ',', '.') }}</span>
+                        <span>
+                            @if(in_array($booking->status ?? '', ['dibatalkan', 'expired']))
+                                Rp0
+                            @else
+                                Rp{{ number_format($booking->sisa_pelunasan ?? ($booking->total_price - ($booking->total_dibayar ?? 0)), 0, ',', '.') }}
+                            @endif
+                        </span>
                     </div>
                 </div>
 
-                @if($booking->payment_status === 'belum_bayar')
+                @if(($booking->payment_status === 'belum_bayar') && !in_array($booking->status ?? '', ['dibatalkan', 'expired']))
                 <div class="invoice-notice d-flex justify-content-between align-items-center flex-wrap gap-2" style="background-color: #fffbeb; border: 1px solid #f9edd0; border-radius: 12px; padding: 1rem; color: #8a6d3b; font-family: Arial, sans-serif; font-size: 13px;">
                     <span>Batas pembayaran DP: <strong>1 jam</strong> sejak invoice dibuat.</span>
                     @if(!request()->routeIs('owner.*') && !request()->routeIs('admin.*'))

@@ -64,7 +64,7 @@
                     </div>
                     <div>
                         <span>Instagram</span>
-                        <strong>{{ $booking->user->instagram ? '@' . $booking->user->instagram : '-' }}</strong>
+                        <strong>{{ $booking->user->instagram ? '@' . ltrim($booking->user->instagram, '@') : '-' }}</strong>
                     </div>
                 </div>
             </div>
