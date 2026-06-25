@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function ($schedule) {
         $schedule->call(function () {
             \App\Models\Booking::cancelExpiredBookings();
+            \App\Models\Booking::autoCancelPendingCancellations();
         })->everyMinute();
     })
     ->withExceptions(function (Exceptions $exceptions) {
