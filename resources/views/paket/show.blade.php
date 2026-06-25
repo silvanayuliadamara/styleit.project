@@ -717,6 +717,12 @@
                                 </label>
                             @endforeach
                         </div>
+                        @if($package->category->slug === 'baju')
+                            <p class="mt-3 text-secondary" style="font-family: Georgia, serif; font-size: 13.5px; line-height: 1.6; color: #6f625c;">
+                                <strong>Notes!</strong><br>
+                                Jika di luar daerah yang tertulis di paket, ada tambahan biaya tergantung jauhnya lokasi pemasangan
+                            </p>
+                        @endif
                         @endif
 
                 {{-- Summary Calculation Card --}}
