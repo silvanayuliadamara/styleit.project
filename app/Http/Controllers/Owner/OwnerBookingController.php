@@ -47,7 +47,7 @@ class OwnerBookingController extends Controller
 
     public function invoice(Booking $booking)
     {
-        $booking->load(['user', 'package', 'schedule', 'addons', 'payments']);
+        $booking->load(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest']);
 
         return view('shared.invoice', compact('booking'));
     }

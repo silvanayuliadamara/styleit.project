@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 class Booking extends Model
 {
@@ -163,6 +164,38 @@ class Booking extends Model
                 ->update([
                     'status' => 'ditolak',
                 ]);
+        }
+    }
+
+    public static function autoCancelPendingCancellations()
+    {
+        $pendingCancels = CancellationRequest::where('status_persetujuan', 'diajukan')
+            ->where('created_at', '<=', now()->subHours(24))
+            ->get();
+
+        foreach ($pendingCancels as $cancelReq) {
+            DB::transaction(function () use ($cancelReq) {
+                $booking = $cancelReq->booking;
+                if ($booking) {
+                    $cancelReq->update([
+                        'status_persetujuan' => 'disetujui',
+                        'approved_by' => null,
+                        'customer_dibaca' => false,
+                    ]);
+
+                    if ($booking->status === 'diterima' && $booking->schedule_id) {
+                        $schedule = $booking->schedule;
+                        if ($schedule) {
+                            $schedule->decrementTerpakai();
+                        }
+                    }
+
+                    $booking->update([
+                        'status' => 'dibatalkan',
+                        'status_layanan' => 'dibatalkan',
+                    ]);
+                }
+            });
         }
     }
 }

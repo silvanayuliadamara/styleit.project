@@ -20,6 +20,7 @@ class CancelExpiredBookings
     {
         try {
             Booking::cancelExpiredBookings();
+            Booking::autoCancelPendingCancellations();
         } catch (\Illuminate\Database\QueryException $e) {
             // Ignore if tables don't exist yet (e.g., during migrations)
         }
