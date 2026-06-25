@@ -47,7 +47,7 @@
                             <p class="invoice-customer-detail">{{ $booking->user->phone }}</p>
                         @endif
                         @if(($booking->user ?? null) && ($booking->user->instagram ?? null))
-                            <p class="invoice-customer-detail">IG: {{ '@' . $booking->user->instagram }}</p>
+                            <p class="invoice-customer-detail">IG: {{ '@' . ltrim($booking->user->instagram, '@') }}</p>
                         @endif
                         @if(($booking->user ?? null) && ($booking->user->address ?? null))
                             <p class="invoice-customer-detail">{{ $booking->user->address }}</p>
