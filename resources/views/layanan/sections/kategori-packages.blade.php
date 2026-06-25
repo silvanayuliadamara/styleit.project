@@ -7,9 +7,9 @@
                     <div class="price-card h-100">
 
                         {{-- Package Image --}}
-                        <div class="pkg-img-wrap">
+                        <div class="pkg-img-wrap" @if($category->slug === 'baju') style="aspect-ratio: 4/5;" @endif>
                             @if($package->image)
-                                <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}">
+                                <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" @if($category->slug === 'baju') style="object-fit: cover;" @endif>
                             @else
                                 <div class="pkg-no-img">
                                     <i class="bi bi-image"></i>

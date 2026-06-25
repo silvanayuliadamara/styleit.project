@@ -510,9 +510,9 @@
             <div class="col-lg-5">
                 <div class="position-sticky cover-image-sticky">
                     @if ($package->image)
-                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="aspect-ratio: 3/4; object-fit: cover; border: 1px solid #eadfd6;">
+                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="@if($package->category->slug === 'baju') aspect-ratio: 4/5; @else aspect-ratio: 3/4; @endif object-fit: cover; border: 1px solid #eadfd6;">
                     @else
-                        <div class="w-100 rounded-4 d-flex align-items-center justify-content-center bg-light border text-muted" style="aspect-ratio: 3/4; border-color: #eadfd6 !important;">
+                        <div class="w-100 rounded-4 d-flex align-items-center justify-content-center bg-light border text-muted" style="@if($package->category->slug === 'baju') aspect-ratio: 4/5; @else aspect-ratio: 3/4; @endif border-color: #eadfd6 !important;">
                             <i class="bi bi-image" style="font-size: 48px;"></i>
                         </div>
                     @endif
@@ -751,7 +751,7 @@
                         </div>
                         <div class="col-sm-6">
                             <button type="submit" name="action" value="checkout" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
-                                Booking Sekarang
+                                Checkout
                             </button>
                         </div>
                     @endif
