@@ -60,7 +60,13 @@
                             $badgeClass = 'sbadge-pending';
                             $badgeLabel = 'Menunggu Pembayaran';
 
-                            if (in_array($booking->status ?? '', ['dibatalkan', 'expired'])) {
+                            $latestCancel = $booking->latestCancellationRequest ?? null;
+                            $hasPendingCancellation = $latestCancel && $latestCancel->status_persetujuan === 'diajukan';
+
+                            if ($hasPendingCancellation) {
+                                $badgeClass = 'sbadge-menunggu-pembatalan';
+                                $badgeLabel = 'Menunggu Konfirmasi Pembatalan';
+                            } elseif (in_array($booking->status ?? '', ['dibatalkan', 'expired'])) {
                                 $badgeClass = 'sbadge-dibatalkan';
                                 $badgeLabel = 'Dibatalkan';
                             } elseif (($booking->payment_status ?? '') === 'lunas') {
@@ -157,7 +163,7 @@
                     </div>
                 </div>
 
-                @if(($booking->payment_status === 'belum_bayar') && !in_array($booking->status ?? '', ['dibatalkan', 'expired']))
+                @if(($booking->payment_status === 'belum_bayar') && !$hasPendingCancellation && !in_array($booking->status ?? '', ['dibatalkan', 'expired']))
                 <div class="invoice-notice d-flex justify-content-between align-items-center flex-wrap gap-2" style="background-color: #fffbeb; border: 1px solid #f9edd0; border-radius: 12px; padding: 1rem; color: #8a6d3b; font-family: Arial, sans-serif; font-size: 13px;">
                     <span>Batas pembayaran DP: <strong>1 jam</strong> sejak invoice dibuat.</span>
                     @if(!request()->routeIs('owner.*') && !request()->routeIs('admin.*'))
