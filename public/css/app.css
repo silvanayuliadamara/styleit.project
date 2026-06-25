@@ -1747,11 +1747,12 @@ body {
     font-weight: 700;
     margin-bottom: 10px;
 }
-.sbadge-menunggu-dp  { background: #fff8e1; color: #896414;  border: 1px solid #ffe082; }
-.sbadge-dp-diterima  { background: #e0f2f1; color: #00796b;  border: 1px solid #b2dfdb; }
-.sbadge-lunas        { background: #e8f5e9; color: #2e7d32;  border: 1px solid #a5d6a7; }
-.sbadge-dibatalkan   { background: #ffebee; color: #c62828;  border: 1px solid #ffcdd2; }
-.sbadge-pending      { background: #f5f5f5; color: #616161;  border: 1px solid #e0e0e0; }
+.sbadge-menunggu-dp          { background: #fff8e1; color: #896414;  border: 1px solid #ffe082; }
+.sbadge-dp-diterima          { background: #e0f2f1; color: #00796b;  border: 1px solid #b2dfdb; }
+.sbadge-lunas                { background: #e8f5e9; color: #2e7d32;  border: 1px solid #a5d6a7; }
+.sbadge-dibatalkan           { background: #ffebee; color: #c62828;  border: 1px solid #ffcdd2; }
+.sbadge-pending              { background: #f5f5f5; color: #616161;  border: 1px solid #e0e0e0; }
+.sbadge-menunggu-pembatalan  { background: #fff3e0; color: #e65100;  border: 1px solid #ffcc80; }
 
 .invoice-booking-date {
     font-family: Arial, sans-serif;
