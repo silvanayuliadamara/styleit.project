@@ -1,0 +1,460 @@
+/* =============================================================
+   LAYANAN PAGES — Modular CSS
+   =============================================================
+   Styles for /layanan (index) and /layanan/{slug} (kategori)
+   ============================================================= */
+
+
+/* ── SHARED: Back Link ── */
+.back-link {
+    transition: all 0.3s ease;
+    color: #88746a !important;
+}
+.back-link:hover {
+    color: #b08a42 !important;
+    transform: translateX(-4px);
+}
+
+
+/* =============================================================
+   INDEX PAGE — Editorial Split Cards with Arch Frames
+   ============================================================= */
+
+/* Split Card Container */
+.lyb-cat-card {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: transparent;
+    text-decoration: none;
+    color: var(--lyb-dark);
+    min-height: 420px;
+    padding: 40px 0;
+}
+.lyb-cat-card:hover {
+    color: var(--lyb-dark);
+}
+.lyb-cat-card.lyb-cat-reverse {
+    flex-direction: row-reverse;
+}
+
+/* ── Arch Image Side ── */
+.lyb-cat-arch-wrap {
+    width: 42%;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    padding: 10px;
+}
+.lyb-cat-arch {
+    position: relative;
+    width: 280px;
+    height: 380px;
+    border-radius: 160px 160px 28px 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(33, 19, 19, 0.1);
+    border: 5px solid #fff;
+    z-index: 2;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+}
+.lyb-cat-card:hover .lyb-cat-arch {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px rgba(176, 138, 66, 0.18);
+}
+.lyb-cat-arch img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lyb-cat-card:hover .lyb-cat-arch img {
+    transform: scale(1.08);
+}
+
+/* Decorative gold frame behind arch */
+.lyb-cat-arch-decor {
+    position: absolute;
+    width: 280px;
+    height: 380px;
+    border-radius: 160px 160px 28px 28px;
+    border: 1.5px solid var(--lyb-gold);
+    z-index: 1;
+    top: 24px;
+    left: calc(50% + 14px);
+    transform: translateX(-50%);
+    pointer-events: none;
+    opacity: 0.5;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lyb-cat-card:hover .lyb-cat-arch-decor {
+    top: 30px;
+    left: calc(50% + 20px);
+    opacity: 0.8;
+}
+.lyb-cat-card.lyb-cat-reverse .lyb-cat-arch-decor {
+    left: calc(50% - 14px);
+}
+.lyb-cat-card.lyb-cat-reverse:hover .lyb-cat-arch-decor {
+    left: calc(50% - 20px);
+}
+
+/* Glass shine sweep on arch */
+.lyb-cat-arch-shine {
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 40%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.18) 60%, rgba(255,255,255,0) 100%);
+    transform: skewX(-20deg);
+    z-index: 3;
+    pointer-events: none;
+}
+.lyb-cat-card:hover .lyb-cat-arch-shine {
+    animation: arch-shine-sweep 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes arch-shine-sweep {
+    0% { left: -150%; }
+    100% { left: 150%; }
+}
+
+/* Floating number badge */
+.lyb-cat-badge {
+    position: absolute;
+    bottom: 20px;
+    right: -10px;
+    width: 52px;
+    height: 52px;
+    background: rgba(33, 19, 19, 0.88);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(176, 138, 66, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--lyb-gold);
+    z-index: 4;
+    box-shadow: 0 8px 24px rgba(33, 19, 19, 0.2);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lyb-cat-card:hover .lyb-cat-badge {
+    background: var(--lyb-gold);
+    color: #fff;
+    border-color: var(--lyb-gold);
+    transform: scale(1.12) translateY(-6px);
+    box-shadow: 0 12px 30px rgba(176, 138, 66, 0.35);
+}
+.lyb-cat-card.lyb-cat-reverse .lyb-cat-badge {
+    right: auto;
+    left: -10px;
+}
+
+/* ── Content Side ── */
+.lyb-cat-body {
+    flex: 1;
+    padding: 20px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.lyb-cat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(176, 138, 66, 0.1) 0%, rgba(216, 168, 79, 0.05) 100%);
+    border: 1px solid rgba(176, 138, 66, 0.15);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: var(--lyb-gold);
+    margin-bottom: 20px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lyb-cat-card:hover .lyb-cat-icon {
+    background: linear-gradient(135deg, var(--lyb-gold) 0%, #d8a84f 100%);
+    border-color: transparent;
+    color: #fff;
+    transform: scale(1.08);
+    box-shadow: 0 8px 20px rgba(176, 138, 66, 0.25);
+}
+.lyb-cat-kicker {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--lyb-gold);
+    margin-bottom: 8px;
+    display: block;
+}
+.lyb-cat-title {
+    font-family: Georgia, serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--lyb-dark);
+    margin: 0 0 16px;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+}
+.lyb-cat-divider {
+    width: 45px;
+    height: 2px;
+    background: var(--lyb-gold);
+    margin-bottom: 18px;
+    border-radius: 1px;
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lyb-cat-card:hover .lyb-cat-divider {
+    width: 70px;
+}
+.lyb-cat-desc {
+    font-family: Arial, sans-serif;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: #6f625c;
+    margin-bottom: 28px;
+}
+.lyb-cat-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--lyb-dark);
+    color: #fff;
+    border: 1.5px solid var(--lyb-dark);
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    width: fit-content;
+    position: relative;
+    overflow: hidden;
+}
+.lyb-cat-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%);
+    transform: skewX(-25deg);
+}
+.lyb-cat-card:hover .lyb-cat-link::before {
+    animation: lyb-btn-shimmer 1.5s infinite;
+}
+@keyframes lyb-btn-shimmer {
+    0% { left: -100%; }
+    100% { left: 150%; }
+}
+.lyb-cat-link i {
+    transition: transform 0.3s ease;
+}
+.lyb-cat-card:hover .lyb-cat-link {
+    background: var(--lyb-gold);
+    border-color: var(--lyb-gold);
+    box-shadow: 0 8px 24px rgba(176, 138, 66, 0.25);
+    transform: translateY(-2px);
+}
+.lyb-cat-card:hover .lyb-cat-link i {
+    transform: translateX(4px);
+}
+
+/* ── Separator line between cards ── */
+.lyb-cat-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+.lyb-cat-separator::before,
+.lyb-cat-separator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(176, 138, 66, 0.2), transparent);
+}
+.lyb-cat-separator i {
+    font-size: 8px;
+    color: var(--lyb-gold);
+    padding: 0 16px;
+    opacity: 0.5;
+}
+
+
+/* =============================================================
+   KATEGORI PAGE — Hero Stats
+   ============================================================= */
+
+.kategori-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+.kategori-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.kategori-stat-item i {
+    font-size: 18px;
+    color: var(--lyb-gold);
+}
+.kategori-stat-item strong {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--lyb-dark);
+    line-height: 1;
+}
+.kategori-stat-item span {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #9a8d85;
+    font-weight: 600;
+}
+.kategori-stat-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(176, 138, 66, 0.25);
+}
+
+
+/* =============================================================
+   KATEGORI PAGE — Package Cards
+   ============================================================= */
+
+.pkg-img-wrap {
+    margin: 0 0 20px 0;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    background: #f9f5f0;
+    aspect-ratio: 3 / 4;
+    border: 1px solid var(--lyb-line);
+    box-shadow: 0 4px 16px rgba(33, 19, 19, 0.05);
+}
+.pkg-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.price-card:hover .pkg-img-wrap img {
+    transform: scale(1.06);
+}
+.pkg-img-wrap .pkg-no-img {
+    width: 100%;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pkg-img-wrap .pkg-no-img i {
+    font-size: 36px;
+    color: var(--lyb-gold);
+    opacity: 0.3;
+}
+.pkg-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px 0;
+    position: relative;
+}
+.pkg-divider::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(176,138,66,0) 0%, rgba(176,138,66,0.2) 50%, rgba(176,138,66,0) 100%);
+}
+.pkg-divider i {
+    font-size: 7px;
+    color: var(--lyb-gold);
+    background: rgba(255,255,255,0.85);
+    padding: 0 10px;
+    z-index: 2;
+}
+.pkg-price-block {
+    text-align: center;
+    padding: 4px 0;
+}
+.pkg-price-block .price {
+    font-family: Georgia, serif !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: var(--lyb-gold) !important;
+    margin: 0 !important;
+}
+.pkg-price-block .dp {
+    font-family: Arial, sans-serif !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    color: #8f7d73 !important;
+    font-weight: 700 !important;
+    margin: 4px 0 0 !important;
+}
+
+
+/* =============================================================
+   RESPONSIVE — Index Page
+   ============================================================= */
+
+@media (max-width: 991px) {
+    .lyb-cat-arch-wrap { width: 38%; }
+    .lyb-cat-arch, .lyb-cat-arch-decor { width: 240px; height: 340px; border-radius: 140px 140px 24px 24px; }
+    .lyb-cat-body { padding: 16px 32px; }
+    .lyb-cat-title { font-size: 26px; }
+}
+
+@media (max-width: 768px) {
+    .lyb-cat-card,
+    .lyb-cat-card.lyb-cat-reverse {
+        flex-direction: column;
+        min-height: auto;
+        padding: 24px 0;
+        gap: 8px;
+    }
+    .lyb-cat-arch-wrap {
+        width: 100%;
+        padding: 0;
+    }
+    .lyb-cat-arch, .lyb-cat-arch-decor {
+        width: 220px;
+        height: 300px;
+        border-radius: 130px 130px 22px 22px;
+    }
+    .lyb-cat-body {
+        padding: 20px 8px;
+        text-align: center;
+        align-items: center;
+    }
+    .lyb-cat-title { font-size: 24px; }
+    .lyb-cat-badge {
+        right: calc(50% - 130px);
+    }
+    .lyb-cat-card.lyb-cat-reverse .lyb-cat-badge {
+        left: auto;
+        right: calc(50% - 130px);
+    }
+}
