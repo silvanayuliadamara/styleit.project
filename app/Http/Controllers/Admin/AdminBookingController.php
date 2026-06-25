@@ -60,7 +60,7 @@ class AdminBookingController extends Controller
         if (! $this->bajuScope()->where('id', $booking->id)->exists()) {
             abort(403, 'Unauthorized action.');
         }
-        $booking->load(['user', 'package', 'schedule', 'addons', 'payments']);
+        $booking->load(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest']);
 
         return view('shared.invoice', compact('booking'));
     }
