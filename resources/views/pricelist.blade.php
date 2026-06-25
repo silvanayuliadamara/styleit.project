@@ -3,6 +3,45 @@
 @section('title', 'Pricelist')
 
 @section('content')
+<style>
+    .pricelist-img-wrapper {
+        width: 110px;
+        height: 147px;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #eadfd6;
+        flex-shrink: 0;
+        background-color: #fbf8f1;
+    }
+    .pricelist-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .pricelist-card:hover .pricelist-img {
+        transform: scale(1.05);
+    }
+    .pricelist-img-placeholder {
+        width: 100%;
+        height: 100%;
+        background-color: #fbf8f1;
+        color: #b08a42;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    @media (max-width: 768px) {
+        .pricelist-img-wrapper {
+            width: 120px;
+            height: 160px;
+            border-radius: 12px;
+        }
+    }
+</style>
+
 {{-- Hero Header Section --}}
 <section class="pricelist-hero">
     <div class="container text-center">
@@ -29,41 +68,18 @@
                     <h2 class="pricelist-category-title">{{ $category->name }}</h2>
                     <div class="pricelist-divider"></div>
 
-                    {{-- Brosur Manual untuk kategori ini --}}
-                    @php
-                        $brochures = [];
-                        if ($category->slug === 'baju') {
-                            $brochures = [
-                                ['url' => asset('storage/packages/attire_packages.jpg'), 'title' => 'Buku Paket Attire'],
-                                ['url' => asset('storage/packages/attire_items.jpg'), 'title' => 'Brosur Satuan Attire (Premium & Luxury)']
-                            ];
-                        } elseif ($category->slug === 'wedding') {
-                            $brochures = [
-                                ['url' => asset('storage/packages/wedding_premium.jpg'), 'title' => 'Brosur Wedding Premium'],
-                                ['url' => asset('storage/packages/wedding_luxury.jpg'), 'title' => 'Brosur Wedding Luxury'],
-                                ['url' => asset('storage/packages/makeup_wedding.jpg'), 'title' => 'Brosur Jasa Makeup Wedding']
-                            ];
-                        }
-                    @endphp
-
-                    @if (!empty($brochures))
-                        <div class="row mb-5 g-3 justify-content-center">
-                            <div class="col-12"><p class="small text-muted mb-2"><i class="bi bi-book-half"></i> Brosur Cetak / Buku Paket Resmi:</p></div>
-                            @foreach ($brochures as $b)
-                                <div class="col-6 col-sm-4 col-md-3 text-center">
-                                    <div class="position-relative overflow-hidden rounded-4 shadow-sm" style="background: #fff; cursor: pointer; border: 1px solid #eadfd6 !important; border-radius: 16px !important;">
-                                        <a href="{{ $b['url'] }}" target="_blank" title="Klik untuk memperbesar {{ $b['title'] }}">
-                                            <img src="{{ $b['url'] }}" alt="{{ $b['title'] }}" class="w-100 brochure-card-img" style="transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: block;">
-                                        </a>
-                                    </div>
-                                    <span class="d-block small fw-bold text-secondary mt-2" style="font-size: 11px;">{{ $b['title'] }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
                     @foreach ($category->packages as $package)
                         <div class="pricelist-card scroll-reveal">
+                            <div class="pricelist-img-wrapper">
+                                @if($package->image)
+                                    <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="pricelist-img">
+                                @else
+                                    <div class="pricelist-img-placeholder">
+                                        <i class="bi bi-stars"></i>
+                                    </div>
+                                @endif
+                            </div>
+
                             <div class="pricelist-card-info">
                                 <h5 class="pricelist-card-name">{{ $package->name }}</h5>
                                 <p class="pricelist-card-desc">{{ $package->description }}</p>
