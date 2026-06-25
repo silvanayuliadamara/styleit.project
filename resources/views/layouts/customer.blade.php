@@ -8,8 +8,31 @@
     <title>{{ $title ?? 'Dashboard Customer — LYB' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/owner.css') }}">
+    <style>
+        body, table, input, button, select, textarea, h1, h2, h3, h4, h5, h6, p, span, a, strong {
+            font-family: 'Outfit', sans-serif !important;
+        }
+        .lyb-admin-sidebar {
+            background: #1c0e0e !important;
+            border-right: 1px solid rgba(176, 138, 66, 0.1);
+        }
+        .lyb-admin-brand h1 {
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 700;
+        }
+        .lyb-admin-nav-link:hover, .lyb-admin-nav-link.active {
+            background: #2b1717 !important;
+            box-shadow: inset 4px 0 0 #b08a42 !important;
+        }
+        .lyb-admin-profile {
+            background: #251313 !important;
+        }
+    </style>
 </head>
 
 <body class="lyb-admin-body">
