@@ -32,6 +32,14 @@ class MidtransService
         }
     }
 
+    /**
+     * Check if the system is running in sandbox/simulation mode.
+     */
+    public function isSandboxMode(): bool
+    {
+        return !config('midtrans.is_production');
+    }
+
     public function getSnapToken(Booking $booking): string
     {
         $cacheKey = "midtrans_snap_token_booking_{$booking->id}";
@@ -42,6 +50,18 @@ class MidtransService
         }
 
         $orderId = $booking->booking_code.'-'.time();
+
+        // Sandbox mode: return dummy token without calling Midtrans API
+        if ($this->isSandboxMode()) {
+            $dummyToken = 'sandbox-token-'.$booking->id.'-'.time();
+            Cache::put($cacheKey, [
+                'snap_token' => $dummyToken,
+                'order_id' => $orderId,
+            ], now()->addHours(24));
+            Log::info('Sandbox mode: generated dummy snap token', ['booking_id' => $booking->id, 'token' => $dummyToken]);
+            return $dummyToken;
+        }
+
         $params = [
             'transaction_details' => [
                 'order_id' => $orderId,
@@ -100,6 +120,26 @@ class MidtransService
 
         // Order ID format: LYB-GP-{id1}-{id2}-...-{timestamp}
         $orderId = 'LYB-GP-'.implode('-', $bookingIds).'-'.time();
+
+        // Sandbox mode: return dummy token without calling Midtrans API
+        if ($this->isSandboxMode()) {
+            $dummyToken = 'sandbox-group-token-'.implode('-', $bookingIds).'-'.time();
+            $groupData = [
+                'snap_token' => $dummyToken,
+                'order_id' => $orderId,
+                'booking_ids' => $bookingIds,
+            ];
+            Cache::put($cacheKey, $groupData, now()->addHours(24));
+            foreach ($bookings as $b) {
+                Cache::put("midtrans_snap_token_booking_{$b->id}", [
+                    'snap_token' => $dummyToken,
+                    'order_id' => $orderId,
+                    'group_booking_ids' => $bookingIds,
+                ], now()->addHours(24));
+            }
+            Log::info('Sandbox mode: generated dummy group snap token', ['booking_ids' => $bookingIds, 'token' => $dummyToken]);
+            return $dummyToken;
+        }
 
         $firstBooking = $bookings[0];
         $user = $firstBooking->user;
@@ -161,6 +201,12 @@ class MidtransService
     {
         if (in_array($booking->payment_status, ['dp_diterima', 'lunas'])) {
             return true;
+        }
+
+        // Sandbox mode: skip Midtrans API status check entirely
+        if ($this->isSandboxMode()) {
+            Log::info('Sandbox mode: skipping Midtrans API status check', ['booking_id' => $booking->id]);
+            return false;
         }
 
         $cacheKey = "midtrans_snap_token_booking_{$booking->id}";

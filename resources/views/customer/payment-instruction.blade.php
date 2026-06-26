@@ -436,29 +436,45 @@
                 
                 {{-- 6. Aksi Penutup --}}
                 <div class="instruction-actions">
-                    <button class="btn-reopen-snap" id="btnOpenSnap">Bayar Sekarang (Buka Snap Gateway)</button>
+                    @if(!config('midtrans.is_production'))
+                        {{-- Sandbox mode: link to full simulator --}}
+                        <a href="{{ route('customer.payment.sandbox', $booking->booking_code) }}" class="btn-reopen-snap" style="text-decoration: none; text-align: center;">
+                            <i class="bi bi-credit-card-2-front me-2"></i>Buka Sandbox Payment Simulator
+                        </a>
+                    @else
+                        <button class="btn-reopen-snap" id="btnOpenSnap">Bayar Sekarang (Buka Snap Gateway)</button>
+                    @endif
                     <a href="{{ route('customer.bookings.index') }}" class="btn-check-status">Cek Riwayat Booking</a>
                 </div>
 
-                @if(config('app.debug') || !config('midtrans.is_production'))
-                    <div class="mt-4 p-3 border border-warning rounded-4 bg-light text-center">
-                        <h6 class="text-warning fw-bold mb-2"><i class="bi bi-bug-fill"></i> Local Developer Sandbox Helper</h6>
-                        <p class="small text-muted mb-3" style="font-size: 0.8rem; line-height: 1.4;">Karena localhost tidak dapat menerima webhook dari server Midtrans di internet, klik tombol di bawah untuk mensimulasikan webhook POST secara lokal.</p>
-                        <button type="button" class="btn btn-warning btn-sm w-100 fw-bold py-2" onclick="simulateWebhookPayment(event)" style="border-radius: 10px; color: #211313;">
-                            <i class="bi bi-send-fill"></i> Simulasikan Webhook Bayar Berhasil (POST)
-                        </button>
+                @if(!config('midtrans.is_production'))
+                    <div class="mt-4 p-3 border rounded-4 text-center" style="border-color: rgba(245, 158, 11, 0.3) !important; background: linear-gradient(135deg, #fffbeb, #fef3c7);">
+                        <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; display: inline-block; animation: blink 1.5s ease-in-out infinite;"></span>
+                            <h6 class="mb-0 fw-bold" style="color: #92400e; font-size: 0.85rem;">SANDBOX MODE AKTIF</h6>
+                        </div>
+                        <p class="small mb-3" style="color: #78350f; font-size: 0.78rem; line-height: 1.5;">
+                            Pembayaran dalam mode simulasi. Gunakan Sandbox Simulator untuk mensimulasikan berbagai skenario pembayaran (berhasil, pending, gagal).
+                        </p>
+                        <a href="{{ route('customer.payment.sandbox', $booking->booking_code) }}" class="btn btn-sm w-100 fw-bold py-2" style="border-radius: 10px; background: linear-gradient(135deg, #d97706, #b45309); color: #fff; border: none;">
+                            <i class="bi bi-play-circle-fill me-1"></i> Buka Payment Simulator
+                        </a>
                     </div>
+                    <style>
+                        @keyframes blink {
+                            0%, 100% { opacity: 1; }
+                            50% { opacity: 0.3; }
+                        }
+                    </style>
                 @endif
             </div>
         </div>
     </div>
 </section>
 
-{{-- Midtrans Snap Integration --}}
+{{-- Midtrans Snap Integration (production only) --}}
 @if(config('midtrans.is_production'))
     <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-@else
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 @endif
 <script>
 
@@ -496,8 +512,15 @@
         alertBox.className = 'alert alert-success d-block';
         alertBox.innerText = 'Permintaan pembayaran sebesar Rp{{ number_format($booking->dp_amount, 0, ",", ".") }} telah dikirim ke nomor ' + phone + '. Silakan konfirmasi di aplikasi e-wallet Anda.';
         
-        // Auto trigger snap for real payment gateway process
-        triggerSnapPayment();
+        @if(config('midtrans.is_production'))
+            // Production: Auto trigger snap for real payment gateway process
+            triggerSnapPayment();
+        @else
+            // Sandbox: redirect to sandbox simulator after a short delay
+            setTimeout(() => {
+                window.location.href = "{{ route('customer.payment.sandbox', $booking->booking_code) }}";
+            }, 1500);
+        @endif
     }
 
     // Countdown Timer Logic
@@ -527,13 +550,17 @@
         }, 1000);
     }
 
-    // Launch Midtrans Snap Popup
+    // Launch Midtrans Snap Popup (production only)
     function triggerSnapPayment() {
+        @if(!config('midtrans.is_production'))
+            // Sandbox mode: redirect to sandbox simulator instead
+            window.location.href = "{{ route('customer.payment.sandbox', $booking->booking_code) }}";
+            return;
+        @endif
         const token = "{{ $snapToken }}";
-        if (token) {
+        if (token && window.snap) {
             window.snap.pay(token, {
                 onSuccess: function(result) {
-                    // Confirm payment status in our DB (fallback for localhost where webhook can't reach)
                     fetch("{{ route('customer.payment.confirm', $booking->booking_code) }}", {
                         method: 'POST',
                         headers: {
@@ -548,7 +575,6 @@
                     }).then(() => {
                         window.location.href = "{{ route('customer.payment.success', $booking->booking_code) }}";
                     }).catch(() => {
-                        // Even if confirm fails, still redirect
                         window.location.href = "{{ route('customer.payment.success', $booking->booking_code) }}";
                     });
                 },
@@ -609,22 +635,23 @@
     document.addEventListener('DOMContentLoaded', () => {
         startTimer();
         
-        // Auto trigger snap on page load
-        setTimeout(triggerSnapPayment, 800);
-        
-        // Reopen snap on click
-        document.getElementById('btnOpenSnap').addEventListener('click', triggerSnapPayment);
+        @if(config('midtrans.is_production'))
+            // Production: Auto trigger snap on page load
+            setTimeout(triggerSnapPayment, 800);
+            
+            // Reopen snap on click
+            const btnOpenSnap = document.getElementById('btnOpenSnap');
+            if (btnOpenSnap) {
+                btnOpenSnap.addEventListener('click', triggerSnapPayment);
+            }
+        @endif
 
-        // Polling simulation: check if payment status has changed to accepted
-        // In real app, webhook will update booking status, and we check here every 5 seconds.
+        // Polling: check if payment status has changed to accepted
         const bookingCode = "{{ $booking->booking_code }}";
         const checkInterval = setInterval(() => {
             fetch(`/customer/bookings/${bookingCode}`)
                 .then(r => r.text())
                 .then(html => {
-                    // Simple check if the booking details show accepted status
-                    // Or retrieve a small JSON status check endpoint.
-                    // For demo/simplicity, if we request booking detail and find "diterima" or "dp_diterima":
                     if (html.includes('diterima') || html.includes('dp_diterima') || html.includes('LUNAS')) {
                         clearInterval(checkInterval);
                         window.location.href = "{{ route('customer.payment.success', $booking->booking_code) }}";

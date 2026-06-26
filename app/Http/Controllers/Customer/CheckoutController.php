@@ -213,6 +213,10 @@ class CheckoutController extends Controller
                 'success' => true,
                 'snap_token' => $snapToken,
                 'client_key' => config('midtrans.client_key'),
+                'sandbox_mode' => !config('midtrans.is_production'),
+                'sandbox_url' => !config('midtrans.is_production')
+                    ? route('customer.payment.sandbox', $createdBookings[0]->booking_code)
+                    : null,
                 'redirect_url' => route('customer.payment.instruction', $createdBookings[0]->booking_code),
                 'booking_codes' => collect($createdBookings)->pluck('booking_code')->all(),
             ]);
@@ -272,6 +276,29 @@ class CheckoutController extends Controller
         }
 
         return view('customer.payment-success', compact('booking', 'payment'));
+    }
+
+    /**
+     * Show sandbox payment simulator page.
+     * Only available when MIDTRANS_IS_PRODUCTION is false.
+     */
+    public function sandboxSimulator($booking_code)
+    {
+        // Block access in production mode
+        abort_if(config('midtrans.is_production'), 404);
+
+        $booking = Booking::where('booking_code', $booking_code)->firstOrFail();
+        abort_if($booking->user_id !== Auth::id(), 403);
+
+        // If already paid, redirect to success
+        if (in_array($booking->payment_status, ['dp_diterima', 'lunas'])) {
+            return redirect()->route('customer.payment.success', $booking_code);
+        }
+
+        // Collect all related booking codes (for group checkout)
+        $bookingCodes = [$booking->booking_code];
+
+        return view('customer.payment-sandbox-simulator', compact('booking', 'bookingCodes'));
     }
 
     /**
