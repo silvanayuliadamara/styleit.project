@@ -392,11 +392,9 @@
     </div>
 </section>
 
-{{-- Midtrans Snap JS --}}
+{{-- Midtrans Snap JS (production only) --}}
 @if(config('midtrans.is_production'))
     <script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-@else
-    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 @endif
 <script>
 
@@ -437,8 +435,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then(data => {
-                if (data.success && data.snap_token) {
-                    // Open Midtrans Snap popup immediately after checkout
+                if (data.success && data.sandbox_mode && data.sandbox_url) {
+                    // Sandbox mode: redirect to sandbox simulator instead of Snap popup
+                    window.location.href = data.sandbox_url;
+                } else if (data.success && data.snap_token) {
+                    // Production mode: Open Midtrans Snap popup immediately after checkout
                     window.snap.pay(data.snap_token, {
                         onSuccess: function(result) {
                             // Confirm payment in our DB (fallback for localhost where webhook can't reach)

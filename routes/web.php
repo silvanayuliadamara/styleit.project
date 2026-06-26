@@ -77,6 +77,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pembayaran/{booking_code}', [CheckoutController::class, 'paymentInstruction'])->name('customer.payment.instruction');
     Route::get('/pembayaran/{booking_code}/berhasil', [CheckoutController::class, 'paymentSuccess'])->name('customer.payment.success');
     Route::post('/pembayaran/{booking_code}/confirm', [CheckoutController::class, 'confirmPayment'])->name('customer.payment.confirm');
+    Route::get('/pembayaran/{booking_code}/sandbox', [CheckoutController::class, 'sandboxSimulator'])->name('customer.payment.sandbox');
 });
 
 // Owner routes
