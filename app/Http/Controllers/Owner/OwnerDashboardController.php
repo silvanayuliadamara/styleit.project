@@ -32,13 +32,19 @@ class OwnerDashboardController extends Controller
 
         // 7. Biaya Pihak Lain
         $totalBiayaPihakLain = 0;
+        $totalBiayaHenna = 0;
+        $totalBiayaMelati = 0;
+        $totalBiayaLainnya = 0;
         $totalGatewayFee = 0;
+
         foreach ($allBookings as $booking) {
             if (! in_array($booking->status, ['ditolak', 'dibatalkan'])) {
-                if ($booking->package) {
-                    $totalBiayaPihakLain += $booking->package->items->where('is_pihak_lain', true)->sum('biaya_pihak_lain');
-                }
-                $totalBiayaPihakLain += $booking->addons->sum('pivot.biaya_pihak_lain');
+                $breakdown = $booking->pihak_lain_breakdown;
+                $totalBiayaPihakLain += $breakdown['total'];
+                $totalBiayaMelati += $breakdown['melati'];
+                $totalBiayaHenna += $breakdown['henna'];
+                $totalBiayaLainnya += $breakdown['lainnya'];
+                
                 $totalGatewayFee += $booking->gateway_fee;
             }
         }
@@ -57,6 +63,23 @@ class OwnerDashboardController extends Controller
             $q->where('status_persetujuan', 'diajukan');
         })->with(['user', 'package', 'latestCancellationRequest'])->get();
 
+        // Chart Data: monthly booking counts & actual revenues for the last 6 months
+        $monthlyRevenue = [];
+        $monthlyBookings = [];
+        $monthLabels = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $monthLabels[] = $date->translatedFormat('M Y');
+            
+            // Filter bookings created in this month
+            $monthBookings = $allBookings->filter(function ($b) use ($date) {
+                return $b->created_at && $b->created_at->format('Y-m') === $date->format('Y-m');
+            });
+            
+            $monthlyBookings[] = $monthBookings->count();
+            $monthlyRevenue[] = (int) $monthBookings->whereNotIn('status', ['ditolak', 'dibatalkan'])->sum('total_dibayar');
+        }
+
         return view('owner.dashboard', compact(
             'totalBookings',
             'bookingWaiting',
@@ -65,9 +88,15 @@ class OwnerDashboardController extends Controller
             'totalOmset',
             'totalPendapatan',
             'totalBiayaPihakLain',
+            'totalBiayaHenna',
+            'totalBiayaMelati',
+            'totalBiayaLainnya',
             'estimasiBersihOwner',
             'latestBookings',
-            'pendingCancellations'
+            'pendingCancellations',
+            'monthLabels',
+            'monthlyRevenue',
+            'monthlyBookings'
         ));
     }
 }
