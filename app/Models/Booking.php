@@ -198,4 +198,63 @@ class Booking extends Model
             });
         }
     }
+
+    public function getPihakLainBreakdownAttribute(): array
+    {
+        $biayaMelati = 0;
+        $biayaHenna = 0;
+        $biayaLainnya = 0;
+
+        if ($this->package && $this->package->items) {
+            foreach ($this->package->items as $item) {
+                $itemName = strtolower($item->name);
+                $isMelati = (strpos($itemName, 'melati') !== false);
+                $isHenna = (strpos($itemName, 'henna') !== false || strpos($itemName, 'kuku') !== false);
+
+                if ($item->is_pihak_lain || $isMelati || $isHenna) {
+                    $itemCost = $item->biaya_pihak_lain;
+                    
+                    if ($isMelati) {
+                        $biayaMelati += $itemCost;
+                    } elseif ($isHenna) {
+                        $biayaHenna += $itemCost;
+                    } else {
+                        $biayaLainnya += $itemCost;
+                    }
+                }
+            }
+        }
+
+        foreach ($this->addons as $addon) {
+            $addonName = strtolower($addon->pivot->nama_addon);
+            $isMelati = (strpos($addonName, 'melati') !== false);
+            $isHenna = (strpos($addonName, 'henna') !== false || strpos($addonName, 'kuku') !== false);
+
+            if ($addon->pivot->is_pihak_lain || $isMelati || $isHenna) {
+                $addonCost = $addon->pivot->biaya_pihak_lain;
+                if ($addonCost <= 0) {
+                    // Fallback to addon's selling price (subtotal)
+                    $addonCost = $addon->pivot->subtotal;
+                } else {
+                    $addonCost = $addonCost * ($addon->pivot->qty ?? 1);
+                }
+
+                if ($isMelati) {
+                    $biayaMelati += $addonCost;
+                } elseif ($isHenna) {
+                    $biayaHenna += $addonCost;
+                } else {
+                    $biayaLainnya += $addonCost;
+                }
+            }
+        }
+
+        return [
+            'melati' => $biayaMelati,
+            'henna' => $biayaHenna,
+            'lainnya' => $biayaLainnya,
+            'total' => $biayaMelati + $biayaHenna + $biayaLainnya,
+        ];
+    }
 }
+

@@ -18,7 +18,7 @@
     </header>
 
     {{-- Filter Quick Actions --}}
-    <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
+    <div class="d-flex gap-2 mb-3 flex-wrap align-items-center lyb-filter-pills">
         <a href="{{ route('owner.bookings.index') }}" class="btn btn-sm rounded-pill px-3 {{ !request('payment_status') ? 'btn-dark' : 'btn-outline-dark' }}" style="font-size: 12px; font-weight: 600;">
             Semua
         </a>

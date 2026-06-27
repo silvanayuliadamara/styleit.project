@@ -8,7 +8,7 @@
             <p>Kelola rincian paket layanan makeup, baju, dan pricing untuk customer.</p>
         </div>
         <div>
-            <a href="{{ route('owner.packages.create') }}" class="btn btn-dark fw-bold px-3 py-2" style="border-radius: 10px; background: #211313; border: none;">
+            <a href="{{ route('owner.packages.create') }}" class="btn btn-dark fw-bold px-3 py-2 lyb-btn-add" style="border-radius: 10px; background: #211313; border: none;">
                 <i class="bi bi-plus-lg"></i> Tambah Paket
             </a>
         </div>

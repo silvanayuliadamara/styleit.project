@@ -44,7 +44,13 @@
                     </div>
                     <div class="lyb-stat-info">
                         <span>Total Biaya Pihak Lain</span>
-                        <strong style="font-size:16px;">Rp{{ number_format($totalBiayaPihakLain, 0, ',', '.') }}</strong>
+                        <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                            <strong style="font-size:16px; margin: 0 !important; line-height: 1;">Rp{{ number_format($totalBiayaPihakLain, 0, ',', '.') }}</strong>
+                            <div style="font-size: 9px; color: #8a7a72; font-family: 'Outfit', sans-serif; line-height: 1.1; border-left: 1px solid rgba(176, 138, 66, 0.2); padding-left: 6px;">
+                                melati: Rp{{ number_format($totalBiayaMelati, 0, ',', '.') }}<br>
+                                henna: Rp{{ number_format($totalBiayaHenna, 0, ',', '.') }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -114,7 +120,20 @@
                                     Rp{{ number_format($booking->total_dibayar, 0, ',', '.') }}
                                 </td>
                                 <td style="color: #a03131;">
-                                    Rp{{ number_format($booking->biaya_pihak_lain ?? 0, 0, ',', '.') }}
+                                    <div class="fw-bold">Rp{{ number_format($booking->biaya_pihak_lain ?? 0, 0, ',', '.') }}</div>
+                                    @if(($booking->biaya_melati ?? 0) > 0 || ($booking->biaya_henna ?? 0) > 0 || ($booking->biaya_lainnya ?? 0) > 0)
+                                        <div class="text-secondary" style="font-size: 10px; font-weight: normal; margin-top: 2px; line-height: 1.3; font-family: 'Outfit', sans-serif;">
+                                            @if(($booking->biaya_melati ?? 0) > 0)
+                                                <div class="text-nowrap">🌸 Melati: Rp{{ number_format($booking->biaya_melati, 0, ',', '.') }}</div>
+                                            @endif
+                                            @if(($booking->biaya_henna ?? 0) > 0)
+                                                <div class="text-nowrap">✨ Henna: Rp{{ number_format($booking->biaya_henna, 0, ',', '.') }}</div>
+                                            @endif
+                                            @if(($booking->biaya_lainnya ?? 0) > 0)
+                                                <div class="text-nowrap">📦 Lainnya: Rp{{ number_format($booking->biaya_lainnya, 0, ',', '.') }}</div>
+                                            @endif
+                                        </div>
+                                    @endif
                                 </td>
                                 <td style="color: #896414;">
                                     Rp{{ number_format($booking->gateway_fee ?? 0, 0, ',', '.') }}

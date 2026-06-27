@@ -56,6 +56,7 @@
         <!-- Left Column: Details -->
         <div class="col-12 col-lg-8">
             {{-- Customer & Event Info --}}
+            <div class="lyb-detail-card">
             <div class="card mb-4" style="border-radius: 18px; border: 1px solid #eadfd6; background: #fff; overflow: hidden;">
                 <div class="card-header bg-light py-3 border-bottom" style="border-color: #eadfd6;">
                     <h5 class="mb-0 fw-bold" style="color: #211313;"><i class="bi bi-person-fill text-gold"></i> Informasi Customer & Acara</h5>
@@ -105,8 +106,10 @@
                     </div>
                 </div>
             </div>
+            </div>
 
             {{-- Package Details --}}
+            <div class="lyb-detail-card">
             <div class="card mb-4" style="border-radius: 18px; border: 1px solid #eadfd6; background: #fff; overflow: hidden;">
                 <div class="card-header bg-light py-3 border-bottom" style="border-color: #eadfd6;">
                     <h5 class="mb-0 fw-bold" style="color: #211313;"><i class="bi bi-box-seam-fill text-gold"></i> Detail Rincian Layanan</h5>
@@ -159,11 +162,13 @@
                     </div>
                 </div>
             </div>
+            </div>
         </div>
 
         <!-- Right Column: Payment & Action -->
         <div class="col-12 col-lg-4">
             {{-- Status Keuangan --}}
+            <div class="lyb-detail-card">
             <div class="card mb-4" style="border-radius: 18px; border: 1px solid #eadfd6; background: #fff; overflow: hidden;">
                 <div class="card-header bg-light py-3 border-bottom" style="border-color: #eadfd6;">
                     <h5 class="mb-0 fw-bold" style="color: #211313;"><i class="bi bi-wallet2 text-gold"></i> Status Keuangan</h5>
@@ -198,6 +203,7 @@
                         </span>
                     </div>
                 </div>
+            </div>
             </div>
 
             {{-- Konfirmasi DP (jika upload bukti) --}}
@@ -257,6 +263,7 @@
             @endif
 
             {{-- Update Status Booking / Layanan --}}
+            <div class="lyb-detail-card">
             <div class="card" style="border-radius: 18px; border: 1px solid #eadfd6; background: #fff; overflow: hidden;">
                 <div class="card-header bg-light py-3 border-bottom" style="border-color: #eadfd6;">
                     <h5 class="mb-0 fw-bold" style="color: #211313;"><i class="bi bi-gear-fill text-gold"></i> Tindakan Lainnya</h5>
@@ -293,6 +300,7 @@
                         </button>
                     </form>
                 </div>
+            </div>
             </div>
         </div>
     </div>

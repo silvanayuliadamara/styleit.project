@@ -224,17 +224,19 @@ class OwnerBookingController extends Controller
         $totalHargaBooking = 0;
         $totalDiterima = 0;
         $totalBiayaPihakLain = 0;
+        $totalBiayaMelati = 0;
+        $totalBiayaHenna = 0;
+        $totalBiayaLainnya = 0;
         $totalGatewayFee = 0;
         $totalBersihOwner = 0;
 
         foreach ($bookings as $booking) {
             // Biaya Pihak Lain
-            $biayaP = 0;
-            if ($booking->package) {
-                $biayaP += $booking->package->items->where('is_pihak_lain', true)->sum('biaya_pihak_lain');
-            }
-            $biayaP += $booking->addons->sum('pivot.biaya_pihak_lain');
-            $booking->biaya_pihak_lain = $biayaP;
+            $breakdown = $booking->pihak_lain_breakdown;
+            $booking->biaya_pihak_lain = $breakdown['total'];
+            $booking->biaya_melati = $breakdown['melati'];
+            $booking->biaya_henna = $breakdown['henna'];
+            $booking->biaya_lainnya = $breakdown['lainnya'];
 
             // Gateway Fee
             $booking->gateway_fee = $booking->gateway_fee;
@@ -244,13 +246,16 @@ class OwnerBookingController extends Controller
                 $booking->bersih_owner = 0;
             } else {
                 $booking->bersih_owner = $booking->total_dibayar > 0
-                    ? max(0, $booking->total_dibayar - $biayaP - $booking->gateway_fee)
-                    : max(0, $booking->dp_amount - $biayaP);
+                    ? max(0, $booking->total_dibayar - $breakdown['total'] - $booking->gateway_fee)
+                    : max(0, $booking->dp_amount - $breakdown['total']);
             }
 
             $totalHargaBooking += $booking->total_price;
             $totalDiterima += $booking->total_dibayar;
-            $totalBiayaPihakLain += $biayaP;
+            $totalBiayaPihakLain += $breakdown['total'];
+            $totalBiayaMelati += $breakdown['melati'];
+            $totalBiayaHenna += $breakdown['henna'];
+            $totalBiayaLainnya += $breakdown['lainnya'];
             $totalGatewayFee += $booking->gateway_fee;
             $totalBersihOwner += $booking->bersih_owner;
         }
@@ -260,6 +265,9 @@ class OwnerBookingController extends Controller
             'totalHargaBooking',
             'totalDiterima',
             'totalBiayaPihakLain',
+            'totalBiayaMelati',
+            'totalBiayaHenna',
+            'totalBiayaLainnya',
             'totalGatewayFee',
             'totalBersihOwner'
         ));
@@ -284,7 +292,8 @@ class OwnerBookingController extends Controller
         $columns = [
             'Kode Booking', 'Customer', 'Paket', 'Tanggal Acara',
             'Total Harga', 'DP Wajib', 'Total Dibayar', 'Sisa Pelunasan',
-            'Biaya Pihak Lain', 'Gateway Fee', 'Bersih Owner', 'Status',
+            'Biaya Pihak Lain (Total)', 'Pihak Lain: Melati', 'Pihak Lain: Henna', 'Pihak Lain: Lainnya',
+            'Gateway Fee', 'Bersih Owner', 'Status',
         ];
 
         $callback = function () use ($bookings, $columns) {
@@ -296,11 +305,8 @@ class OwnerBookingController extends Controller
             fputcsv($file, $columns, ';');
 
             foreach ($bookings as $booking) {
-                $biayaP = 0;
-                if ($booking->package) {
-                    $biayaP += $booking->package->items->where('is_pihak_lain', true)->sum('biaya_pihak_lain');
-                }
-                $biayaP += $booking->addons->sum('pivot.biaya_pihak_lain');
+                $breakdown = $booking->pihak_lain_breakdown;
+                $biayaP = $breakdown['total'];
 
                 if (in_array($booking->status, ['expired', 'dibatalkan', 'ditolak'])) {
                     $bersih = 0;
@@ -320,6 +326,9 @@ class OwnerBookingController extends Controller
                     $booking->total_dibayar,
                     $booking->sisa_pelunasan,
                     $biayaP,
+                    $breakdown['melati'],
+                    $breakdown['henna'],
+                    $breakdown['lainnya'],
                     $booking->gateway_fee,
                     $bersih,
                     $booking->status,

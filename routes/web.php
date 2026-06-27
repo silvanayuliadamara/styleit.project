@@ -67,6 +67,8 @@ Route::middleware(['auth', 'role:customer'])
         Route::post('/bookings/{booking}/review', [ReviewController::class, 'store'])->name('bookings.review');
         Route::post('/cancellations/{id}/dismiss', [CustomerBookingController::class, 'dismissCancellationNotif'])->name('cancellations.dismiss');
         Route::get('/checkout/{booking}/snap-token', [MidtransController::class, 'getSnapToken'])->name('checkout.snap-token');
+        Route::get('/profile', [CustomerDashboardController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profile', [CustomerDashboardController::class, 'updateProfile'])->name('profile.update');
     });
 
 // Midtrans webhook (public, no CSRF, no auth)
