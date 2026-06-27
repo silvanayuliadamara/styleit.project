@@ -669,3 +669,1072 @@
 .lyb-laporan-row .value.gold {
     color: #b08a42;
 }
+
+/* ==========================================================================
+   PREMIUM OWNER DASHBOARD & NAV UPGRADE
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* Dynamic Ambient Background & Typography */
+body.lyb-admin-body {
+    background: linear-gradient(135deg, #fdfbf8 0%, #f6efe4 100%) !important;
+    font-family: 'Outfit', sans-serif !important;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body.lyb-admin-body::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(176, 138, 66, 0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Sidebar Refinements */
+.lyb-admin-sidebar {
+    background: #170b0b !important; /* Muted darker premium chocolate black */
+    border-right: 1px solid rgba(176, 138, 66, 0.12);
+    box-shadow: 10px 0 40px rgba(23, 11, 11, 0.05);
+}
+
+.lyb-admin-brand {
+    border-bottom: 1px dashed rgba(176, 138, 66, 0.15);
+    padding-bottom: 20px;
+}
+
+.lyb-admin-brand h1 {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 15px;
+    letter-spacing: 1px;
+}
+
+.lyb-admin-label {
+    color: rgba(176, 138, 66, 0.6) !important;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+/* Sidebar Navigation Hover & Active States */
+.lyb-admin-nav-link,
+.lyb-nav-group-toggle {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    border-radius: 12px !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    color: #c4b4b4 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.lyb-admin-nav-link:hover,
+.lyb-nav-group-toggle:hover {
+    background: rgba(176, 138, 66, 0.08) !important;
+    color: #fff !important;
+    transform: translateX(5px);
+}
+
+.lyb-admin-nav-link:hover i,
+.lyb-nav-group-toggle:hover i {
+    color: #fff !important;
+}
+
+.lyb-admin-nav-link:hover .bi-chevron-right,
+.lyb-nav-group-toggle:hover .lyb-caret {
+    transform: translateX(3px) !important;
+    color: var(--lyb-gold) !important;
+}
+
+/* Active Nav State */
+.lyb-admin-nav-link.active {
+    background: linear-gradient(90deg, rgba(176, 138, 66, 0.15) 0%, rgba(176, 138, 66, 0.02) 100%) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    border-left: 3px solid var(--lyb-gold, #b08a42) !important;
+    padding-left: 20px !important;
+}
+
+.lyb-admin-nav-link.active i {
+    color: var(--lyb-gold, #b08a42) !important;
+    filter: drop-shadow(0 2px 4px rgba(176, 138, 66, 0.2));
+}
+
+.lyb-admin-profile {
+    background: rgba(176, 138, 66, 0.05) !important;
+    border: 1px solid rgba(176, 138, 66, 0.1);
+}
+
+.lyb-admin-profile strong {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    color: #fff !important;
+}
+
+.lyb-admin-footer-link {
+    transition: all 0.25s ease;
+}
+
+.lyb-admin-footer-link:hover {
+    color: var(--lyb-gold) !important;
+}
+
+/* Stat Cards Premium Redesign */
+.lyb-stat-card {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(176, 138, 66, 0.08) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px rgba(33, 19, 19, 0.03), 0 1px 3px rgba(0,0,0,0.02) !important;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.lyb-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--lyb-gold, #b08a42), #d4a853, var(--lyb-gold, #b08a42));
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    animation: shimmerBar 3s ease-in-out infinite;
+}
+
+.lyb-stat-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(176, 138, 66, 0.04) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.lyb-stat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 24px 48px rgba(33, 19, 19, 0.08), 0 4px 12px rgba(176, 138, 66, 0.06) !important;
+    border-color: rgba(176, 138, 66, 0.2) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.lyb-stat-card:hover::before {
+    opacity: 1;
+}
+
+.lyb-stat-card:hover::after {
+    opacity: 1;
+}
+
+.lyb-stat-icon {
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 16px !important;
+    font-size: 22px !important;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    position: relative;
+}
+
+.lyb-stat-card:hover .lyb-stat-icon {
+    transform: scale(1.15) rotate(-5deg);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Stat Icon Custom Glow Animations — with unique gradient backgrounds */
+.lyb-stat-icon.total {
+    background: linear-gradient(135deg, rgba(107, 63, 160, 0.1), rgba(133, 89, 186, 0.05)) !important;
+    color: #6b3fa0 !important;
+    border: 1px solid rgba(107, 63, 160, 0.12);
+}
+
+.lyb-stat-icon.pending {
+    background: linear-gradient(135deg, rgba(212, 131, 59, 0.1), rgba(232, 161, 89, 0.05)) !important;
+    color: #c97529 !important;
+    border: 1px solid rgba(212, 131, 59, 0.12);
+    animation: iconFloat 3s infinite ease-in-out;
+}
+
+.lyb-stat-icon.aktif {
+    background: linear-gradient(135deg, rgba(29, 110, 166, 0.1), rgba(59, 140, 196, 0.05)) !important;
+    color: #1d6ea6 !important;
+    border: 1px solid rgba(29, 110, 166, 0.12);
+}
+
+.lyb-stat-icon.selesai {
+    background: linear-gradient(135deg, rgba(45, 110, 37, 0.1), rgba(75, 140, 67, 0.05)) !important;
+    color: #2d6e25 !important;
+    border: 1px solid rgba(45, 110, 37, 0.12);
+}
+
+.lyb-stat-icon.harga {
+    background: linear-gradient(135deg, rgba(176, 138, 66, 0.12), rgba(206, 168, 96, 0.05)) !important;
+    color: #b08a42 !important;
+    border: 1px solid rgba(176, 138, 66, 0.15);
+}
+
+.lyb-stat-icon.pendapatan {
+    background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(64, 169, 64, 0.05)) !important;
+    color: #228b22 !important;
+    border: 1px solid rgba(34, 139, 34, 0.12);
+}
+
+.lyb-stat-icon.biaya {
+    background: linear-gradient(135deg, rgba(160, 49, 49, 0.1), rgba(190, 79, 79, 0.05)) !important;
+    color: #a03131 !important;
+    border: 1px solid rgba(160, 49, 49, 0.12);
+}
+
+.lyb-stat-icon.bersih {
+    background: linear-gradient(135deg, rgba(26, 122, 66, 0.12), rgba(56, 152, 96, 0.05)) !important;
+    color: #1a7a42 !important;
+    border: 1px solid rgba(26, 122, 66, 0.15);
+}
+
+.lyb-stat-info strong {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 26px !important;
+    font-weight: 700;
+    color: #211313;
+    transition: color 0.3s ease;
+}
+
+.lyb-stat-card:hover .lyb-stat-info strong {
+    color: #170b0b;
+}
+
+.lyb-stat-info span {
+    font-family: 'Outfit', sans-serif !important;
+    text-transform: uppercase;
+    font-size: 10px !important;
+    letter-spacing: 0.6px;
+    font-weight: 600;
+    color: #8a7a72 !important;
+    transition: color 0.3s ease, letter-spacing 0.3s ease;
+}
+
+.lyb-stat-card:hover .lyb-stat-info span {
+    color: #6f5c52 !important;
+    letter-spacing: 0.8px;
+}
+
+/* Section Header Typography */
+.lyb-admin-page-header h2 {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-weight: 700;
+    font-size: 32px !important;
+    background: linear-gradient(135deg, #211313 0%, #3a2828 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.lyb-admin-page-header p {
+    font-family: 'Outfit', sans-serif !important;
+    color: #8a7a72 !important;
+    font-size: 14px !important;
+}
+
+.lyb-admin-section-head h3 {
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-weight: 600;
+    font-size: 22px !important;
+}
+
+/* Table Containers Premium Card Styling */
+.lyb-admin-table-card {
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(176, 138, 66, 0.1) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px rgba(33, 19, 19, 0.03) !important;
+    padding: 10px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lyb-admin-table-card:hover {
+    box-shadow: 0 16px 48px rgba(33, 19, 19, 0.06) !important;
+}
+
+.lyb-admin-table th {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    letter-spacing: 1px !important;
+    color: var(--lyb-muted, #88746a) !important;
+    padding: 18px 20px !important;
+    background: linear-gradient(180deg, #FAF7F2 0%, #f5f0e8 100%);
+    border-bottom: 2px solid #eadfd6 !important;
+}
+
+.lyb-admin-table td {
+    padding: 16px 20px !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 13.5px !important;
+    border-bottom: 1px solid #f4ede6 !important;
+    transition: all 0.25s ease;
+}
+
+.lyb-admin-table tr {
+    transition: all 0.25s ease;
+}
+
+.lyb-admin-table tbody tr:hover td {
+    background-color: rgba(176, 138, 66, 0.03) !important;
+    color: #211313;
+}
+
+.lyb-admin-table tbody tr:hover {
+    transform: scale(1.002);
+}
+
+.lyb-package-name {
+    font-weight: 600;
+    color: #211313;
+}
+
+/* Premium Badges styling */
+.lyb-admin-status {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    padding: 5px 12px !important;
+    border-radius: 30px !important;
+    text-transform: capitalize !important;
+    letter-spacing: 0.2px;
+    border-width: 1px !important;
+    border-style: solid !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+}
+
+.lyb-admin-status::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    margin-right: 4px;
+    animation: statusDot 2s ease-in-out infinite;
+}
+
+.lyb-admin-status.pending {
+    background: #fff9e6 !important;
+    color: #d4833b !important;
+    border-color: #ffe699 !important;
+}
+
+.lyb-admin-status.selesai {
+    background: #eafaf1 !important;
+    color: #219653 !important;
+    border-color: #d1f2e1 !important;
+}
+
+.lyb-admin-status.aktif {
+    background: #eaf6fe !important;
+    color: #1d6ea6 !important;
+    border-color: #d2e9fc !important;
+}
+
+.lyb-admin-status.ditolak {
+    background: #fdf2f2 !important;
+    color: #eb5757 !important;
+    border-color: #fbd5d5 !important;
+}
+
+/* Submenu layout styles in sidebar */
+.lyb-nav-submenu {
+    padding-left: 20px !important;
+}
+
+.lyb-nav-submenu-link {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 13px !important;
+    color: #a08c8c !important;
+    padding: 10px 14px !important;
+    border-radius: 8px !important;
+}
+
+.lyb-nav-submenu-link:hover,
+.lyb-nav-submenu-link.active {
+    background: rgba(176, 138, 66, 0.05) !important;
+    color: var(--lyb-gold) !important;
+}
+
+/* ====== Premium Animations ====== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes iconFloat {
+    0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    50% {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(201, 117, 41, 0.12);
+    }
+}
+
+@keyframes shimmerBar {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes statusDot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animate page elements */
+.lyb-animate-fade-up {
+    animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-1 { animation-delay: 0.06s; }
+.delay-2 { animation-delay: 0.12s; }
+.delay-3 { animation-delay: 0.18s; }
+.delay-4 { animation-delay: 0.24s; }
+.delay-5 { animation-delay: 0.30s; }
+.delay-6 { animation-delay: 0.36s; }
+
+/* Stat card stagger entrance — values pop in */
+.lyb-stat-card .lyb-stat-info strong {
+    animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: inherit;
+}
+
+/* Alert cancellation glow pulsing */
+.alert-danger-pulse {
+    border: 1px solid rgba(220, 53, 69, 0.2) !important;
+    box-shadow: 0 10px 30px rgba(220, 53, 69, 0.03) !important;
+    animation: dangerGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes dangerGlow {
+    0%, 100% {
+        border-color: rgba(220, 53, 69, 0.25);
+        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.03);
+    }
+    50% {
+        border-color: rgba(220, 53, 69, 0.5);
+        box-shadow: 0 10px 30px rgba(220, 53, 69, 0.08);
+    }
+}
+
+/* Premium Pagination Styling */
+.pagination {
+    display: flex;
+    gap: 6px;
+}
+
+.page-item .page-link {
+    color: #211313;
+    background-color: #fff;
+    border: 1px solid #eadfd6;
+    border-radius: 10px !important;
+    padding: 8px 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.01);
+}
+
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+    border-radius: 10px !important;
+}
+
+.page-item .page-link:hover {
+    background-color: #fcfbf8;
+    border-color: #b08a42;
+    color: #b08a42;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(176, 138, 66, 0.1);
+}
+
+.page-item.active .page-link {
+    background: linear-gradient(135deg, #b08a42, #c9a254) !important;
+    border-color: #b08a42 !important;
+    color: #fff !important;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(176, 138, 66, 0.3) !important;
+}
+
+.page-item.disabled .page-link {
+    background-color: #fbf9f6;
+    border-color: #f4ede6;
+    color: #c4b4b4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Quick Actions & Helper Classes */
+.hover-underline:hover {
+    text-decoration: underline !important;
+}
+
+.text-gold {
+    color: var(--lyb-gold, #b08a42) !important;
+}
+
+/* Pihak Lain detail separator */
+.lyb-pihak-lain-detail {
+    font-size: 8.5px;
+    color: #8a7a72;
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.15;
+    border-left: 2px solid rgba(176, 138, 66, 0.18);
+    padding-left: 7px;
+    transition: all 0.3s ease;
+}
+
+.lyb-stat-card:hover .lyb-pihak-lain-detail {
+    border-left-color: rgba(176, 138, 66, 0.4);
+    color: #6f5c52;
+}
+
+/* ==========================================================================
+   🎨 PREMIUM VISUAL UPGRADE — Animations & Micro-Interactions
+   ========================================================================== */
+
+/* ====== Page Header Entrance ====== */
+.lyb-admin-page-header {
+    animation: headerSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.lyb-admin-page-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #b08a42, #d4a853, transparent);
+    animation: headerLineExpand 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    border-radius: 2px;
+}
+
+@keyframes headerSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes headerLineExpand {
+    from { width: 0; }
+    to { width: 160px; }
+}
+
+/* ====== Table Row Stagger Animation (Layout-Safe) ====== */
+.lyb-admin-table tbody tr {
+    opacity: 0;
+    animation: rowFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: background-color 0.3s ease !important;
+}
+
+.lyb-admin-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+.lyb-admin-table tbody tr:nth-child(2) { animation-delay: 0.10s; }
+.lyb-admin-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+.lyb-admin-table tbody tr:nth-child(4) { animation-delay: 0.20s; }
+.lyb-admin-table tbody tr:nth-child(5) { animation-delay: 0.24s; }
+.lyb-admin-table tbody tr:nth-child(6) { animation-delay: 0.28s; }
+.lyb-admin-table tbody tr:nth-child(7) { animation-delay: 0.32s; }
+.lyb-admin-table tbody tr:nth-child(8) { animation-delay: 0.36s; }
+.lyb-admin-table tbody tr:nth-child(9) { animation-delay: 0.40s; }
+.lyb-admin-table tbody tr:nth-child(10) { animation-delay: 0.44s; }
+.lyb-admin-table tbody tr:nth-child(n+11) { animation-delay: 0.48s; }
+
+@keyframes rowFadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* ====== Table Row Hover — Gold Accent & Gradient Background ====== */
+.lyb-admin-table tbody td:first-child {
+    border-left: 4px solid transparent;
+    transition: border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lyb-admin-table tbody tr:hover td:first-child {
+    border-left-color: #b08a42;
+}
+
+.lyb-admin-table tbody tr:hover td {
+    background: linear-gradient(90deg, rgba(176, 138, 66, 0.04), rgba(176, 138, 66, 0.01)) !important;
+}
+
+
+/* ====== Table Card Entrance ====== */
+.lyb-admin-table-card {
+    border: 1px solid rgba(176, 138, 66, 0.12) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 12px 40px rgba(33, 19, 19, 0.04) !important;
+    animation: cardFloat 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    border-radius: 20px !important;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lyb-admin-table-card:hover {
+    box-shadow: 0 20px 48px rgba(33, 19, 19, 0.08) !important;
+}
+
+@keyframes cardFloat {
+    from {
+        opacity: 0;
+        transform: translateY(32px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Override app.css Table Header Background & Typography */
+.lyb-admin-table thead th {
+    background: linear-gradient(180deg, #fdfbf7 0%, #f5eee0 100%) !important;
+    color: #4e3a27 !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    letter-spacing: 2px !important;
+    padding: 16px 20px !important;
+    border-bottom: 2px solid rgba(176, 138, 66, 0.18) !important;
+    text-transform: uppercase !important;
+}
+
+/* ====== "Add" Button Premium Style ====== */
+.lyb-btn-add {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #211313, #3a2222) !important;
+    border: 1px solid rgba(176, 138, 66, 0.2) !important;
+    border-radius: 14px !important;
+    padding: 11px 24px !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 16px rgba(33, 19, 19, 0.15);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    color: #fff !important;
+}
+
+.lyb-btn-add::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transition: left 0.6s ease;
+}
+
+.lyb-btn-add:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 12px 32px rgba(33, 19, 19, 0.24), 0 0 0 2px rgba(176, 138, 66, 0.25);
+    background: linear-gradient(135deg, #2a1818, #4a2e2e) !important;
+}
+
+.lyb-btn-add:hover::before {
+    left: 100%;
+}
+
+.lyb-btn-add:active {
+    transform: translateY(-1px) scale(0.97);
+    box-shadow: 0 4px 12px rgba(33, 19, 19, 0.15);
+}
+
+.lyb-btn-add i {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: inline-block;
+}
+
+.lyb-btn-add:hover i {
+    transform: rotate(90deg) scale(1.1);
+}
+
+/* ====== Action Buttons Micro-Interactions ====== */
+.lyb-admin-table .btn-outline-dark,
+.lyb-admin-table .btn-outline-danger {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    border-radius: 10px !important;
+    padding: 6px 16px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.lyb-admin-table .btn-outline-dark {
+    border-color: rgba(33, 19, 19, 0.15) !important;
+    color: #4e3a27 !important;
+}
+
+.lyb-admin-table .btn-outline-dark:hover {
+    background: #211313 !important;
+    border-color: #211313 !important;
+    color: #fff !important;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 14px rgba(33, 19, 19, 0.1);
+}
+
+.lyb-admin-table .btn-outline-danger {
+    border-color: rgba(220, 53, 69, 0.2) !important;
+    color: #dc3545 !important;
+}
+
+.lyb-admin-table .btn-outline-danger:hover {
+    background: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #fff !important;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 14px rgba(220, 53, 69, 0.15);
+}
+
+.lyb-admin-table .btn-outline-dark:active,
+.lyb-admin-table .btn-outline-danger:active {
+    transform: translateY(0) scale(0.96);
+}
+
+/* ====== Table Badges & Status Upgrade ====== */
+.lyb-admin-table .badge {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    padding: 6px 14px !important;
+    border-radius: 30px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px;
+    border: 1px solid transparent !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Custom styles for standard badges in table to look premium */
+.lyb-admin-table .badge.bg-success {
+    background-color: #e6f6ec !important;
+    color: #0f8644 !important;
+    border-color: #ccebda !important;
+}
+
+.lyb-admin-table .badge.bg-secondary {
+    background-color: #f1ede8 !important;
+    color: #796658 !important;
+    border-color: #e5ded6 !important;
+}
+
+.lyb-admin-table .badge.bg-danger {
+    background-color: #fdf2f2 !important;
+    color: #de3535 !important;
+    border-color: #fbd5d5 !important;
+}
+
+.lyb-admin-table .badge.bg-warning {
+    background-color: #fffbeb !important;
+    color: #b27a00 !important;
+    border-color: #fef08a !important;
+}
+
+.lyb-admin-table .badge.bg-dark {
+    background-color: #211313 !important;
+    color: #ffffff !important;
+    border-color: rgba(176, 138, 66, 0.2) !important;
+}
+
+.lyb-admin-table tr:hover .badge {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ====== Filter Pills Animation ====== */
+.lyb-filter-pills {
+    animation: filterSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.lyb-filter-pills .btn {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    font-family: 'Outfit', sans-serif !important;
+    border-radius: 30px !important;
+    padding: 7px 18px !important;
+    font-size: 13px !important;
+}
+
+.lyb-filter-pills .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(33, 19, 19, 0.08);
+}
+
+.lyb-filter-pills .btn.btn-dark {
+    background: linear-gradient(135deg, #211313, #3a2222) !important;
+    border: 1px solid rgba(176, 138, 66, 0.25) !important;
+    box-shadow: 0 4px 14px rgba(33, 19, 19, 0.15);
+}
+
+.lyb-filter-pills .btn.btn-dark:hover {
+    box-shadow: 0 8px 20px rgba(33, 19, 19, 0.22);
+}
+
+.lyb-filter-pills .btn.btn-outline-dark:hover {
+    background: #fdfbf7 !important;
+    border-color: #b08a42 !important;
+    color: #b08a42 !important;
+}
+
+@keyframes filterSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ====== Detail Page Card Stagger ====== */
+.lyb-detail-card {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: detailCardIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.lyb-detail-card:nth-child(1) { animation-delay: 0.08s; }
+.lyb-detail-card:nth-child(2) { animation-delay: 0.16s; }
+.lyb-detail-card:nth-child(3) { animation-delay: 0.24s; }
+.lyb-detail-card:nth-child(4) { animation-delay: 0.32s; }
+
+@keyframes detailCardIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Detail page card hover effect */
+.lyb-detail-card .card {
+    transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    border: 1px solid rgba(176, 138, 66, 0.12) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 30px rgba(33, 19, 19, 0.02) !important;
+    overflow: hidden;
+}
+
+.lyb-detail-card .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(33, 19, 19, 0.07), 0 0 0 1px rgba(176, 138, 66, 0.1) !important;
+    border-color: rgba(176, 138, 66, 0.25) !important;
+}
+
+.lyb-detail-card .card-header {
+    background: #fdfbf7 !important;
+    border-bottom: 1px solid rgba(176, 138, 66, 0.12) !important;
+    padding: 18px 24px !important;
+    transition: background 0.3s ease;
+}
+
+.lyb-detail-card .card:hover .card-header {
+    background: linear-gradient(135deg, #fdfaf4, #f5eee0) !important;
+}
+
+.lyb-detail-card .card-body {
+    padding: 24px !important;
+}
+
+/* ====== Empty State Animation ====== */
+.lyb-empty-row {
+    animation: emptyFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.lyb-empty-row i {
+    animation: emptyBounce 2s ease-in-out infinite;
+    display: inline-block;
+    color: #c4b4a0;
+}
+
+@keyframes emptyFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes emptyBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* ====== Section Entrance ====== */
+.lyb-admin-section {
+    animation: sectionFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+@keyframes sectionFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ====== Code tags (slug, kode) ====== */
+.lyb-admin-table code {
+    background: linear-gradient(135deg, #fbf8f5, #f3ece4) !important;
+    color: #8b6a2f !important;
+    padding: 4px 10px !important;
+    border-radius: 8px !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(176, 138, 66, 0.15) !important;
+    transition: all 0.3s ease;
+    font-family: 'Outfit', monospace !important;
+}
+
+.lyb-admin-table tr:hover code {
+    background: linear-gradient(135deg, #f5eadb, #f0e5d5) !important;
+    border-color: rgba(176, 138, 66, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(176, 138, 66, 0.08);
+}
+
+/* ====== Icon Column Hover ====== */
+.lyb-admin-table .text-gold i {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lyb-admin-table tr:hover .text-gold i {
+    transform: scale(1.22) rotate(-8deg);
+    filter: drop-shadow(0 4px 8px rgba(176, 138, 66, 0.25));
+}
+
+/* ====== Image thumbnails in table ====== */
+.lyb-admin-table img {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 12px !important;
+}
+
+.lyb-admin-table tr:hover img {
+    transform: scale(1.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: rgba(176, 138, 66, 0.4) !important;
+}
+
+/* ====== Search Input Enhancement ====== */
+.lyb-admin-page-header .form-control {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    font-family: 'Outfit', sans-serif !important;
+    border: 1px solid rgba(176, 138, 66, 0.15) !important;
+}
+
+.lyb-admin-page-header .form-control:focus {
+    border-color: #b08a42 !important;
+    box-shadow: 0 0 0 3px rgba(176, 138, 66, 0.15), 0 8px 24px rgba(176, 138, 66, 0.06) !important;
+    transform: translateY(-1px);
+}
+
+/* ====== Back Button Hover ====== */
+.lyb-admin-content > .mb-3 .btn-outline-secondary {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    font-family: 'Outfit', sans-serif !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(176, 138, 66, 0.15) !important;
+    color: #4e3a27 !important;
+    background: #fff;
+}
+
+.lyb-admin-content > .mb-3 .btn-outline-secondary:hover {
+    transform: translateX(-4px);
+    border-color: #b08a42 !important;
+    color: #b08a42 !important;
+    box-shadow: 0 4px 12px rgba(176, 138, 66, 0.08);
+    background: #fff !important;
+}
+
+/* ====== Smooth Scrolling for Main Content ====== */
+.lyb-admin-main {
+    scroll-behavior: smooth;
+}
+
+/* ====== Responsive: Reduce Animation on Low-Width ====== */
+@media (max-width: 768px) {
+    .lyb-admin-table tbody tr {
+        animation-delay: 0s !important;
+        animation-duration: 0.3s !important;
+    }
+
+    .lyb-admin-table tbody tr:hover {
+        transform: none !important;
+    }
+
+    .lyb-detail-card {
+        animation-delay: 0s !important;
+        animation-duration: 0.3s !important;
+    }
+}
+
+/* ====== Prefers Reduced Motion ====== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

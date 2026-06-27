@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/owner.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/owner.css') }}?v={{ time() }}">
 </head>
 
 <body class="lyb-admin-body">
@@ -110,7 +110,7 @@
             </div>
         </aside>
         <main class="lyb-admin-main">
-            <div class="lyb-admin-content">
+            <div class="lyb-admin-content lyb-animate-fade-up">
                 @if(session('success'))
                     <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius: 12px;">
                         {{ session('success') }}

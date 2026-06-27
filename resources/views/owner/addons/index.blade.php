@@ -8,7 +8,7 @@
             <p>Kelola layanan opsional (seperti makeup keluarga, sewa baju tambahan, henna, melati) beserta opsi harga.</p>
         </div>
         <div>
-            <a href="{{ route('owner.addons.create') }}" class="btn btn-dark fw-bold px-3 py-2" style="border-radius: 10px; background: #211313; border: none;">
+            <a href="{{ route('owner.addons.create') }}" class="btn btn-dark fw-bold px-3 py-2 lyb-btn-add" style="border-radius: 10px; background: #211313; border: none;">
                 <i class="bi bi-plus-lg"></i> Tambah Addon
             </a>
         </div>
