@@ -50,7 +50,12 @@
                 <nav class="lyb-admin-nav">
                     <a href="{{ route('customer.dashboard') }}"
                         class="lyb-admin-nav-link {{ request()->routeIs('customer.dashboard') ? 'active' : '' }}">
-                        <span><i class="bi bi-person-fill"></i> Profil & Riwayat</span>
+                        <span><i class="bi bi-person-badge"></i> Profil & Riwayat</span>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    <a href="{{ route('customer.profile.edit') }}"
+                        class="lyb-admin-nav-link {{ request()->routeIs('customer.profile.edit') ? 'active' : '' }}">
+                        <span><i class="bi bi-person-gear"></i> Ubah Profil</span>
                         <i class="bi bi-chevron-right"></i>
                     </a>
                 </nav>

@@ -7,6 +7,10 @@ use App\Models\Booking;
 use App\Models\CancellationRequest;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+
 class CustomerDashboardController extends Controller
 {
     public function index()
@@ -51,5 +55,46 @@ class CustomerDashboardController extends Controller
             'completedBookingCount',
             'unreadCancellationNotifs'
         ));
+    }
+
+    public function editProfile()
+    {
+        $user = Auth::user();
+        return view('customer.profile', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:20', Rule::unique('users', 'phone')->ignore($user->id)],
+            'instagram' => ['nullable', 'string', 'max:50'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'phone.required' => 'Nomor telepon wajib diisi.',
+            'phone.unique' => 'Nomor telepon sudah terdaftar.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+        ]);
+
+        $user->name = $request->name;
+        $user->phone = $request->phone;
+        $user->instagram = $request->instagram;
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->route('customer.profile.edit')->with('success', 'Profil Anda berhasil diperbarui.');
     }
 }
