@@ -751,7 +751,7 @@
                         </div>
                         <div class="col-sm-6">
                             <button type="submit" name="action" value="checkout" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
-                                Booking Sekarang
+                                Checkout
                             </button>
                         </div>
                     @endif
