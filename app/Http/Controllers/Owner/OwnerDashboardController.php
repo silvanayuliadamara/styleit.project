@@ -25,10 +25,10 @@ class OwnerDashboardController extends Controller
         $bookingSelesai = $allBookings->where('payment_status', 'lunas')->count();
 
         // 5. Total Harga Booking (Gross booked value)
-        $totalOmset = $allBookings->whereNotIn('status', ['ditolak', 'dibatalkan'])->sum('total_price');
+        $totalOmset = $allBookings->whereNotIn('status', Booking::CANCELLED_STATUSES)->sum('total_price');
 
         // 6. Pembayaran Diterima (Actual cash in hand before expenses)
-        $totalPendapatan = $allBookings->whereNotIn('status', ['ditolak', 'dibatalkan'])->sum('total_dibayar');
+        $totalPendapatan = $allBookings->whereNotIn('status', Booking::CANCELLED_STATUSES)->sum('total_dibayar');
 
         // 7. Biaya Pihak Lain
         $totalBiayaPihakLain = 0;
@@ -38,7 +38,7 @@ class OwnerDashboardController extends Controller
         $totalGatewayFee = 0;
 
         foreach ($allBookings as $booking) {
-            if (! in_array($booking->status, ['ditolak', 'dibatalkan'])) {
+            if (! in_array($booking->status, Booking::CANCELLED_STATUSES)) {
                 $breakdown = $booking->pihak_lain_breakdown;
                 $totalBiayaPihakLain += $breakdown['total'];
                 $totalBiayaMelati += $breakdown['melati'];
@@ -77,7 +77,7 @@ class OwnerDashboardController extends Controller
             });
             
             $monthlyBookings[] = $monthBookings->count();
-            $monthlyRevenue[] = (int) $monthBookings->whereNotIn('status', ['ditolak', 'dibatalkan'])->sum('total_dibayar');
+            $monthlyRevenue[] = (int) $monthBookings->whereNotIn('status', Booking::CANCELLED_STATUSES)->sum('total_dibayar');
         }
 
         return view('owner.dashboard', compact(
