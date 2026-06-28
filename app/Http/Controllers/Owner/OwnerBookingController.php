@@ -57,33 +57,8 @@ class OwnerBookingController extends Controller
      */
     public function confirmDp(Request $request, Booking $booking)
     {
-        DB::transaction(function () use ($booking) {
-            // Update status pembayaran pending di tabel payments menjadi approved
-            $pendingPayment = $booking->payments()->where('status', 'pending')->first();
-            if ($pendingPayment) {
-                $pendingPayment->update([
-                    'status' => 'diterima',
-                    'paid_at' => now(),
-                ]);
-            }
-
-            // Update booking
-            $booking->update([
-                'status' => 'diterima',
-                'payment_status' => 'dp_diterima',
-                'total_dibayar' => $booking->dp_amount,
-                'sisa_pelunasan' => $booking->total_price - $booking->dp_amount,
-                'status_layanan' => 'terjadwal',
-            ]);
-
-            // Jika ada schedule, increment jumlah terpakai
-            if ($booking->schedule_id) {
-                $schedule = Schedule::find($booking->schedule_id);
-                if ($schedule) {
-                    $schedule->incrementTerpakai();
-                }
-            }
-        });
+        $bookingService = app(\App\Services\BookingService::class);
+        $bookingService->confirmDpPayment($booking);
 
         return redirect()->route('owner.bookings.show', $booking->id)
             ->with('success', 'Pembayaran DP berhasil dikonfirmasi dan jadwal telah diperbarui.');
@@ -94,26 +69,8 @@ class OwnerBookingController extends Controller
      */
     public function confirmLunas(Booking $booking)
     {
-        DB::transaction(function () use ($booking) {
-            // Cari sisa pelunasan
-            $sisa = $booking->total_price - $booking->total_dibayar;
-
-            // Catat pembayaran pelunasan
-            Payment::create([
-                'booking_id' => $booking->id,
-                'amount' => $sisa,
-                'status' => 'diterima',
-                'paid_at' => now(),
-                'tipe_pembayaran' => 'pelunasan',
-            ]);
-
-            // Update booking ke lunas
-            $booking->update([
-                'payment_status' => 'lunas',
-                'total_dibayar' => $booking->total_price,
-                'sisa_pelunasan' => 0,
-            ]);
-        });
+        $bookingService = app(\App\Services\BookingService::class);
+        $bookingService->confirmLunas($booking);
 
         return redirect()->route('owner.bookings.show', $booking->id)
             ->with('success', 'Pelunasan booking berhasil dikonfirmasi.');
@@ -187,18 +144,8 @@ class OwnerBookingController extends Controller
                     'customer_dibaca' => false, // trigger notification to customer
                 ]);
 
-                // Decrement schedule if status was diterima
-                if ($booking->status === 'diterima' && $booking->schedule_id) {
-                    $schedule = Schedule::find($booking->schedule_id);
-                    if ($schedule) {
-                        $schedule->decrementTerpakai();
-                    }
-                }
-
-                $booking->update([
-                    'status' => 'dibatalkan',
-                    'status_layanan' => 'dibatalkan',
-                ]);
+                $bookingService = app(\App\Services\BookingService::class);
+                $bookingService->cancelBooking($booking);
             } else {
                 $cancelReq->update([
                     'status_persetujuan' => 'ditolak',
@@ -218,7 +165,7 @@ class OwnerBookingController extends Controller
     public function laporan(Request $request)
     {
         $bookings = Booking::with(['user', 'package.items', 'addons'])
-            ->whereNotIn('status', ['ditolak', 'dibatalkan'])
+            ->whereNotIn('status', Booking::CANCELLED_STATUSES)
             ->get();
 
         $totalHargaBooking = 0;
@@ -242,7 +189,7 @@ class OwnerBookingController extends Controller
             $booking->gateway_fee = $booking->gateway_fee;
 
             // Bersih Owner
-            if (in_array($booking->status, ['expired', 'dibatalkan', 'ditolak'])) {
+            if (in_array($booking->status, Booking::CANCELLED_STATUSES)) {
                 $booking->bersih_owner = 0;
             } else {
                 $booking->bersih_owner = $booking->total_dibayar > 0
@@ -276,7 +223,7 @@ class OwnerBookingController extends Controller
     public function exportLaporanCsv()
     {
         $bookings = Booking::with(['user', 'package.items', 'addons'])
-            ->whereNotIn('status', ['ditolak', 'dibatalkan'])
+            ->whereNotIn('status', Booking::CANCELLED_STATUSES)
             ->get();
 
         $fileName = 'Laporan_Keuangan_'.date('Y-m-d').'.csv';
@@ -308,7 +255,7 @@ class OwnerBookingController extends Controller
                 $breakdown = $booking->pihak_lain_breakdown;
                 $biayaP = $breakdown['total'];
 
-                if (in_array($booking->status, ['expired', 'dibatalkan', 'ditolak'])) {
+                if (in_array($booking->status, Booking::CANCELLED_STATUSES)) {
                     $bersih = 0;
                 } else {
                     $bersih = $booking->total_dibayar > 0
