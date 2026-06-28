@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\DB;
 
 class Booking extends Model
 {
+    /** Statuses considered "active" (not cancelled/rejected). */
+    const ACTIVE_STATUSES = ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'];
+
+    /** Statuses considered "cancelled/rejected". */
+    const CANCELLED_STATUSES = ['ditolak', 'dibatalkan', 'expired'];
+
     protected $fillable = [
         'booking_code',
         'user_id',
@@ -66,19 +72,16 @@ class Booking extends Model
         return $this->belongsTo(Schedule::class);
     }
 
-    public function checkout(): BelongsTo
+    /* ---- Scopes ---- */
+
+    public function scopeActive($query)
     {
-        return $this->belongsTo(Checkout::class ?? Checkout::class, 'checkout_id');
+        return $query->whereIn('status', self::ACTIVE_STATUSES);
     }
 
-    public function detail(): HasOne
+    public function scopeCancelled($query)
     {
-        return $this->hasOne(BookingDetail::class ?? BookingDetail::class);
-    }
-
-    public function invoice(): HasOne
-    {
-        return $this->hasOne(Invoice::class ?? Invoice::class);
+        return $query->whereIn('status', self::CANCELLED_STATUSES);
     }
 
     public function addons(): BelongsToMany
@@ -112,19 +115,12 @@ class Booking extends Model
 
     public function getGatewayFeeAttribute(): int
     {
-        if ($this->booking_code === 'BOOK-001' || $this->booking_code === 'LYB-DEMO-001') {
-            return 4400;
-        }
-        if ($this->booking_code === 'BOOK-003') {
-            return 2500;
-        }
+        $hasOnlinePayment = $this->payments()
+            ->whereNull('proof_image')
+            ->where('status', 'diterima')
+            ->exists();
 
-        $hasOnlinePayment = $this->payments()->whereNull('proof_image')->where('status', 'diterima')->exists();
-        if ($hasOnlinePayment) {
-            return 4400;
-        }
-
-        return 0;
+        return $hasOnlinePayment ? (int) config('services.midtrans.gateway_fee', 4400) : 0;
     }
 
     public function getFittingPriorityAttribute(): ?int
