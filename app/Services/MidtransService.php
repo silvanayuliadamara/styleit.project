@@ -262,27 +262,9 @@ class MidtransService
                     }
 
                     if ($bookingsToConfirm->isNotEmpty()) {
+                        $bookingService = app(\App\Services\BookingService::class);
                         foreach ($bookingsToConfirm as $b) {
-                            $b->update([
-                                'payment_status' => 'dp_diterima',
-                                'status' => 'diterima',
-                            ]);
-
-                            $payment = $b->payments()->where('status', 'pending')->first();
-                            if ($payment) {
-                                $payment->update([
-                                    'status' => 'diterima',
-                                    'paid_at' => now(),
-                                ]);
-                            } else {
-                                $b->payments()->create([
-                                    'amount' => $b->dp_amount,
-                                    'proof_image' => null,
-                                    'status' => 'diterima',
-                                    'metode_pembayaran' => $status['payment_type'] ?? 'Midtrans',
-                                    'paid_at' => now(),
-                                ]);
-                            }
+                            $bookingService->confirmDpPayment($b, $status['payment_type'] ?? 'Midtrans');
                         }
                     }
 
@@ -298,18 +280,9 @@ class MidtransService
                     $bookingsToUpdate->push($booking);
                 }
 
+                $bookingService = app(\App\Services\BookingService::class);
                 foreach ($bookingsToUpdate as $b) {
-                    $b->update([
-                        'payment_status' => 'belum_bayar',
-                        'status' => $newStatus,
-                    ]);
-
-                    $payment = $b->payments()->where('status', 'pending')->first();
-                    if ($payment) {
-                        $payment->update([
-                            'status' => 'ditolak',
-                        ]);
-                    }
+                    $bookingService->rejectPayment($b, $newStatus);
                 }
             }
         } catch (\Exception $e) {

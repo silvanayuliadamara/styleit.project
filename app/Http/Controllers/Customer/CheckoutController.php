@@ -400,29 +400,9 @@ class CheckoutController extends Controller
             return response()->json(['message' => 'Pembayaran sudah dikonfirmasi sebelumnya.']);
         }
 
+        $bookingService = app(\App\Services\BookingService::class);
         foreach ($bookings as $b) {
-            // Update booking status
-            $b->update([
-                'payment_status' => 'dp_diterima',
-                'status' => 'diterima',
-            ]);
-
-            // Update payment record
-            $payment = $b->payments()->where('status', 'pending')->first();
-            if ($payment) {
-                $payment->update([
-                    'status' => 'diterima',
-                    'paid_at' => now(),
-                ]);
-            } else {
-                $b->payments()->create([
-                    'amount' => $b->dp_amount,
-                    'proof_image' => null,
-                    'status' => 'diterima',
-                    'metode_pembayaran' => $request->input('payment_type', 'Midtrans'),
-                    'paid_at' => now(),
-                ]);
-            }
+            $bookingService->confirmDpPayment($b, $request->input('payment_type', 'Midtrans'));
         }
 
         return response()->json(['message' => 'Pembayaran berhasil dikonfirmasi.', 'success' => true]);

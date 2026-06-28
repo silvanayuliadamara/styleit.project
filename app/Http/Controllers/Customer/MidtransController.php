@@ -84,44 +84,18 @@ class MidtransController extends Controller
             return response()->json(['message' => 'bookings not found'], 404);
         }
 
+        $bookingService = app(\App\Services\BookingService::class);
+
         if ($transactionStatus === 'capture' || $transactionStatus === 'settlement') {
             if ($fraudStatus === 'accept' || $fraudStatus === null) {
                 foreach ($bookings as $booking) {
-                    $booking->update([
-                        'payment_status' => 'dp_diterima',
-                        'status' => 'diterima',
-                    ]);
-
-                    $payment = $booking->payments()->where('status', 'pending')->first();
-                    if ($payment) {
-                        $payment->update([
-                            'status' => 'diterima',
-                            'paid_at' => now(),
-                        ]);
-                    } else {
-                        $booking->payments()->create([
-                            'amount' => $booking->dp_amount,
-                            'proof_image' => null,
-                            'status' => 'diterima',
-                            'paid_at' => now(),
-                        ]);
-                    }
+                    $bookingService->confirmDpPayment($booking, $request->input('payment_type', 'Midtrans'));
                 }
             }
         } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'])) {
             $newStatus = ($transactionStatus === 'expire') ? 'expired' : 'dibatalkan';
             foreach ($bookings as $booking) {
-                $booking->update([
-                    'payment_status' => 'belum_bayar',
-                    'status' => $newStatus,
-                ]);
-
-                $payment = $booking->payments()->where('status', 'pending')->first();
-                if ($payment) {
-                    $payment->update([
-                        'status' => 'ditolak',
-                    ]);
-                }
+                $bookingService->rejectPayment($booking, $newStatus);
             }
         }
 
