@@ -64,15 +64,27 @@ class PublicPageController extends Controller
 
         abort_if(! $package, Response::HTTP_NOT_FOUND);
 
-        $addons = Addon::where('is_active', true)
-            ->where(function ($q) use ($package) {
-                $q->whereDoesntHave('categories')
-                  ->orWhereHas('categories', function ($catQ) use ($package) {
-                      $catQ->where('service_categories.id', $package->category_id)
-                           ->where('category_addons.status', 'aktif');
-                  });
-            })
-            ->get();
+        if ($package->category->slug === 'baju') {
+            $addons = Addon::where('is_active', true)
+                ->whereHas('categories', function ($catQ) use ($package) {
+                    $catQ->where('service_categories.id', $package->category_id)
+                         ->where('category_addons.status', 'aktif');
+                })
+                ->get();
+        } else {
+            $addons = Addon::where('is_active', true)
+                ->where(function ($q) use ($package) {
+                    $q->whereDoesntHave('categories')
+                      ->orWhereHas('categories', function ($catQ) use ($package) {
+                          $catQ->where('service_categories.id', $package->category_id)
+                               ->where('category_addons.status', 'aktif');
+                      });
+                })
+                ->whereDoesntHave('categories', function ($catQ) {
+                    $catQ->where('slug', 'baju');
+                })
+                ->get();
+        }
         $calendar = $this->buildCalendar($package);
 
         // Prepopulate edit data if editing cart item
