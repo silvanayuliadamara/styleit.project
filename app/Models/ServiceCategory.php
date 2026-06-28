@@ -20,4 +20,29 @@ class ServiceCategory extends Model
             ->withPivot('status')
             ->withTimestamps();
     }
+
+    /**
+     * Find a category by its slug, cached per-request for performance.
+     */
+    public static function findBySlug(string $slug): ?self
+    {
+        static $cache = [];
+
+        if (!isset($cache[$slug])) {
+            $cache[$slug] = self::where('slug', $slug)->first();
+        }
+
+        return $cache[$slug];
+    }
+
+    /**
+     * Get IDs for Wedding + Prewedding categories (commonly used together).
+     */
+    public static function getWeddingCategoryIds(): array
+    {
+        return array_filter([
+            self::findBySlug('wedding')?->id,
+            self::findBySlug('prewedding')?->id,
+        ]);
+    }
 }
