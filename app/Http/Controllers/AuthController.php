@@ -156,11 +156,16 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $rules = [
             'email' => ['required', 'email'],
             'password' => ['required'],
-            'captcha' => ['required', 'captcha'],
-        ], [
+        ];
+
+        if (!config('captcha.disable')) {
+            $rules['captcha'] = ['required', 'captcha'];
+        }
+
+        $request->validate($rules, [
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'password.required' => 'Kata sandi wajib diisi.',
@@ -185,7 +190,7 @@ class AuthController extends Controller
         } elseif ($user->hasRole('admin')) {
             return redirect()->route('admin.dashboard');
         } else {
-            return redirect()->route('home');
+            return redirect()->intended(route('customer.dashboard'));
         }
     }
 
