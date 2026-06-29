@@ -109,6 +109,15 @@ class OwnerBookingController extends Controller
                         $schedule->decrementTerpakai();
                     }
                 }
+                if ($booking->tanggal_acara_2) {
+                    $schedule2 = Schedule::where('category_id', $booking->package->category_id)
+                        ->whereDate('tanggal', $booking->tanggal_acara_2)
+                        ->where('jenis_jadwal', $booking->slot_waktu)
+                        ->first();
+                    if ($schedule2) {
+                        $schedule2->decrementTerpakai();
+                    }
+                }
             }
             // Sebaliknya, jika status berubah dari pending/batal ke diterima, increment terpakai
             elseif ($oldStatus !== 'diterima' && $newStatus === 'diterima') {
@@ -116,6 +125,15 @@ class OwnerBookingController extends Controller
                     $schedule = Schedule::find($booking->schedule_id);
                     if ($schedule) {
                         $schedule->incrementTerpakai();
+                    }
+                }
+                if ($booking->tanggal_acara_2) {
+                    $schedule2 = Schedule::where('category_id', $booking->package->category_id)
+                        ->whereDate('tanggal', $booking->tanggal_acara_2)
+                        ->where('jenis_jadwal', $booking->slot_waktu)
+                        ->first();
+                    if ($schedule2) {
+                        $schedule2->incrementTerpakai();
                     }
                 }
             }

@@ -21,6 +21,10 @@
 
     <div class="invoice-card">
         <div class="invoice-inner">
+            <!-- Watermark background logo -->
+            <div class="invoice-watermark">
+                <img src="{{ asset('images/logo.png') }}" alt="Watermark Logo">
+            </div>
 
             <div class="invoice-header">
                 <div class="invoice-brand-area">
@@ -31,9 +35,9 @@
                     </div>
                 </div>
                 <div class="invoice-number-area">
-                    <p class="invoice-label">INVOICE</p>
-                    <p class="invoice-code">INV-{{ $booking->booking_code }}</p>
-                    <p class="invoice-booking-ref">Booking: {{ $booking->booking_code }}</p>
+                    <p class="invoice-label" style="font-size: 15px; font-weight: 700; color: #211313; margin: 0; letter-spacing: 1px;">
+                        INVOICE ({{ ($booking->user ?? null)->name ?? 'Client' }})
+                    </p>
                 </div>
             </div>
 

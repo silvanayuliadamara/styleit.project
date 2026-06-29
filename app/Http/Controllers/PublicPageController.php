@@ -18,7 +18,10 @@ class PublicPageController extends Controller
 {
     public function home()
     {
-        $categories = ServiceCategory::orderBy('sort_order')->get();
+        $slugOrder = ['prewedding' => 1, 'wedding' => 2, 'baju' => 3, 'regular' => 4];
+        $categories = ServiceCategory::all()->sortBy(function ($cat) use ($slugOrder) {
+            return $slugOrder[$cat->slug] ?? 99;
+        })->values();
         $portfolioItems = PortfolioItem::orderBy('sort_order')->take(4)->get();
 
         $reviews = Review::where('status_review', 'tampil')
@@ -38,9 +41,12 @@ class PublicPageController extends Controller
 
     public function layanan()
     {
+        $slugOrder = ['prewedding' => 1, 'wedding' => 2, 'baju' => 3, 'regular' => 4];
         $categories = ServiceCategory::with(['packages' => function ($q) {
-            $q->orderBy('sort_order');
-        }])->orderBy('sort_order')->get();
+            $q->orderBy('price', 'desc');
+        }])->get()->sortBy(function ($cat) use ($slugOrder) {
+            return $slugOrder[$cat->slug] ?? 99;
+        })->values();
 
         return view('layanan.index', compact('categories'));
     }
@@ -48,7 +54,7 @@ class PublicPageController extends Controller
     public function kategori(string $slug)
     {
         $category = ServiceCategory::with(['packages' => function ($q) {
-            $q->orderBy('sort_order');
+            $q->orderBy('price', 'desc');
         }])->where('slug', $slug)->first();
 
         abort_if(! $category, Response::HTTP_NOT_FOUND);
@@ -64,7 +70,9 @@ class PublicPageController extends Controller
 
         abort_if(! $package, Response::HTTP_NOT_FOUND);
 
-        if ($package->category->slug === 'baju') {
+        if ($package->category->slug === 'regular') {
+            $addons = collect([]);
+        } elseif ($package->category->slug === 'baju') {
             $addons = Addon::where('is_active', true)
                 ->whereHas('categories', function ($catQ) use ($package) {
                     $catQ->where('service_categories.id', $package->category_id)
@@ -85,6 +93,19 @@ class PublicPageController extends Controller
                 })
                 ->get();
         }
+
+        $isMakeupOnly = $package->butuh_makeup && !$package->butuh_baju;
+        $addons = $addons->reject(function ($addon) use ($isMakeupOnly) {
+            $name = strtolower($addon->name);
+            if ($name === 'tambahan baju' || $name === 'makeup tambahan') {
+                return true;
+            }
+            if (strpos($name, 'henna') !== false && !$isMakeupOnly) {
+                return true;
+            }
+            return false;
+        })->values();
+
         $calendar = $this->buildCalendar($package);
 
         // Prepopulate edit data if editing cart item
@@ -106,11 +127,14 @@ class PublicPageController extends Controller
 
     public function pricelist()
     {
+        $slugOrder = ['prewedding' => 1, 'wedding' => 2, 'baju' => 3, 'regular' => 4];
         $categories = ServiceCategory::with(['packages' => function ($q) {
-            $q->orderBy('sort_order');
-        }])->orderBy('sort_order')->get();
+            $q->orderBy('price', 'desc');
+        }])->get()->sortBy(function ($cat) use ($slugOrder) {
+            return $slugOrder[$cat->slug] ?? 99;
+        })->values();
 
-        $packages = ServicePackage::with('category')->orderBy('sort_order')->get();
+        $packages = ServicePackage::with('category')->orderBy('price', 'desc')->get();
 
         return view('pricelist', compact('categories', 'packages'));
     }
@@ -192,17 +216,16 @@ class PublicPageController extends Controller
 
             if (! $isBlocked) {
                 if ($categorySlug === 'wedding' || $categorySlug === 'prewedding') {
-                    // Check slots: pagi, siang, sore
-                    $unavailableSlotsCount = 0;
-                    foreach (['pagi', 'siang', 'sore'] as $slot) {
-                        $key = $dateStr.'_'.$slot;
-                        $booked = isset($weddingBookings[$key]);
+                    // Check slots: pagi (max 2), siang (max 1)
+                    $pagiBooked = isset($weddingBookings[$dateStr.'_pagi']) ? count($weddingBookings[$dateStr.'_pagi']) : 0;
+                    $pagiBlocked = isset($blockedSchedules[$dateStr.'_pagi']) ? 2 : 0;
+                    $pagiUnavailable = max($pagiBooked, $pagiBlocked);
 
-                        $blocked = isset($blockedSchedules[$key]);
-                        if ($booked || $blocked) {
-                            $unavailableSlotsCount++;
-                        }
-                    }
+                    $siangBooked = isset($weddingBookings[$dateStr.'_siang']) ? count($weddingBookings[$dateStr.'_siang']) : 0;
+                    $siangBlocked = isset($blockedSchedules[$dateStr.'_siang']) ? 1 : 0;
+                    $siangUnavailable = max($siangBooked, $siangBlocked);
+
+                    $unavailableSlotsCount = $pagiUnavailable + $siangUnavailable;
                     $isFull = ($unavailableSlotsCount >= 3);
                     $remaining = max(0, 3 - $unavailableSlotsCount);
                 } elseif ($categorySlug === 'regular') {
@@ -257,26 +280,26 @@ class PublicPageController extends Controller
         $categorySlug = $package->category->slug;
 
         $slots = [
-            'pagi' => ['available' => true, 'label' => 'Pagi (06:00 - 11:00)', 'reason' => null],
-            'siang' => ['available' => true, 'label' => 'Siang (12:00 - 16:00)', 'reason' => null],
-            'sore' => ['available' => true, 'label' => 'Sore (17:00 - 21:00)', 'reason' => null],
+            'pagi' => ['available' => true, 'label' => 'Pagi', 'reason' => null],
+            'siang' => ['available' => true, 'label' => 'Siang', 'reason' => null],
         ];
 
         if ($categorySlug === 'wedding' || $categorySlug === 'prewedding') {
-            // Wedding & Prewedding: 1 MUA location per slot.
-            // Check if slot has any active bookings in wedding OR prewedding categories on that date.
+            // Wedding & Prewedding: pagi max 2, siang max 1.
+            // Check if slot has active bookings in wedding OR prewedding categories on that date.
             $weddingCategory = ServiceCategory::where('slug', 'wedding')->first();
             $preweddingCategory = ServiceCategory::where('slug', 'prewedding')->first();
             $categoryIds = array_filter([$weddingCategory?->id, $preweddingCategory?->id]);
 
             foreach ($slots as $slotKey => &$slotInfo) {
                 // Check if booked
-                $isBooked = Booking::whereDate('tanggal_acara', $dateStr)
+                $maxBookings = ($slotKey === 'pagi') ? 2 : 1;
+                $activeCount = Booking::whereDate('tanggal_acara', $dateStr)
                     ->where('slot_waktu', $slotKey)
                     ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
-                    ->exists();
+                    ->count();
 
-                if ($isBooked) {
+                if ($activeCount >= $maxBookings) {
                     $slotInfo['available'] = false;
                     $slotInfo['reason'] = 'Sudah dibooking pelanggan lain';
 

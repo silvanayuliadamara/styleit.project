@@ -57,6 +57,15 @@ class BookingService
                     $schedule->incrementTerpakai();
                 }
             }
+            if ($booking->tanggal_acara_2) {
+                $schedule2 = Schedule::where('category_id', $booking->package->category_id)
+                    ->whereDate('tanggal', $booking->tanggal_acara_2)
+                    ->where('jenis_jadwal', $booking->slot_waktu)
+                    ->first();
+                if ($schedule2) {
+                    $schedule2->incrementTerpakai();
+                }
+            }
         });
     }
 
@@ -109,10 +118,21 @@ class BookingService
     {
         DB::transaction(function () use ($booking) {
             // Decrement schedule if was accepted
-            if ($booking->status === 'diterima' && $booking->schedule_id) {
-                $schedule = Schedule::find($booking->schedule_id);
-                if ($schedule) {
-                    $schedule->decrementTerpakai();
+            if ($booking->status === 'diterima') {
+                if ($booking->schedule_id) {
+                    $schedule = Schedule::find($booking->schedule_id);
+                    if ($schedule) {
+                        $schedule->decrementTerpakai();
+                    }
+                }
+                if ($booking->tanggal_acara_2) {
+                    $schedule2 = Schedule::where('category_id', $booking->package->category_id)
+                        ->whereDate('tanggal', $booking->tanggal_acara_2)
+                        ->where('jenis_jadwal', $booking->slot_waktu)
+                        ->first();
+                    if ($schedule2) {
+                        $schedule2->decrementTerpakai();
+                    }
                 }
             }
 

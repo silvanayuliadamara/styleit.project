@@ -28,6 +28,8 @@ class CartController extends Controller
 
         $categorySlug = $package->category->slug ?? '';
 
+        $is2xMakeup = $package && in_array($package->code, ['PKG-MU-2X', 'PKG-WED-SILVER', 'PKG-WED-GOLD', 'PKG-WED-GOLD-L']);
+
         $rules = [
             'package_id' => ['required', 'integer'],
             'booking_date' => ['required', 'date', 'after_or_equal:today'],
@@ -38,8 +40,14 @@ class CartController extends Controller
             'edit_key' => ['nullable', 'string'],
         ];
 
+        if ($is2xMakeup) {
+            $rules['booking_date_2'] = ['required', 'date', 'after_or_equal:today'];
+        } else {
+            $rules['booking_date_2'] = ['nullable', 'date'];
+        }
+
         if ($categorySlug === 'wedding' || $categorySlug === 'prewedding' || $categorySlug === 'regular') {
-            $rules['slot_waktu'] = ['required', 'string', 'in:pagi,siang,sore'];
+            $rules['slot_waktu'] = ['required', 'string', 'in:pagi,siang'];
         } else {
             $rules['slot_waktu'] = ['nullable', 'string'];
         }
@@ -52,6 +60,7 @@ class CartController extends Controller
 
         $validated = $request->validate($rules, [
             'booking_date.required' => 'Tanggal booking wajib dipilih.',
+            'booking_date_2.required' => 'Tanggal booking kedua wajib dipilih untuk paket ini.',
             'softlens.required' => 'Status penggunaan softlens wajib dipilih.',
             'slot_waktu.required' => 'Slot waktu MUA wajib dipilih.',
             'tanggal_fitting.required' => 'Tanggal fitting wajib dipilih.',
@@ -88,6 +97,7 @@ class CartController extends Controller
             'package_image' => $package->image ?? null,
             'category_name' => $package->category->name ?? '',
             'booking_date' => $validated['booking_date'],
+            'booking_date_2' => $validated['booking_date_2'] ?? null,
             'softlens' => (bool) ($validated['softlens'] ?? false),
             'slot_waktu' => $validated['slot_waktu'] ?? null,
             'tanggal_fitting' => $validated['tanggal_fitting'] ?? null,

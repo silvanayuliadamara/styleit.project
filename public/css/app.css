@@ -1647,6 +1647,26 @@ body {
     border-radius: 24px;
     box-shadow: 0 10px 40px rgba(33, 19, 19, .08);
     overflow: hidden;
+    position: relative;
+}
+.invoice-watermark {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.06;
+    z-index: 0;
+    pointer-events: none;
+    width: 50%;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.invoice-watermark img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
 
 .invoice-header {
@@ -1655,6 +1675,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    z-index: 1;
 }
 .invoice-brand-area {
     display: flex;
@@ -1662,8 +1684,8 @@ body {
     gap: 14px;
 }
 .invoice-brand-logo {
-    width: 44px;
-    height: 44px;
+    width: 64px;
+    height: 64px;
     object-fit: contain;
 }
 .invoice-brand-name {
@@ -1704,7 +1726,11 @@ body {
     margin: 0;
 }
 
-.invoice-body { padding: 36px 40px; }
+.invoice-body {
+    padding: 36px 40px;
+    position: relative;
+    z-index: 1;
+}
 
 .invoice-meta-row {
     display: flex;

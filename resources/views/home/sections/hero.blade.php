@@ -42,7 +42,6 @@
                                     <div class="slide-overlay"></div>
                                     <div class="slide-content">
                                         <blockquote>“Hari paling bahagia hidup saya.”</blockquote>
-                                        <p>— Sasha, Wedding Gold Package</p>
                                     </div>
                                 </div>
                             </div>
@@ -51,7 +50,6 @@
                                     <div class="slide-overlay"></div>
                                     <div class="slide-content">
                                         <blockquote>“Riasannya sangat halus & awet seharian.”</blockquote>
-                                        <p>— Rina, Prewedding Outdoor</p>
                                     </div>
                                 </div>
                             </div>
@@ -60,7 +58,6 @@
                                     <div class="slide-overlay"></div>
                                     <div class="slide-content">
                                         <blockquote>“Sangat profesional & gaunnya mewah.”</blockquote>
-                                        <p>— Dinda, Attire & Makeup Package</p>
                                     </div>
                                 </div>
                             </div>

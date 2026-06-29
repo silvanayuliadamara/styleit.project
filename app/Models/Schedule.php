@@ -11,7 +11,6 @@ class Schedule extends Model
     const SLOT_DEFAULTS = [
         'pagi'  => ['start' => '06:00', 'end' => '11:00'],
         'siang' => ['start' => '12:00', 'end' => '16:00'],
-        'sore'  => ['start' => '17:00', 'end' => '21:00'],
         'baju'  => ['start' => '08:00', 'end' => '17:00'],
     ];
 
