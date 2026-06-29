@@ -69,7 +69,8 @@ class ServicePackage extends Model
         $name = trim(str_ireplace('Jasa ', '', $value));
         $name = preg_replace('/\s+-\s+[AB]$/i', '', $name);
         $name = preg_replace('/\s+[AB]$/i', '', $name);
-        return $name;
+        $name = preg_replace('/\s*\(\d+jt\)/i', '', $name);
+        return trim($name);
     }
 
     public function getDescriptionAttribute($value)
@@ -82,24 +83,8 @@ class ServicePackage extends Model
 
     public function getDpAmountAttribute($value)
     {
-        $categorySlug = $this->relationLoaded('category') ? ($this->category->slug ?? '') : '';
-        if ($categorySlug === '') {
-            $slugs = [1 => 'wedding', 2 => 'prewedding', 3 => 'regular', 4 => 'baju'];
-            $categorySlug = $slugs[$this->category_id] ?? '';
-        }
-
-        if ($categorySlug === 'wedding') {
-            if ($this->butuh_makeup && $this->butuh_baju) {
-                return 1000000;
-            } else {
-                return 500000;
-            }
-        } elseif ($categorySlug === 'regular') {
-            return 200000;
-        } elseif (in_array($categorySlug, ['prewedding', 'baju'])) {
-            return 500000;
-        }
-        return $value;
+        $dp = ($this->butuh_makeup && $this->butuh_baju) ? 1000000 : 500000;
+        return min($dp, $this->price);
     }
 
     public function getIsBestSellerAttribute()

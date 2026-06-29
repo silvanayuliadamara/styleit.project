@@ -292,19 +292,24 @@ class PublicPageController extends Controller
             $categoryIds = array_filter([$weddingCategory?->id, $preweddingCategory?->id]);
 
             foreach ($slots as $slotKey => &$slotInfo) {
-                // Check if booked
                 $maxBookings = ($slotKey === 'pagi') ? 2 : 1;
-                $activeCount = Booking::whereDate('tanggal_acara', $dateStr)
-                    ->where('slot_waktu', $slotKey)
-                    ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
+                // Check if booked across Day 1, Day 2, or Day 3
+                $activeCount = Booking::whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
+                    ->where(function ($q) use ($dateStr, $slotKey) {
+                        $q->where(function ($sq) use ($dateStr, $slotKey) {
+                            $sq->whereDate('tanggal_acara', $dateStr)
+                               ->where('slot_waktu', $slotKey);
+                        })
+                        ->orWhere(function ($sq) use ($dateStr, $slotKey) {
+                            $sq->where('notes', 'LIKE', '%' . $dateStr . '%')
+                               ->where('notes', 'LIKE', '%Slot Hari 2: ' . $slotKey . '%');
+                        })
+                        ->orWhere(function ($sq) use ($dateStr, $slotKey) {
+                            $sq->where('notes', 'LIKE', '%' . $dateStr . '%')
+                               ->where('notes', 'LIKE', '%Slot Hari 3: ' . $slotKey . '%');
+                        });
+                    })
                     ->count();
-
-                if ($activeCount >= $maxBookings) {
-                    $slotInfo['available'] = false;
-                    $slotInfo['reason'] = 'Sudah dibooking pelanggan lain';
-
-                    continue;
-                }
 
                 // Check if blocked by owner in schedules
                 $isBlockedByOwner = Schedule::whereDate('tanggal', $dateStr)
@@ -313,7 +318,16 @@ class PublicPageController extends Controller
                     ->where('status', 'diblokir')
                     ->exists();
 
+                $remaining = max(0, $maxBookings - $activeCount);
                 if ($isBlockedByOwner) {
+                    $remaining = 0;
+                }
+                $slotInfo['remaining'] = $remaining;
+
+                if ($activeCount >= $maxBookings) {
+                    $slotInfo['available'] = false;
+                    $slotInfo['reason'] = 'Sudah dibooking pelanggan lain';
+                } elseif ($isBlockedByOwner) {
                     $slotInfo['available'] = false;
                     $slotInfo['reason'] = 'Diblokir oleh MUA';
                 }
@@ -334,6 +348,12 @@ class PublicPageController extends Controller
                     ->where('slot_waktu', $slotKey)
                     ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
                     ->count();
+
+                $remaining = 0;
+                if ($schedule && $schedule->status === 'tersedia') {
+                    $remaining = max(0, $schedule->kuota - $activeCount);
+                }
+                $slotInfo['remaining'] = $remaining;
 
                 if (! $schedule || $schedule->status !== 'tersedia' || $activeCount >= $schedule->kuota) {
                     $slotInfo['available'] = false;

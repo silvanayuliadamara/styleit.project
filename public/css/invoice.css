@@ -1,0 +1,189 @@
+@media print {
+        /* Hide layout chrome and controls */
+        nav, header, footer, 
+        .public-navbar, .owner-navbar, .admin-navbar, .navbar,
+        .auth-footer, .invoice-topnav, .alert, .btn-close, [role="alert"] {
+            display: none !important;
+        }
+        
+        /* Ensure main container takes full width & height without top padding */
+        main, .container, .invoice-wrap {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            background: #fff !important;
+            height: auto !important;
+            min-height: 0 !important;
+        }
+
+        /* Print page margins */
+        @page {
+            size: A4;
+            margin: 0.8cm 1.0cm !important;
+        }
+
+        body {
+            background: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 12px !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        /* Invoice container modifications for print */
+        .invoice-card {
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        .invoice-inner {
+            box-shadow: none !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+
+        /* Header styling for print */
+        .invoice-header {
+            padding: 12px 20px !important;
+            background: #fbf8f1 !important;
+            border: 1px solid #eadfd6 !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .invoice-brand-logo {
+            width: 40px !important;
+            height: 40px !important;
+        }
+
+        .invoice-brand-name {
+            font-size: 15px !important;
+            margin: 0 !important;
+        }
+
+        .invoice-brand-sub {
+            font-size: 8px !important;
+            margin: 2px 0 0 0 !important;
+        }
+
+        .invoice-code {
+            font-size: 18px !important;
+        }
+
+        /* Spacing in body */
+        .invoice-body {
+            padding: 12px 0 !important;
+        }
+
+        .invoice-meta-row {
+            margin-bottom: 12px !important;
+            gap: 12px !important;
+        }
+
+        .invoice-customer-name {
+            font-size: 15px !important;
+            margin-bottom: 3px !important;
+        }
+
+        .invoice-customer-detail {
+            font-size: 11px !important;
+            margin-bottom: 2px !important;
+        }
+
+        .invoice-status-badge {
+            padding: 3px 10px !important;
+            font-size: 10px !important;
+            margin-bottom: 4px !important;
+        }
+
+        .invoice-booking-date {
+            font-size: 10px !important;
+        }
+
+        .invoice-booking-date strong {
+            font-size: 11px !important;
+            margin-top: 1px !important;
+        }
+
+        /* Table optimization */
+        .invoice-table {
+            margin-bottom: 12px !important;
+        }
+
+        .invoice-table thead th {
+            padding: 6px 10px !important;
+            font-size: 10px !important;
+        }
+
+        .invoice-table tbody td {
+            padding: 8px 10px !important;
+            font-size: 11px !important;
+        }
+
+        .invoice-item-name {
+            font-size: 11px !important;
+            margin-bottom: 2px !important;
+        }
+
+        .invoice-item-desc {
+            font-size: 10px !important;
+        }
+
+        /* Summary block optimization */
+        .invoice-summary {
+            max-width: 250px !important;
+            margin-top: 4px !important;
+        }
+
+        .invoice-summary-row {
+            padding: 4px 0 !important;
+            font-size: 11px !important;
+        }
+
+        .invoice-summary-row:last-child {
+            padding-top: 6px !important;
+            margin-top: 2px !important;
+            font-size: 12px !important;
+        }
+
+        .invoice-summary-row:last-child span:last-child {
+            font-size: 13px !important;
+        }
+
+        .invoice-notice {
+            margin-top: 10px !important;
+            padding: 8px 12px !important;
+            font-size: 10px !important;
+            border-radius: 8px !important;
+        }
+
+        /* Footer business info spacing */
+        .invoice-footer-biz {
+            padding: 12px 15px !important;
+            margin-top: 12px !important;
+            background: #fbf8f1 !important;
+            border: 1px solid #eadfd6 !important;
+            border-radius: 8px !important;
+        }
+
+        .invoice-footer-biz p {
+            font-size: 9px !important;
+            margin-bottom: 2px !important;
+        }
+
+        .invoice-footer-biz em {
+            font-size: 9px !important;
+        }
+    }

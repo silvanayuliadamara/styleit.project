@@ -1,506 +1,14 @@
 @extends('layouts.app', ['title' => $package->name . ' - Lisa Yuli Belti'])
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/paket-show.css') }}">
+@endpush
+
 @section('content')
-<style>
-    /* Premium LYB Styling Sesuai Screenshot */
-    :root {
-        --lyb-gold: #b08a42;
-        --lyb-gold-light: #fbf8f1;
-        --lyb-gold-border: #eadfd6;
-        --lyb-dark: #211313;
-    }
-
-    body {
-        background-color: #FAF6F0 !important;
-    }
-
-    h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
-        font-family: Georgia, "Times New Roman", serif !important;
-        color: var(--lyb-dark) !important;
-    }
-
-    /* Back Link styling */
-    .back-link {
-        transition: all 0.3s ease;
-    }
-    .back-link:hover {
-        color: var(--lyb-gold) !important;
-        transform: translateX(-4px);
-    }
-
-    /* Cover Image sticky styling */
-    .cover-image-sticky {
-        top: 100px;
-        transition: all 0.3s ease;
-    }
-
-    /* Wedding gallery thumbnails */
-    .thumbnail-container {
-        border: 2px solid transparent;
-        opacity: 0.6;
-        transition: all 0.3s ease;
-    }
-    .thumbnail-container:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-    }
-    .thumbnail-container.active {
-        border-color: var(--lyb-gold) !important;
-        opacity: 1 !important;
-        box-shadow: 0 4px 10px rgba(176, 138, 66, 0.2);
-    }
-
-    /* Month Calendar Grid Styles */
-    .calendar-month-card {
-        background: #fff;
-        border: 1px solid var(--lyb-gold-border);
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 10px 30px rgba(33, 19, 19, 0.02);
-        height: 100%;
-        transition: all 0.3s ease;
-    }
-    .calendar-month-card:hover {
-        box-shadow: 0 15px 35px rgba(33, 19, 19, 0.05);
-    }
-    .calendar-grid-7 {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 12px 8px;
-        text-align: center;
-        align-items: center;
-    }
-    .calendar-day-header {
-        font-size: 11px;
-        font-weight: 700;
-        color: #a3958e;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding-bottom: 4px;
-    }
-    .calendar-day-cell {
-        width: 100%;
-        max-width: 38px;
-        aspect-ratio: 1;
-        margin: 0 auto;
-        align-self: center;
-        justify-self: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        font-size: 13px;
-        font-weight: 600;
-        position: relative;
-        user-select: none;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .calendar-day-cell .day-number {
-        position: relative;
-        z-index: 2;
-    }
-    /* Available day */
-    .calendar-day-cell.available {
-        border: 1px solid #c2e7d0;
-        background-color: #eafaf1;
-        color: #1a7a42;
-        cursor: pointer;
-    }
-    .calendar-day-cell.available:hover {
-        background-color: #1a7a42;
-        color: #fff;
-        border-color: #1a7a42;
-        box-shadow: 0 4px 10px rgba(26, 122, 66, 0.15);
-        transform: scale(1.08);
-    }
-    /* When selected (radio checked) */
-    .calendar-day-cell.available:has(input:checked) {
-        background-color: var(--lyb-gold) !important;
-        color: #fff !important;
-        border-color: var(--lyb-gold) !important;
-        transform: scale(1.12);
-        animation: activePulse 1.2s infinite;
-    }
-    @keyframes activePulse {
-        0% {
-            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 0 rgba(176, 138, 66, 0.4);
-        }
-        70% {
-            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 8px rgba(176, 138, 66, 0);
-        }
-        100% {
-            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 0 rgba(176, 138, 66, 0);
-        }
-    }
-    /* Full day */
-    .calendar-day-cell.full {
-        border: 1px solid #f9d6d6;
-        background-color: #fdf2f2;
-        color: #dc3545;
-        cursor: not-allowed;
-    }
-    .calendar-day-cell.full:hover {
-        transform: none;
-    }
-    /* Blocked day */
-    .calendar-day-cell.blocked {
-        border: 1px solid var(--lyb-gold-border);
-        background-color: #f6f3f0;
-        color: #a3958e;
-        cursor: not-allowed;
-        text-decoration: line-through;
-    }
-    .calendar-day-cell.blocked:hover {
-        transform: none;
-    }
-    /* Empty cell */
-    .calendar-day-cell.empty {
-        background: transparent;
-        border: none;
-        pointer-events: none;
-    }
-    /* Disabled cell (not in 60-day range) */
-    .calendar-day-cell.disabled {
-        color: #ccc;
-        background: transparent;
-        border: none;
-        cursor: not-allowed;
-    }
-
-    /* Month Navigation Buttons */
-    .calendar-nav-btn {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        border: 1px solid var(--lyb-gold-border);
-        border-radius: 50%;
-        background-color: #fff;
-        color: var(--lyb-dark);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .calendar-nav-btn:hover:not(:disabled) {
-        background-color: var(--lyb-gold-light);
-        border-color: var(--lyb-gold);
-        color: var(--lyb-gold);
-        transform: scale(1.05);
-    }
-    .calendar-nav-btn:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        background-color: #f8f9fa;
-        border-color: #e9ecef;
-    }
-
-    /* Calendar Legend Premium */
-    .calendar-legend-custom {
-        display: flex;
-        justify-content: center;
-        gap: 24px;
-        margin-top: 24px;
-        flex-wrap: wrap;
-    }
-    .calendar-legend-custom .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #6f625c;
-    }
-    .calendar-legend-custom .legend-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-    .calendar-legend-custom .available-dot {
-        background-color: #1a7a42;
-        box-shadow: 0 0 6px rgba(26, 122, 66, 0.4);
-    }
-    .calendar-legend-custom .full-dot {
-        background-color: #dc3545;
-        box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);
-    }
-    .calendar-legend-custom .blocked-dot {
-        background-color: #a3958e;
-        box-shadow: 0 0 6px rgba(163, 149, 142, 0.4);
-    }
-
-    /* Mobile adjustments */
-    @media (max-width: 576px) {
-        .calendar-month-card {
-            padding: 16px;
-        }
-        .calendar-grid-7 {
-            gap: 8px 4px;
-        }
-        .calendar-day-cell {
-            max-width: 32px;
-            font-size: 12px;
-        }
-        .calendar-legend-custom {
-            gap: 16px;
-            margin-top: 16px;
-        }
-    }
-
-    /* Interactive Radio & Checkbox Containers (Capsule shape) */
-    .addon-row-clickable, .slot-row-clickable {
-        border: 1px solid var(--lyb-gold-border) !important;
-        background-color: #fff;
-        border-radius: 50px !important;
-        padding: 16px 28px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-    .addon-row-clickable::after, .slot-row-clickable::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle, rgba(176, 138, 66, 0.05) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-    }
-    .addon-row-clickable:hover::after, .slot-row-clickable:hover::after {
-        opacity: 1;
-    }
-    .addon-row-clickable:hover, .slot-row-clickable:hover {
-        background-color: #fffdf9 !important;
-        border-color: var(--lyb-gold) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(176, 138, 66, 0.08);
-    }
-    .addon-row-clickable:has(input:checked), .slot-row-clickable:has(input:checked) {
-        background-color: var(--lyb-gold-light) !important;
-        border-color: var(--lyb-gold) !important;
-        box-shadow: 0 6px 18px rgba(176, 138, 66, 0.12);
-        transform: translateY(-1px);
-    }
-    
-    .addon-row-clickable input[type="checkbox"] {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-        max-width: 20px !important;
-        max-height: 20px !important;
-        border-radius: 4px !important;
-        flex-shrink: 0 !important;
-        aspect-ratio: 1 / 1 !important;
-        border-color: var(--lyb-gold-border) !important;
-        transition: all 0.2s ease;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-    }
-    
-    .slot-row-clickable input[type="radio"] {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-        max-width: 20px !important;
-        max-height: 20px !important;
-        border-radius: 50% !important;
-        flex-shrink: 0 !important;
-        aspect-ratio: 1 / 1 !important;
-        border-color: var(--lyb-gold-border) !important;
-        transition: all 0.2s ease;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-    }
-    
-    /* Make custom styling for radios/checkboxes inside active elements */
-    .addon-row-clickable:has(input:checked) input[type="checkbox"], 
-    .slot-row-clickable:has(input:checked) input[type="radio"] {
-        background-color: var(--lyb-gold) !important;
-        border-color: var(--lyb-gold) !important;
-    }
-
-    /* Softlens Pills layout side-by-side as screenshot */
-    .softlens-container {
-        display: flex;
-        gap: 16px;
-    }
-    .softlens-pill {
-        flex: 1;
-        background: #fff;
-        border: 1px solid var(--lyb-gold-border);
-        border-radius: 50px;
-        padding: 14px 28px;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        user-select: none;
-    }
-    .softlens-pill:hover {
-        border-color: var(--lyb-gold);
-        background-color: var(--lyb-gold-light);
-    }
-    .softlens-pill input[type="radio"] {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-        max-width: 20px !important;
-        max-height: 20px !important;
-        border-radius: 50% !important;
-        flex-shrink: 0 !important;
-        aspect-ratio: 1 / 1 !important;
-        border-color: var(--lyb-gold-border) !important;
-        margin: 0 !important;
-        margin-right: 12px !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        cursor: pointer;
-    }
-    .softlens-pill:has(input:checked) {
-        border-color: var(--lyb-gold) !important;
-        background-color: var(--lyb-gold-light) !important;
-        box-shadow: 0 4px 12px rgba(176, 138, 66, 0.08);
-    }
-    .softlens-pill:has(input:checked) input[type="radio"] {
-        background-color: var(--lyb-gold) !important;
-        border-color: var(--lyb-gold) !important;
-    }
-
-    /* Price Info Box / Summary Box */
-    .premium-card {
-        background-color: #fdfaf6;
-        border: 1px solid var(--lyb-gold-border) !important;
-        border-radius: 20px;
-        padding: 24px;
-        transition: all 0.3s ease;
-    }
-    .premium-card:hover {
-        box-shadow: 0 8px 25px rgba(203, 180, 159, 0.12);
-    }
-
-    .summary-card {
-        background-color: #fff;
-        border: 1px solid var(--lyb-gold-border) !important;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 10px 30px rgba(33, 19, 19, 0.01);
-    }
-
-    /* Action Buttons */
-    .btn-lyb-outline {
-        border: 2px solid var(--lyb-dark);
-        color: var(--lyb-dark);
-        background-color: #fffdfc;
-        font-weight: 700;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .btn-lyb-outline:hover {
-        background-color: var(--lyb-gold-light);
-        border-color: var(--lyb-gold);
-        color: var(--lyb-gold);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(176, 138, 66, 0.1);
-    }
-    .btn-lyb-dark {
-        background-color: var(--lyb-dark);
-        border: 2px solid var(--lyb-dark);
-        color: #fff;
-        font-weight: 700;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-    .btn-lyb-dark::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -150%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            to right,
-            transparent,
-            rgba(176, 138, 66, 0.3),
-            rgba(251, 248, 241, 0.5),
-            rgba(176, 138, 66, 0.3),
-            transparent
-        );
-        transform: skewX(-25deg);
-        animation: goldShimmer 4s infinite ease-in-out;
-    }
-    .btn-lyb-dark:hover {
-        background-color: #3d2525;
-        border-color: #3d2525;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(33, 19, 19, 0.25);
-    }
-    @keyframes goldShimmer {
-        0% {
-            left: -150%;
-        }
-        30% {
-            left: 150%;
-        }
-        100% {
-            left: 150%;
-        }
-    }
-
-    /* Dynamic section load transitions */
-    .animate-slide-fade {
-        animation: slideFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes slideFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-12px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Spinner rotation */
-    .spinner-icon {
-        display: inline-block;
-        animation: spin 1.2s linear infinite;
-    }
-    @keyframes spin {
-        from {
-            transform: rotate(0deg);
-        }
-        to {
-            transform: rotate(360deg);
-        }
-    }
-    .link-whatsapp-gold {
-        color: var(--lyb-gold) !important;
-        font-weight: 600;
-        font-size: 14px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .link-whatsapp-gold:hover {
-        color: var(--lyb-dark) !important;
-        transform: translateY(-1px);
-    }
-    .calendar-day-cell.available.selected-date {
-        background-color: var(--lyb-gold) !important;
-        color: #fff !important;
-        border-color: var(--lyb-gold) !important;
-        transform: scale(1.12);
-        box-shadow: 0 4px 10px rgba(184, 137, 72, 0.3);
-    }
-</style>
-
+<div class="package-detail-page">
 @php
     $is2xMakeup = in_array($package->code, ['PKG-MU-2X', 'PKG-WED-SILVER', 'PKG-WED-GOLD', 'PKG-WED-GOLD-L']);
+    $is3xMakeup = in_array($package->code, ['PKG-MU-3X', 'PKG-WED-DIAMOND-P', 'PKG-WED-DIAMOND-L']);
 @endphp
 
 <div class="container py-5">
@@ -512,10 +20,6 @@
     <form action="{{ route('customer.cart.store') }}" method="POST" id="bookingForm">
         @csrf
         <input type="hidden" name="package_id" value="{{ $package->id }}">
-        @if($is2xMakeup)
-            <input type="hidden" name="booking_date" id="hidden_booking_date" value="{{ old('booking_date', $editItem['booking_date'] ?? '') }}">
-            <input type="hidden" name="booking_date_2" id="hidden_booking_date_2" value="{{ old('booking_date_2', $editItem['booking_date_2'] ?? '') }}">
-        @endif
         @if(isset($editItem))
             <input type="hidden" name="edit_key" value="{{ $editItem['key'] }}">
         @endif
@@ -525,7 +29,7 @@
             <div class="col-lg-5">
                 <div class="position-sticky cover-image-sticky">
                     @if ($package->image)
-                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="@if($package->category->slug === 'baju') aspect-ratio: 4/5; @else aspect-ratio: 3/4; @endif object-fit: cover; border: 1px solid #eadfd6;">
+                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="@if($package->category->slug === 'baju') aspect-ratio: 4/5; @else aspect-ratio: 3/4; @endif object-fit: cover; object-position: center top !important; border: 1px solid #eadfd6;">
                     @else
                         <div class="w-100 rounded-4 d-flex align-items-center justify-content-center bg-light border text-muted" style="@if($package->category->slug === 'baju') aspect-ratio: 4/5; @else aspect-ratio: 3/4; @endif border-color: #eadfd6 !important;">
                             <i class="bi bi-image" style="font-size: 48px;"></i>
@@ -654,17 +158,10 @@
                                             @endphp
 
                                             @if ($dateData)
-                                                @if($is2xMakeup)
-                                                    <label class="calendar-day-cell {{ $dateData['status'] }} calendar-day-checkbox-label" title="{{ $dateData['label'] }}" data-date="{{ $currentDateStr }}">
-                                                        <input type="checkbox" value="{{ $currentDateStr }}" {{ $dateData['status'] !== 'available' ? 'disabled' : '' }} class="d-none calendar-date-checkbox">
-                                                        <span class="day-number">{{ $day }}</span>
-                                                    </label>
-                                                @else
-                                                    <label class="calendar-day-cell {{ $dateData['status'] }}" title="{{ $dateData['label'] }}">
-                                                        <input type="radio" name="booking_date" value="{{ $currentDateStr }}" {{ $dateData['status'] !== 'available' ? 'disabled' : '' }} {{ old('booking_date', $editItem['booking_date'] ?? '') === $currentDateStr ? 'checked' : '' }} class="d-none">
-                                                        <span class="day-number">{{ $day }}</span>
-                                                    </label>
-                                                @endif
+                                                <label class="calendar-day-cell {{ $dateData['status'] }}" title="{{ $dateData['label'] }}">
+                                                    <input type="radio" name="booking_date" value="{{ $currentDateStr }}" {{ $dateData['status'] !== 'available' ? 'disabled' : '' }} {{ old('booking_date', $editItem['booking_date'] ?? '') === $currentDateStr ? 'checked' : '' }} class="d-none">
+                                                    <span class="day-number">{{ $day }}</span>
+                                                </label>
                                             @else
                                                 <div class="calendar-day-cell disabled">
                                                     <span class="day-number">{{ $day }}</span>
@@ -694,13 +191,47 @@
                     </div>
                 </div>
 
+                @if($is2xMakeup || $is3xMakeup)
+                <div class="mb-4" id="bookingDate2Container">
+                    <label class="form-label fw-bold mb-2" for="bookingDate2Input" style="color: var(--lyb-dark); font-size: 15px;">Tanggal Acara Kedua (Hari 2) <span class="text-danger">*</span></label>
+                    <input type="date" name="booking_date_2" id="bookingDate2Input" value="{{ old('booking_date_2', $editItem['booking_date_2'] ?? '') }}" class="form-control rounded-4 py-2.5 px-3" style="border: 1px solid var(--lyb-gold-border); background: #fffcf8;" required>
+                    <small class="text-muted mt-1 d-block" style="font-size: 11px;">Silakan pilih tanggal untuk hari kedua acara Anda.</small>
+                </div>
+                @endif
+
+                @if($is3xMakeup)
+                <div class="mb-4" id="bookingDate3Container">
+                    <label class="form-label fw-bold mb-2" for="bookingDate3Input" style="color: var(--lyb-dark); font-size: 15px;">Tanggal Acara Ketiga (Hari 3) <span class="text-danger">*</span></label>
+                    <input type="date" name="booking_date_3" id="bookingDate3Input" value="{{ old('booking_date_3', $editItem['booking_date_3'] ?? '') }}" class="form-control rounded-4 py-2.5 px-3" style="border: 1px solid var(--lyb-gold-border); background: #fffcf8;" required>
+                    <small class="text-muted mt-1 d-block" style="font-size: 11px;">Silakan pilih tanggal untuk hari ketiga acara Anda.</small>
+                </div>
+                @endif
+
                 {{-- Dynamic MUA Slot Selection --}}
-                <div id="slotSelectionContainer" class="mb-4 d-none">
-                    <label class="form-label fw-bold mb-2" style="color: var(--lyb-dark); font-size: 15px;">Pilih Slot Waktu MUA <span class="text-danger">*</span></label>
-                    <div class="d-flex flex-column gap-2" id="slotList">
+                <div id="slotSelectionContainer1" class="mb-4 d-none">
+                    <label class="form-label fw-bold mb-2" style="color: var(--lyb-dark); font-size: 15px;">Pilih Slot Waktu MUA Hari 1 <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-column gap-2" id="slotList1">
                         <!-- Dynamically populated via JS -->
                     </div>
                 </div>
+
+                @if($is2xMakeup || $is3xMakeup)
+                <div id="slotSelectionContainer2" class="mb-4 d-none">
+                    <label class="form-label fw-bold mb-2" style="color: var(--lyb-dark); font-size: 15px;">Pilih Slot Waktu MUA Hari 2 <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-column gap-2" id="slotList2">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </div>
+                @endif
+
+                @if($is3xMakeup)
+                <div id="slotSelectionContainer3" class="mb-4 d-none">
+                    <label class="form-label fw-bold mb-2" style="color: var(--lyb-dark); font-size: 15px;">Pilih Slot Waktu MUA Hari 3 <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-column gap-2" id="slotList3">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </div>
+                @endif
 
                 @if($package->category->slug !== 'baju' && $package->category->slug !== 'regular')
                 <div class="mb-4">
@@ -815,6 +346,7 @@
         </div>
     </form>
 </div>
+</div>
 
 <script>
 let currentMonthIndex = 0;
@@ -922,10 +454,19 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotals();
 
     // Date change event
-    function renderSlots(data) {
-        const slotContainer = document.getElementById('slotSelectionContainer');
-        const slotList = document.getElementById('slotList');
-        const editSlotWaktu = @json($editItem['slot_waktu'] ?? null);
+    function renderSlots(data, dayNumber = 1) {
+        const slotContainer = document.getElementById('slotSelectionContainer' + dayNumber);
+        const slotList = document.getElementById('slotList' + dayNumber);
+        if (!slotContainer || !slotList) return;
+
+        const inputName = dayNumber === 1 ? 'slot_waktu' : 'slot_waktu_' + dayNumber;
+        const editSlotWaktu = dayNumber === 1 
+            ? @json($editItem['slot_waktu'] ?? null) 
+            : (dayNumber === 2 ? @json($editItem['slot_waktu_2'] ?? null) : @json($editItem['slot_waktu_3'] ?? null));
+
+        const oldSlotWaktu = dayNumber === 1 
+            ? '{{ old('slot_waktu') }}' 
+            : (dayNumber === 2 ? '{{ old('slot_waktu_2') }}' : '{{ old('slot_waktu_3') }}');
 
         slotList.innerHTML = '';
         
@@ -943,9 +484,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const radioInput = document.createElement('input');
                 radioInput.type = 'radio';
-                radioInput.name = 'slot_waktu';
+                radioInput.name = inputName;
                 radioInput.value = key;
-                radioInput.id = 'slot_' + key;
+                radioInput.id = 'slot_' + dayNumber + '_' + key;
                 radioInput.className = 'form-check-input flex-shrink-0';
                 radioInput.style.width = '20px';
                 radioInput.style.height = '20px';
@@ -959,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Check if this slot is selected
-                if (key === editSlotWaktu || key === '{{ old('slot_waktu') }}') {
+                if (key === editSlotWaktu || key === oldSlotWaktu) {
                     radioInput.checked = true;
                 }
                 
@@ -971,6 +512,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 labelTitle.style.fontSize = '14px';
                 labelTitle.innerText = value.label;
                 label.appendChild(labelTitle);
+                
+                if (value.available && typeof value.remaining !== 'undefined') {
+                    const remainingSpan = document.createElement('span');
+                    remainingSpan.className = 'text-muted small';
+                    remainingSpan.style.fontSize = '11px';
+                    remainingSpan.innerText = `Sisa kuota: ${value.remaining} slot`;
+                    label.appendChild(remainingSpan);
+                }
                 
                 if (!value.available) {
                     const reason = document.createElement('span');
@@ -991,209 +540,156 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Fitting date logic
-        const fittingContainer = document.getElementById('fittingDateContainer');
-        const fittingInput = document.getElementById('tanggalFittingInput');
-        const editTanggalFitting = @json($editItem['tanggal_fitting'] ?? null);
+        if (dayNumber === 1) {
+            const fittingContainer = document.getElementById('fittingDateContainer');
+            const fittingInput = document.getElementById('tanggalFittingInput');
+            const editTanggalFitting = @json($editItem['tanggal_fitting'] ?? null);
 
-        if (data.needs_fitting) {
-            fittingContainer.classList.remove('d-none');
-            fittingContainer.classList.add('animate-slide-fade');
-            fittingInput.required = true;
-            
-            // No minimum date constraint (all dates before booking date are available)
-            fittingInput.removeAttribute('min');
-            
-            // Max date is event_date - 1 day
-            const eventDate = new Date(data.date || document.getElementById('hidden_booking_date')?.value || document.querySelector('input[name="booking_date"]:checked')?.value);
-            if (!isNaN(eventDate.getTime())) {
-                eventDate.setDate(eventDate.getDate() - 1);
-                const maxDateStr = eventDate.toISOString().split('T')[0];
-                fittingInput.max = maxDateStr;
+            if (data.needs_fitting) {
+                fittingContainer.classList.remove('d-none');
+                fittingContainer.classList.add('animate-slide-fade');
+                fittingInput.required = true;
+                
+                fittingInput.removeAttribute('min');
+                
+                const eventDate = new Date(data.date || document.querySelector('input[name="booking_date"]:checked')?.value);
+                if (!isNaN(eventDate.getTime())) {
+                    eventDate.setDate(eventDate.getDate() - 1);
+                    const maxDateStr = eventDate.toISOString().split('T')[0];
+                    fittingInput.max = maxDateStr;
+                }
+                
+                if (editTanggalFitting) {
+                    fittingInput.value = editTanggalFitting;
+                } else if ('{{ old('tanggal_fitting') }}') {
+                    fittingInput.value = '{{ old('tanggal_fitting') }}';
+                }
+            } else {
+                fittingContainer.classList.add('d-none');
+                fittingContainer.classList.remove('animate-slide-fade');
+                fittingInput.required = false;
+                fittingInput.value = '';
             }
-            
-            if (editTanggalFitting) {
-                fittingInput.value = editTanggalFitting;
-            } else if ('{{ old('tanggal_fitting') }}') {
-                fittingInput.value = '{{ old('tanggal_fitting') }}';
-            }
-        } else {
-            fittingContainer.classList.add('d-none');
-            fittingContainer.classList.remove('animate-slide-fade');
-            fittingInput.required = false;
-            fittingInput.value = '';
         }
     }
 
-    @if(!$is2xMakeup)
-    document.querySelectorAll('input[name="booking_date"]').forEach((radio) => {
-        radio.addEventListener('change', () => {
-            const dateVal = document.querySelector('input[name="booking_date"]:checked').value;
-            
-            // Show loading state or clear
-            const slotContainer = document.getElementById('slotSelectionContainer');
-            const slotList = document.getElementById('slotList');
-            slotList.innerHTML = '<div class="text-muted small p-2"><i class="bi bi-arrow-clockwise spinner-icon"></i> Mencari slot tersedia...</div>';
-            slotContainer.classList.remove('d-none');
-            slotContainer.classList.add('animate-slide-fade');
+    async function loadSlotsForDay(dayNumber) {
+        let dateVal = '';
+        if (dayNumber === 1) {
+            const selectedRadio = document.querySelector('input[name="booking_date"]:checked');
+            dateVal = selectedRadio ? selectedRadio.value : '';
+        } else if (dayNumber === 2) {
+            dateVal = document.getElementById('bookingDate2Input')?.value || '';
+        } else if (dayNumber === 3) {
+            dateVal = document.getElementById('bookingDate3Input')?.value || '';
+        }
 
-            fetch(`/paket/{{ $package->code }}/slots?date=${dateVal}`)
-                .then(r => r.json())
-                .then(data => {
-                    renderSlots(data);
-                })
-                .catch(err => {
-                    console.error(err);
-                    slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot.</div>';
-                });
-        });
+        const slotContainer = document.getElementById('slotSelectionContainer' + dayNumber);
+        if (!dateVal) {
+            if (slotContainer) slotContainer.classList.add('d-none');
+            return;
+        }
+
+        // Show loading spinner immediately for instant response
+        const slotList = document.getElementById('slotList' + dayNumber);
+        if (slotContainer && slotList) {
+            slotContainer.classList.remove('d-none');
+            slotList.innerHTML = '<div class="text-secondary small p-2"><i class="bi bi-arrow-repeat spinner-icon"></i> Memuat slot MUA...</div>';
+        }
+
+        try {
+            const res = await fetch(`/paket/{{ $package->code }}/slots?date=${dateVal}`);
+            const data = await res.json();
+            renderSlots(data, dayNumber);
+        } catch (err) {
+            console.error(err);
+            const slotList = document.getElementById('slotList' + dayNumber);
+            if (slotList) {
+                slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot.</div>';
+            }
+        }
+    }
+
+    // Register event listeners
+    document.querySelectorAll('input[name="booking_date"]').forEach((radio) => {
+        radio.addEventListener('change', () => loadSlotsForDay(1));
     });
 
-    // Trigger change event for already checked booking date on page load (e.g., from old input or edit data)
-    const selectedRadio = document.querySelector('input[name="booking_date"]:checked');
-    if (selectedRadio) {
-        selectedRadio.dispatchEvent(new Event('change'));
-    }
-    @else
-        const selectedDates = [];
-        const date1 = document.getElementById('hidden_booking_date').value;
-        const date2 = document.getElementById('hidden_booking_date_2').value;
-        if (date1) selectedDates.push(date1);
-        if (date2) selectedDates.push(date2);
+    const date2Input = document.getElementById('bookingDate2Input');
+    const date3Input = document.getElementById('bookingDate3Input');
 
-        // Pre-select checkbox elements on page load
-        selectedDates.forEach(dateStr => {
-            const labels = document.querySelectorAll(`.calendar-day-checkbox-label[data-date="${dateStr}"]`);
-            labels.forEach(label => {
-                label.classList.add('selected-date');
-                const cb = label.querySelector('input[type="checkbox"]');
-                if (cb) cb.checked = true;
-            });
-        });
-
-        if (selectedDates.length > 0) {
-            triggerSlotLoading();
-        }
-
-        document.querySelectorAll('.calendar-day-checkbox-label').forEach((label) => {
-            label.addEventListener('click', function(e) {
-                if (this.classList.contains('booked') || this.classList.contains('blocked')) {
-                    return;
-                }
-                e.preventDefault();
-                const cb = this.querySelector('input[type="checkbox"]');
-                if (!cb) return;
-
-                const dateVal = this.getAttribute('data-date');
-                
-                if (cb.checked) {
-                    cb.checked = false;
-                    this.classList.remove('selected-date');
-                    const idx = selectedDates.indexOf(dateVal);
-                    if (idx > -1) selectedDates.splice(idx, 1);
-                } else {
-                    if (selectedDates.length >= 2) {
-                        const oldDate = selectedDates.shift();
-                        const oldLabels = document.querySelectorAll(`.calendar-day-checkbox-label[data-date="${oldDate}"]`);
-                        oldLabels.forEach(oldL => {
-                            oldL.classList.remove('selected-date');
-                            const oldCb = oldL.querySelector('input[type="checkbox"]');
-                            if (oldCb) oldCb.checked = false;
-                        });
+    if (date2Input) {
+        date2Input.addEventListener('change', () => loadSlotsForDay(2));
+        
+        // Prevent selecting a date before the primary date
+        document.querySelectorAll('input[name="booking_date"]').forEach((radio) => {
+            radio.addEventListener('change', () => {
+                if (radio.checked) {
+                    date2Input.min = radio.value;
+                    if (date2Input.value && date2Input.value < radio.value) {
+                        date2Input.value = '';
+                        loadSlotsForDay(2);
                     }
-                    cb.checked = true;
-                    this.classList.add('selected-date');
-                    selectedDates.push(dateVal);
                 }
-
-                document.getElementById('hidden_booking_date').value = selectedDates[0] || '';
-                document.getElementById('hidden_booking_date_2').value = selectedDates[1] || '';
-
-                triggerSlotLoading();
             });
         });
+    }
 
-        function triggerSlotLoading() {
-            const dateVal1 = document.getElementById('hidden_booking_date').value;
-            const dateVal2 = document.getElementById('hidden_booking_date_2').value;
-
-            const slotContainer = document.getElementById('slotSelectionContainer');
-            const slotList = document.getElementById('slotList');
-
-            if (!dateVal1) {
-                slotContainer.classList.add('d-none');
-                slotContainer.classList.remove('animate-slide-fade');
-                return;
-            }
-
-            slotList.innerHTML = '<div class="text-muted small p-2"><i class="bi bi-arrow-clockwise spinner-icon"></i> Mencari slot tersedia...</div>';
-            slotContainer.classList.remove('d-none');
-            slotContainer.classList.add('animate-slide-fade');
-
-            if (dateVal2) {
-                fetch(`/paket/{{ $package->code }}/slots?date=${dateVal1}`)
-                    .then(r => r.json())
-                    .then(data1 => {
-                        fetch(`/paket/{{ $package->code }}/slots?date=${dateVal2}`)
-                            .then(r => r.json())
-                            .then(data2 => {
-                                const mergedSlots = {};
-                                if (data1.slots && data2.slots) {
-                                    for (const [key, value] of Object.entries(data1.slots)) {
-                                        const v2 = data2.slots[key];
-                                        const isAvail = value.available && v2 && v2.available;
-                                        mergedSlots[key] = {
-                                            available: isAvail,
-                                            label: value.label,
-                                            reason: isAvail ? null : (!value.available ? `${value.reason} (Hari 1)` : `${v2.reason} (Hari 2)`)
-                                        };
-                                    }
-                                }
-                                data1.slots = mergedSlots;
-                                data1.date = dateVal1;
-                                renderSlots(data1);
-                            })
-                            .catch(err => {
-                                console.error(err);
-                                slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot tanggal kedua.</div>';
-                            });
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot tanggal pertama.</div>';
-                    });
-            } else {
-                fetch(`/paket/{{ $package->code }}/slots?date=${dateVal1}`)
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.slots) {
-                            for (const [key, value] of Object.entries(data.slots)) {
-                                if (value.available) {
-                                    value.reason = 'Pilih tanggal kedua untuk verifikasi kuota lengkap';
-                                    value.available = false;
-                                }
-                            }
-                        }
-                        data.date = dateVal1;
-                        renderSlots(data);
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot.</div>';
-                    });
-            }
+    if (date3Input) {
+        date3Input.addEventListener('change', () => loadSlotsForDay(3));
+        
+        // Prevent selecting a date before the second date
+        if (date2Input) {
+            date2Input.addEventListener('change', () => {
+                date3Input.min = date2Input.value;
+                if (date3Input.value && date3Input.value < date2Input.value) {
+                    date3Input.value = '';
+                    loadSlotsForDay(3);
+                }
+            });
         }
-    @endif
+    }
+
+    // Trigger on load if radio already selected (e.g. edit/old)
+    const selectedRadioOnLoad = document.querySelector('input[name="booking_date"]:checked');
+    if (selectedRadioOnLoad) {
+        // Run sequentially to prevent concurrent request deadlock
+        (async () => {
+            await loadSlotsForDay(1);
+            if (date2Input) {
+                date2Input.min = selectedRadioOnLoad.value;
+                if (date2Input.value) {
+                    await loadSlotsForDay(2);
+                }
+            }
+            if (date2Input && date2Input.value && date3Input) {
+                date3Input.min = date2Input.value;
+                if (date3Input.value) {
+                    await loadSlotsForDay(3);
+                }
+            }
+        })();
+    }
 
     // Frontend validation form submit handler
     const bookingForm = document.getElementById('bookingForm');
     if (bookingForm) {
         bookingForm.addEventListener('submit', function(e) {
-            @if($is2xMakeup)
-            const dateVal1 = document.getElementById('hidden_booking_date').value;
-            const dateVal2 = document.getElementById('hidden_booking_date_2').value;
+            @if($is3xMakeup)
+            const dateVal1 = document.querySelector('input[name="booking_date"]:checked')?.value;
+            const dateVal2 = document.getElementById('bookingDate2Input')?.value;
+            const dateVal3 = document.getElementById('bookingDate3Input')?.value;
+            if (!dateVal1 || !dateVal2 || !dateVal3) {
+                e.preventDefault();
+                alert('Silakan pilih tanggal booking utama, tanggal kedua, dan tanggal ketiga.');
+                return false;
+            }
+            @elseif($is2xMakeup)
+            const dateVal1 = document.querySelector('input[name="booking_date"]:checked')?.value;
+            const dateVal2 = document.getElementById('bookingDate2Input')?.value;
             if (!dateVal1 || !dateVal2) {
                 e.preventDefault();
-                alert('Silakan pilih 2 tanggal booking terlebih dahulu pada kalender.');
+                alert('Silakan pilih tanggal booking utama dan tanggal acara kedua.');
                 return false;
             }
             @else
@@ -1204,13 +700,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 return false;
             }
             @endif
-            
-            const slotContainer = document.getElementById('slotSelectionContainer');
-            if (slotContainer && !slotContainer.classList.contains('d-none')) {
+            const slotContainer1 = document.getElementById('slotSelectionContainer1');
+            if (slotContainer1 && !slotContainer1.classList.contains('d-none')) {
                 const selectedSlot = document.querySelector('input[name="slot_waktu"]:checked');
                 if (!selectedSlot) {
                     e.preventDefault();
-                    alert('Silakan pilih slot waktu MUA (Pagi atau Siang).');
+                    alert('Silakan pilih slot waktu MUA Hari 1.');
+                    return false;
+                }
+            }
+
+            const slotContainer2 = document.getElementById('slotSelectionContainer2');
+            if (slotContainer2 && !slotContainer2.classList.contains('d-none')) {
+                const selectedSlot2 = document.querySelector('input[name="slot_waktu_2"]:checked');
+                if (!selectedSlot2) {
+                    e.preventDefault();
+                    alert('Silakan pilih slot waktu MUA Hari 2.');
+                    return false;
+                }
+            }
+
+            const slotContainer3 = document.getElementById('slotSelectionContainer3');
+            if (slotContainer3 && !slotContainer3.classList.contains('d-none')) {
+                const selectedSlot3 = document.querySelector('input[name="slot_waktu_3"]:checked');
+                if (!selectedSlot3) {
+                    e.preventDefault();
+                    alert('Silakan pilih slot waktu MUA Hari 3.');
                     return false;
                 }
             }
