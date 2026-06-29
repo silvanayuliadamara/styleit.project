@@ -398,18 +398,7 @@
         }
     </script>
 
-    <style>
-        .blocked-card {
-            background: #f4ede6 !important;
-            border-color: #d8c8be !important;
-            opacity: 0.75;
-        }
-        .locked-slot {
-            border-color: #fde2e2 !important;
-            background: #fff8f8 !important;
-        }
-        .locked-slot .lyb-slot-title span {
-            color: #a03131;
-        }
-    </style>
+    @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/owner-schedule.css') }}">
+@endpush
 @endsection
