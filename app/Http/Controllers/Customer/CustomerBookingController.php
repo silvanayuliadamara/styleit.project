@@ -35,8 +35,24 @@ class CustomerBookingController extends Controller
         return view('customer.bookings.show', compact('booking'));
     }
 
-    public function invoice(string $bookingCode)
+    public function invoice(Request $request, string $bookingCode)
     {
+        if ($request->input('source') === 'email') {
+            $sessionKey = 'email_invoice_authenticated_' . $bookingCode;
+            if (! session($sessionKey)) {
+                if (Auth::check()) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                }
+                session([
+                    'url.intended' => route('customer.bookings.invoice', ['booking' => $bookingCode, 'source' => 'email']),
+                    $sessionKey => true,
+                ]);
+                return redirect()->route('login')->with('success', 'Demi keamanan, silakan masuk kembali untuk melihat detail invoice Anda.');
+            }
+        }
+
         $booking = Booking::where('booking_code', $bookingCode)
             ->where('user_id', Auth::id())
             ->with(['user', 'package', 'schedule', 'addons', 'payments', 'latestCancellationRequest'])
