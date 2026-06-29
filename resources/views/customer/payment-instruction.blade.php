@@ -287,8 +287,8 @@
             <div class="instruction-card-header">
                 <div class="header-top">
                     <span class="payment-method-badge">
-                        @if($method === 'Virtual Account')
-                            VIRTUAL ACCOUNT
+                        @if($method === 'Virtual Account' || $method === 'Transfer Bank')
+                            TRANSFER BANK
                         @elseif($method === 'QRIS')
                             QRIS
                         @else
@@ -306,8 +306,8 @@
                 <div class="nominal-val">Rp{{ number_format($booking->dp_amount, 0, ',', '.') }}</div>
                 
                 {{-- 2. Detail Pembayaran sesuai Metode --}}
-                @if($method === 'Virtual Account')
-                    <div class="info-label">Nomor Virtual Account</div>
+                @if($method === 'Virtual Account' || $method === 'Transfer Bank')
+                    <div class="info-label">Nomor Rekening / Virtual Account</div>
                     <div class="va-copy-box">
                         <span class="va-number" id="vaNum">{{ $vaNumber }}</span>
                         <button class="btn-copy-va" onclick="copyVa()" title="Salin nomor VA">
@@ -357,7 +357,7 @@
                 <div class="instruction-steps">
                     <h4>Panduan Pembayaran</h4>
                     
-                    @if($method === 'Virtual Account')
+                    @if($method === 'Virtual Account' || $method === 'Transfer Bank')
                         <div class="accordion-item-custom">
                             <div class="accordion-header-custom" onclick="toggleAccordion('step1', this)">
                                 <span>ATM BCA</span>
@@ -482,7 +482,7 @@
     function copyVa() {
         const textToCopy = document.getElementById('vaNum').innerText;
         navigator.clipboard.writeText(textToCopy).then(() => {
-            alert('Nomor Virtual Account berhasil disalin!');
+            alert('Nomor rekening berhasil disalin!');
         }).catch(err => {
             console.error('Gagal menyalin: ', err);
         });

@@ -490,7 +490,18 @@
         color: var(--lyb-dark) !important;
         transform: translateY(-1px);
     }
+    .calendar-day-cell.available.selected-date {
+        background-color: var(--lyb-gold) !important;
+        color: #fff !important;
+        border-color: var(--lyb-gold) !important;
+        transform: scale(1.12);
+        box-shadow: 0 4px 10px rgba(184, 137, 72, 0.3);
+    }
 </style>
+
+@php
+    $is2xMakeup = in_array($package->code, ['PKG-MU-2X', 'PKG-WED-SILVER', 'PKG-WED-GOLD', 'PKG-WED-GOLD-L']);
+@endphp
 
 <div class="container py-5">
     {{-- Back link --}}
@@ -501,6 +512,10 @@
     <form action="{{ route('customer.cart.store') }}" method="POST" id="bookingForm">
         @csrf
         <input type="hidden" name="package_id" value="{{ $package->id }}">
+        @if($is2xMakeup)
+            <input type="hidden" name="booking_date" id="hidden_booking_date" value="{{ old('booking_date', $editItem['booking_date'] ?? '') }}">
+            <input type="hidden" name="booking_date_2" id="hidden_booking_date_2" value="{{ old('booking_date_2', $editItem['booking_date_2'] ?? '') }}">
+        @endif
         @if(isset($editItem))
             <input type="hidden" name="edit_key" value="{{ $editItem['key'] }}">
         @endif
@@ -525,12 +540,23 @@
                 <div class="mb-4">
                     <div class="d-flex align-items-center gap-2 mb-2 text-uppercase" style="letter-spacing: 1.5px; font-size: 12px;">
                         <span class="text-gold-dark fw-bold">{{ $package->category->name }}</span>
-                        @if ($package->is_popular || $package->category->slug === 'wedding')
+                        @if ($package->is_best_seller)
                             <span class="badge rounded-pill px-2.5 py-1" style="background-color: #fbf8f1; color: var(--lyb-gold); border: 1px solid var(--lyb-gold-border); font-size: 10px; font-weight: 700; letter-spacing: 0.5px;">BEST SELLER</span>
                         @endif
                     </div>
                     <h1 class="fw-bold text-dark" style="font-size: 2.2rem; font-family: Georgia, serif !important;">{{ $package->name }}</h1>
-                    <p class="text-secondary mt-2" style="font-size: 15px; line-height: 1.6;">{{ $package->description }}</p>
+                    @php
+                        $points = array_map('trim', explode('+', $package->description));
+                    @endphp
+                    @if(count($points) > 1)
+                        <ul class="text-secondary mt-2 ps-3" style="font-size: 15px; line-height: 1.6; list-style-type: disc;">
+                            @foreach($points as $point)
+                                <li class="mb-1">{{ $point }}</li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-secondary mt-2" style="font-size: 15px; line-height: 1.6;">{!! nl2br(e($package->description)) !!}</p>
+                    @endif
                 </div>
 
                 {{-- Price Info Box --}}
@@ -553,12 +579,10 @@
                 {{-- Includes --}}
                 @if($package->items->isNotEmpty())
                     <div class="mb-4">
-                        <h5 class="fw-bold mb-3" style="color: var(--lyb-dark); font-size: 16px;">Termasuk Paket</h5>
-                        <ul class="list-unstyled d-flex flex-wrap gap-x-4 gap-y-2">
+                        <h5 class="fw-bold mb-2" style="color: var(--lyb-dark); font-size: 16px;">Termasuk Paket</h5>
+                        <ul class="text-secondary ps-4" style="font-size: 14.5px; line-height: 1.8; list-style-type: disc;">
                             @foreach($package->items as $item)
-                                <li class="small text-secondary me-3 d-flex align-items-center" style="font-weight: 500;">
-                                    <i class="bi bi-sparkles me-2" style="color: var(--lyb-gold);"></i>{{ $item->name }} {{ $item->quantity > 1 ? $item->quantity : '' }} {{ $item->unit }}
-                                </li>
+                                <li class="mb-1" style="font-weight: 500;">{{ $item->name }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -630,10 +654,17 @@
                                             @endphp
 
                                             @if ($dateData)
-                                                <label class="calendar-day-cell {{ $dateData['status'] }}" title="{{ $dateData['label'] }}">
-                                                    <input type="radio" name="booking_date" value="{{ $currentDateStr }}" {{ $dateData['status'] !== 'available' ? 'disabled' : '' }} {{ old('booking_date', $editItem['booking_date'] ?? '') === $currentDateStr ? 'checked' : '' }} class="d-none">
-                                                    <span class="day-number">{{ $day }}</span>
-                                                </label>
+                                                @if($is2xMakeup)
+                                                    <label class="calendar-day-cell {{ $dateData['status'] }} calendar-day-checkbox-label" title="{{ $dateData['label'] }}" data-date="{{ $currentDateStr }}">
+                                                        <input type="checkbox" value="{{ $currentDateStr }}" {{ $dateData['status'] !== 'available' ? 'disabled' : '' }} class="d-none calendar-date-checkbox">
+                                                        <span class="day-number">{{ $day }}</span>
+                                                    </label>
+                                                @else
+                                                    <label class="calendar-day-cell {{ $dateData['status'] }}" title="{{ $dateData['label'] }}">
+                                                        <input type="radio" name="booking_date" value="{{ $currentDateStr }}" {{ $dateData['status'] !== 'available' ? 'disabled' : '' }} {{ old('booking_date', $editItem['booking_date'] ?? '') === $currentDateStr ? 'checked' : '' }} class="d-none">
+                                                        <span class="day-number">{{ $day }}</span>
+                                                    </label>
+                                                @endif
                                             @else
                                                 <div class="calendar-day-cell disabled">
                                                     <span class="day-number">{{ $day }}</span>
@@ -671,7 +702,7 @@
                     </div>
                 </div>
 
-                @if($package->category->slug !== 'baju')
+                @if($package->category->slug !== 'baju' && $package->category->slug !== 'regular')
                 <div class="mb-4">
                     <label class="form-label fw-bold" style="color: var(--lyb-dark); font-size: 15px;">Penggunaan Softlens <span class="text-danger">*</span></label>
                     <div class="softlens-container">
@@ -687,6 +718,12 @@
                 </div>
                 @else
                     <input type="hidden" name="softlens" value="0">
+                    @if($package->category->slug === 'regular')
+                        <div class="mb-4 p-3 rounded-4" style="background: #fffdf5; border: 1px solid var(--lyb-gold-border); font-size: 13.5px; color: #6f625c;">
+                            <i class="bi bi-info-circle-fill text-warning me-1"></i>
+                            <strong>Keterangan Softlens:</strong> Layanan ini sudah termasuk <strong>Free Softlens</strong>.
+                        </div>
+                    @endif
                 @endif
 
                 {{-- Dynamic Fitting Date Selection --}}
@@ -711,6 +748,12 @@
                                         <input type="checkbox" name="addons[]" value="{{ $addon->id }}" data-price="{{ $addon->price }}" {{ (old('addons') ? in_array($addon->id, old('addons')) : $isEditAddon) ? 'checked' : '' }} class="form-check-input flex-shrink-0" style="width: 20px; height: 20px;">
                                         <div class="d-flex flex-column">
                                             <span class="fw-semibold text-dark" style="font-size: 14px;">{{ $addon->name }}</span>
+                                            @if($addon->id == 1 || strtolower($addon->name) === 'makeup keluarga')
+                                                <small class="text-muted" style="font-size: 11px;">Notes: 150k per orang</small>
+                                            @endif
+                                            @if($addon->id == 4 || strpos(strtolower($addon->name), 'melati') !== false)
+                                                <small class="text-muted" style="font-size: 11px;">Keterangan: melati depan belakang</small>
+                                            @endif
                                         </div>
                                     </div>
                                     <span class="fw-bold text-gold-dark" style="font-size: 14px;">+Rp{{ number_format($addon->price, 0, ',', '.') }}</span>
@@ -879,6 +922,109 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotals();
 
     // Date change event
+    function renderSlots(data) {
+        const slotContainer = document.getElementById('slotSelectionContainer');
+        const slotList = document.getElementById('slotList');
+        const editSlotWaktu = @json($editItem['slot_waktu'] ?? null);
+
+        slotList.innerHTML = '';
+        
+        // Populate slots
+        if (data.slots && Object.keys(data.slots).length > 0) {
+            slotContainer.classList.remove('d-none');
+            slotContainer.classList.add('animate-slide-fade');
+            for (const [key, value] of Object.entries(data.slots)) {
+                const item = document.createElement('label');
+                item.className = 'd-flex align-items-center justify-content-between p-3 rounded-4 border slot-row-clickable ' + 
+                    (value.available ? 'bg-white cursor-pointer' : 'opacity-50 bg-body-tertiary cursor-not-allowed');
+                
+                const leftPart = document.createElement('div');
+                leftPart.className = 'd-flex align-items-center gap-3';
+
+                const radioInput = document.createElement('input');
+                radioInput.type = 'radio';
+                radioInput.name = 'slot_waktu';
+                radioInput.value = key;
+                radioInput.id = 'slot_' + key;
+                radioInput.className = 'form-check-input flex-shrink-0';
+                radioInput.style.width = '20px';
+                radioInput.style.height = '20px';
+                radioInput.style.minWidth = '20px';
+                radioInput.style.minHeight = '20px';
+                radioInput.style.maxWidth = '20px';
+                radioInput.style.maxHeight = '20px';
+                radioInput.required = true;
+                if (!value.available) {
+                    radioInput.disabled = true;
+                }
+                
+                // Check if this slot is selected
+                if (key === editSlotWaktu || key === '{{ old('slot_waktu') }}') {
+                    radioInput.checked = true;
+                }
+                
+                const label = document.createElement('div');
+                label.className = 'd-flex flex-column';
+                
+                const labelTitle = document.createElement('span');
+                labelTitle.className = 'fw-bold text-dark';
+                labelTitle.style.fontSize = '14px';
+                labelTitle.innerText = value.label;
+                label.appendChild(labelTitle);
+                
+                if (!value.available) {
+                    const reason = document.createElement('span');
+                    reason.className = 'text-danger small';
+                    reason.style.fontSize = '11px';
+                    reason.innerText = value.reason;
+                    label.appendChild(reason);
+                }
+                
+                leftPart.appendChild(radioInput);
+                leftPart.appendChild(label);
+                item.appendChild(leftPart);
+                slotList.appendChild(item);
+            }
+        } else {
+            slotContainer.classList.add('d-none');
+            slotContainer.classList.remove('animate-slide-fade');
+        }
+        
+        // Fitting date logic
+        const fittingContainer = document.getElementById('fittingDateContainer');
+        const fittingInput = document.getElementById('tanggalFittingInput');
+        const editTanggalFitting = @json($editItem['tanggal_fitting'] ?? null);
+
+        if (data.needs_fitting) {
+            fittingContainer.classList.remove('d-none');
+            fittingContainer.classList.add('animate-slide-fade');
+            fittingInput.required = true;
+            
+            // No minimum date constraint (all dates before booking date are available)
+            fittingInput.removeAttribute('min');
+            
+            // Max date is event_date - 1 day
+            const eventDate = new Date(data.date || document.getElementById('hidden_booking_date')?.value || document.querySelector('input[name="booking_date"]:checked')?.value);
+            if (!isNaN(eventDate.getTime())) {
+                eventDate.setDate(eventDate.getDate() - 1);
+                const maxDateStr = eventDate.toISOString().split('T')[0];
+                fittingInput.max = maxDateStr;
+            }
+            
+            if (editTanggalFitting) {
+                fittingInput.value = editTanggalFitting;
+            } else if ('{{ old('tanggal_fitting') }}') {
+                fittingInput.value = '{{ old('tanggal_fitting') }}';
+            }
+        } else {
+            fittingContainer.classList.add('d-none');
+            fittingContainer.classList.remove('animate-slide-fade');
+            fittingInput.required = false;
+            fittingInput.value = '';
+        }
+    }
+
+    @if(!$is2xMakeup)
     document.querySelectorAll('input[name="booking_date"]').forEach((radio) => {
         radio.addEventListener('change', () => {
             const dateVal = document.querySelector('input[name="booking_date"]:checked').value;
@@ -893,98 +1039,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch(`/paket/{{ $package->code }}/slots?date=${dateVal}`)
                 .then(r => r.json())
                 .then(data => {
-                    slotList.innerHTML = '';
-                    
-                    // Populate slots
-                    if (data.slots && Object.keys(data.slots).length > 0) {
-                        slotContainer.classList.remove('d-none');
-                        slotContainer.classList.add('animate-slide-fade');
-                        for (const [key, value] of Object.entries(data.slots)) {
-                            const item = document.createElement('label');
-                            item.className = 'd-flex align-items-center justify-content-between p-3 rounded-4 border slot-row-clickable ' + 
-                                (value.available ? 'bg-white cursor-pointer' : 'opacity-50 bg-body-tertiary cursor-not-allowed');
-                            
-                            const leftPart = document.createElement('div');
-                            leftPart.className = 'd-flex align-items-center gap-3';
-
-                            const radioInput = document.createElement('input');
-                            radioInput.type = 'radio';
-                            radioInput.name = 'slot_waktu';
-                            radioInput.value = key;
-                            radioInput.id = 'slot_' + key;
-                            radioInput.className = 'form-check-input flex-shrink-0';
-                            radioInput.style.width = '20px';
-                            radioInput.style.height = '20px';
-                            radioInput.style.minWidth = '20px';
-                            radioInput.style.minHeight = '20px';
-                            radioInput.style.maxWidth = '20px';
-                            radioInput.style.maxHeight = '20px';
-                            radioInput.required = true;
-                            if (!value.available) {
-                                radioInput.disabled = true;
-                            }
-                            
-                            // Check if this slot is selected
-                            if (key === editSlotWaktu || key === '{{ old('slot_waktu') }}') {
-                                radioInput.checked = true;
-                            }
-                            
-                            const label = document.createElement('div');
-                            label.className = 'd-flex flex-column';
-                            
-                            const labelTitle = document.createElement('span');
-                            labelTitle.className = 'fw-bold text-dark';
-                            labelTitle.style.fontSize = '14px';
-                            labelTitle.innerText = value.label;
-                            label.appendChild(labelTitle);
-                            
-                            if (!value.available) {
-                                const reason = document.createElement('span');
-                                reason.className = 'text-danger small';
-                                reason.style.fontSize = '11px';
-                                reason.innerText = value.reason;
-                                label.appendChild(reason);
-                            }
-                            
-                            leftPart.appendChild(radioInput);
-                            leftPart.appendChild(label);
-                            item.appendChild(leftPart);
-                            slotList.appendChild(item);
-                        }
-                    } else {
-                        slotContainer.classList.add('d-none');
-                        slotContainer.classList.remove('animate-slide-fade');
-                    }
-                    
-                    // Fitting date logic
-                    const fittingContainer = document.getElementById('fittingDateContainer');
-                    const fittingInput = document.getElementById('tanggalFittingInput');
-                    if (data.needs_fitting) {
-                        fittingContainer.classList.remove('d-none');
-                        fittingContainer.classList.add('animate-slide-fade');
-                        fittingInput.required = true;
-                        
-                        // No minimum date constraint (all dates before booking date are available)
-                        fittingInput.removeAttribute('min');
-                        
-                        // Max date is event_date - 1 day
-                        const eventDate = new Date(dateVal);
-                        eventDate.setDate(eventDate.getDate() - 1);
-                        
-                        const maxDateStr = eventDate.toISOString().split('T')[0];
-                        fittingInput.max = maxDateStr;
-                        
-                        if (editTanggalFitting) {
-                            fittingInput.value = editTanggalFitting;
-                        } else if ('{{ old('tanggal_fitting') }}') {
-                            fittingInput.value = '{{ old('tanggal_fitting') }}';
-                        }
-                    } else {
-                        fittingContainer.classList.add('d-none');
-                        fittingContainer.classList.remove('animate-slide-fade');
-                        fittingInput.required = false;
-                        fittingInput.value = '';
-                    }
+                    renderSlots(data);
                 })
                 .catch(err => {
                     console.error(err);
@@ -998,29 +1053,169 @@ document.addEventListener('DOMContentLoaded', () => {
     if (selectedRadio) {
         selectedRadio.dispatchEvent(new Event('change'));
     }
+    @else
+        const selectedDates = [];
+        const date1 = document.getElementById('hidden_booking_date').value;
+        const date2 = document.getElementById('hidden_booking_date_2').value;
+        if (date1) selectedDates.push(date1);
+        if (date2) selectedDates.push(date2);
+
+        // Pre-select checkbox elements on page load
+        selectedDates.forEach(dateStr => {
+            const labels = document.querySelectorAll(`.calendar-day-checkbox-label[data-date="${dateStr}"]`);
+            labels.forEach(label => {
+                label.classList.add('selected-date');
+                const cb = label.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = true;
+            });
+        });
+
+        if (selectedDates.length > 0) {
+            triggerSlotLoading();
+        }
+
+        document.querySelectorAll('.calendar-day-checkbox-label').forEach((label) => {
+            label.addEventListener('click', function(e) {
+                if (this.classList.contains('booked') || this.classList.contains('blocked')) {
+                    return;
+                }
+                e.preventDefault();
+                const cb = this.querySelector('input[type="checkbox"]');
+                if (!cb) return;
+
+                const dateVal = this.getAttribute('data-date');
+                
+                if (cb.checked) {
+                    cb.checked = false;
+                    this.classList.remove('selected-date');
+                    const idx = selectedDates.indexOf(dateVal);
+                    if (idx > -1) selectedDates.splice(idx, 1);
+                } else {
+                    if (selectedDates.length >= 2) {
+                        const oldDate = selectedDates.shift();
+                        const oldLabels = document.querySelectorAll(`.calendar-day-checkbox-label[data-date="${oldDate}"]`);
+                        oldLabels.forEach(oldL => {
+                            oldL.classList.remove('selected-date');
+                            const oldCb = oldL.querySelector('input[type="checkbox"]');
+                            if (oldCb) oldCb.checked = false;
+                        });
+                    }
+                    cb.checked = true;
+                    this.classList.add('selected-date');
+                    selectedDates.push(dateVal);
+                }
+
+                document.getElementById('hidden_booking_date').value = selectedDates[0] || '';
+                document.getElementById('hidden_booking_date_2').value = selectedDates[1] || '';
+
+                triggerSlotLoading();
+            });
+        });
+
+        function triggerSlotLoading() {
+            const dateVal1 = document.getElementById('hidden_booking_date').value;
+            const dateVal2 = document.getElementById('hidden_booking_date_2').value;
+
+            const slotContainer = document.getElementById('slotSelectionContainer');
+            const slotList = document.getElementById('slotList');
+
+            if (!dateVal1) {
+                slotContainer.classList.add('d-none');
+                slotContainer.classList.remove('animate-slide-fade');
+                return;
+            }
+
+            slotList.innerHTML = '<div class="text-muted small p-2"><i class="bi bi-arrow-clockwise spinner-icon"></i> Mencari slot tersedia...</div>';
+            slotContainer.classList.remove('d-none');
+            slotContainer.classList.add('animate-slide-fade');
+
+            if (dateVal2) {
+                fetch(`/paket/{{ $package->code }}/slots?date=${dateVal1}`)
+                    .then(r => r.json())
+                    .then(data1 => {
+                        fetch(`/paket/{{ $package->code }}/slots?date=${dateVal2}`)
+                            .then(r => r.json())
+                            .then(data2 => {
+                                const mergedSlots = {};
+                                if (data1.slots && data2.slots) {
+                                    for (const [key, value] of Object.entries(data1.slots)) {
+                                        const v2 = data2.slots[key];
+                                        const isAvail = value.available && v2 && v2.available;
+                                        mergedSlots[key] = {
+                                            available: isAvail,
+                                            label: value.label,
+                                            reason: isAvail ? null : (!value.available ? `${value.reason} (Hari 1)` : `${v2.reason} (Hari 2)`)
+                                        };
+                                    }
+                                }
+                                data1.slots = mergedSlots;
+                                data1.date = dateVal1;
+                                renderSlots(data1);
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot tanggal kedua.</div>';
+                            });
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot tanggal pertama.</div>';
+                    });
+            } else {
+                fetch(`/paket/{{ $package->code }}/slots?date=${dateVal1}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.slots) {
+                            for (const [key, value] of Object.entries(data.slots)) {
+                                if (value.available) {
+                                    value.reason = 'Pilih tanggal kedua untuk verifikasi kuota lengkap';
+                                    value.available = false;
+                                }
+                            }
+                        }
+                        data.date = dateVal1;
+                        renderSlots(data);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot.</div>';
+                    });
+            }
+        }
+    @endif
 
     // Frontend validation form submit handler
     const bookingForm = document.getElementById('bookingForm');
     if (bookingForm) {
         bookingForm.addEventListener('submit', function(e) {
+            @if($is2xMakeup)
+            const dateVal1 = document.getElementById('hidden_booking_date').value;
+            const dateVal2 = document.getElementById('hidden_booking_date_2').value;
+            if (!dateVal1 || !dateVal2) {
+                e.preventDefault();
+                alert('Silakan pilih 2 tanggal booking terlebih dahulu pada kalender.');
+                return false;
+            }
+            @else
             const selectedDate = document.querySelector('input[name="booking_date"]:checked');
             if (!selectedDate) {
                 e.preventDefault();
                 alert('Silakan pilih tanggal booking terlebih dahulu pada kalender.');
                 return false;
             }
+            @endif
             
             const slotContainer = document.getElementById('slotSelectionContainer');
             if (slotContainer && !slotContainer.classList.contains('d-none')) {
                 const selectedSlot = document.querySelector('input[name="slot_waktu"]:checked');
                 if (!selectedSlot) {
                     e.preventDefault();
-                    alert('Silakan pilih slot waktu MUA (Pagi, Siang, atau Sore).');
+                    alert('Silakan pilih slot waktu MUA (Pagi atau Siang).');
                     return false;
                 }
             }
             
-            @if($package->category->slug !== 'baju')
+            @if($package->category->slug !== 'baju' && $package->category->slug !== 'regular')
             const selectedSoftlens = document.querySelector('input[name="softlens"]:checked');
             if (!selectedSoftlens) {
                 e.preventDefault();
@@ -1030,11 +1225,11 @@ document.addEventListener('DOMContentLoaded', () => {
             @endif
 
             const fittingContainer = document.getElementById('fittingDateContainer');
-            if (fittingContainer && !fittingContainer.classList.contains('d-none')) {
-                const fittingInput = document.getElementById('tanggalFittingInput');
+            const fittingInput = document.getElementById('tanggalFittingInput');
+            if (fittingContainer && !fittingContainer.classList.contains('d-none') && fittingInput && fittingInput.required) {
                 if (!fittingInput.value) {
                     e.preventDefault();
-                    alert('Silakan pilih tanggal fitting ke gallery.');
+                    alert('Silakan pilih tanggal fitting pakaian terlebih dahulu.');
                     return false;
                 }
             }

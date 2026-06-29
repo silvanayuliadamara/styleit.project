@@ -318,7 +318,7 @@
                                 <div class="payment-option-details">
                                     <i class="bi bi-bank"></i>
                                     <div>
-                                        <span class="title">Virtual Account</span>
+                                        <span class="title">Transfer Bank</span>
                                         <span class="subtitle">BCA / Mandiri / BNI / BRI</span>
                                     </div>
                                 </div>

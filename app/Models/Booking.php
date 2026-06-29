@@ -179,10 +179,21 @@ class Booking extends Model
                         'customer_dibaca' => false,
                     ]);
 
-                    if ($booking->status === 'diterima' && $booking->schedule_id) {
-                        $schedule = $booking->schedule;
-                        if ($schedule) {
-                            $schedule->decrementTerpakai();
+                    if ($booking->status === 'diterima') {
+                        if ($booking->schedule_id) {
+                            $schedule = $booking->schedule;
+                            if ($schedule) {
+                                $schedule->decrementTerpakai();
+                            }
+                        }
+                        if ($booking->tanggal_acara_2) {
+                            $schedule2 = Schedule::where('category_id', $booking->package->category_id)
+                                ->whereDate('tanggal', $booking->tanggal_acara_2)
+                                ->where('jenis_jadwal', $booking->slot_waktu)
+                                ->first();
+                            if ($schedule2) {
+                                $schedule2->decrementTerpakai();
+                            }
                         }
                     }
 
@@ -251,6 +262,14 @@ class Booking extends Model
             'lainnya' => $biayaLainnya,
             'total' => $biayaMelati + $biayaHenna + $biayaLainnya,
         ];
+    }
+
+    public function getTanggalAcara2Attribute(): ?string
+    {
+        if ($this->notes && preg_match('/Tanggal Acara Kedua: (\d{4}-\d{2}-\d{2})/', $this->notes, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 }
 
