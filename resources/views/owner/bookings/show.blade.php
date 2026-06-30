@@ -229,7 +229,7 @@
                             <div class="alert alert-secondary small text-center">Bukti gambar tidak ditemukan.</div>
                         @endif
 
-                        <form action="{{ route('owner.bookings.confirmDp', $booking->id) }}" method="POST">
+                        <form action="{{ route('owner.bookings.confirmDp', $booking->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menyetujui dan mengonfirmasi pembayaran DP untuk booking ini?');">
                             @csrf
                             @method('PATCH')
                             <button type="submit" class="btn btn-success w-100 fw-bold py-2" style="border-radius: 10px;">
@@ -251,10 +251,10 @@
                         <div class="alert alert-info small py-2">
                             Nominal pelunasan: <strong>Rp{{ number_format($booking->sisa_pelunasan, 0, ',', '.') }}</strong>
                         </div>
-                        <form action="{{ route('owner.bookings.confirmLunas', $booking->id) }}" method="POST">
+                        <form action="{{ route('owner.bookings.confirmLunas', $booking->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin memproses pelunasan booking ini?');">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="btn btn-success w-100 fw-bold py-2" style="border-radius: 10px;" onclick="return confirm('Apakah Anda yakin ingin memproses pelunasan booking ini?')">
+                            <button type="submit" class="btn btn-success w-100 fw-bold py-2" style="border-radius: 10px;">
                                 <i class="bi bi-wallet-fill"></i> Konfirmasi Lunas
                             </button>
                         </form>
@@ -269,15 +269,19 @@
                     <h5 class="mb-0 fw-bold" style="color: #211313;"><i class="bi bi-gear-fill text-gold"></i> Tindakan Lainnya</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('owner.bookings.updateStatus', $booking->id) }}" method="POST">
+                    <form action="{{ route('owner.bookings.updateStatus', $booking->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin memperbarui status booking dan layanan ini?');">
                         @csrf
                         @method('PATCH')
 
                         <div class="mb-3">
                             <label class="form-label text-muted small fw-bold">Ubah Status Booking</label>
                             <select name="status" class="form-select mb-2" style="border-radius: 10px; border-color: #eadfd6;">
-                                <option value="pending" {{ $booking->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="menunggu_konfirmasi" {{ $booking->status == 'menunggu_konfirmasi' ? 'selected' : '' }}>Menunggu Konfirmasi</option>
+                                @if($booking->status == 'pending')
+                                    <option value="pending" selected>Pending</option>
+                                @endif
+                                @if($booking->status == 'menunggu_konfirmasi')
+                                    <option value="menunggu_konfirmasi" selected>Menunggu Konfirmasi</option>
+                                @endif
                                 <option value="diterima" {{ $booking->status == 'diterima' ? 'selected' : '' }}>Diterima</option>
                                 <option value="ditolak" {{ $booking->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                                 <option value="selesai" {{ $booking->status == 'selesai' ? 'selected' : '' }}>Selesai (Completed)</option>
@@ -288,7 +292,9 @@
                         <div class="mb-3">
                             <label class="form-label text-muted small fw-bold">Ubah Status Layanan</label>
                             <select name="status_layanan" class="form-select" style="border-radius: 10px; border-color: #eadfd6;">
-                                <option value="pending" {{ $booking->status_layanan == 'pending' ? 'selected' : '' }}>Pending / Menunggu</option>
+                                @if($booking->status_layanan == 'pending')
+                                    <option value="pending" selected>Pending / Menunggu</option>
+                                @endif
                                 <option value="terjadwal" {{ $booking->status_layanan == 'terjadwal' ? 'selected' : '' }}>Terjadwal</option>
                                 <option value="selesai" {{ $booking->status_layanan == 'selesai' ? 'selected' : '' }}>Layanan Selesai</option>
                                 <option value="dibatalkan" {{ $booking->status_layanan == 'dibatalkan' ? 'selected' : '' }}>Batal</option>
