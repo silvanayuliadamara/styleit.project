@@ -196,7 +196,7 @@
                                             @endif
                                         @endif
 
-                                        @if(($booking->payment_status ?? '') === 'belum_bayar' && ($booking->status ?? '') === 'pending')
+                                        @if(($booking->payment_status ?? '') === 'belum_bayar' && ($booking->status ?? '') === 'pending' && (!$cancelReq || $cancelReq->status_persetujuan !== 'diajukan'))
                                             <a href="{{ route('customer.payment.instruction', $booking->booking_code) }}" class="premium-action-btn btn-pay">
                                                 <i class="bi bi-wallet2"></i> Bayar DP
                                             </a>
@@ -206,10 +206,18 @@
                                             <i class="bi bi-receipt"></i> Invoice
                                         </a>
                                         @if(in_array($booking->status, ['pending', 'menunggu_konfirmasi', 'diterima']) && (!$cancelReq || $cancelReq->status_persetujuan !== 'diajukan'))
-                                            <button type="button" class="premium-action-btn btn-cancel" onclick="openCancelModal('{{ route('customer.bookings.cancel', $booking->booking_code) }}')">
+                                            <button type="button" class="premium-action-btn btn-cancel" onclick="openCancelModal('{{ route('customer.bookings.cancel', $booking->booking_code) }}', {{ $booking->payment_status !== 'belum_bayar' ? 'true' : 'false' }})">
                                                 Batal
                                             </button>
                                         @endif
+                                         @if($cancelReq && $cancelReq->status_persetujuan === 'diajukan')
+                                            <form action="{{ route('customer.bookings.cancel.withdraw', $booking->booking_code) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pengajuan pembatalan?')">
+                                                @csrf
+                                                <button type="submit" class="premium-action-btn btn-cancel" style="background-color: #fff7ed; color: #ea580c !important; border-color: rgba(234, 88, 12, 0.25); font-size: 13px; font-weight: 600;">
+                                                    Batalkan Pengajuan
+                                                </button>
+                                            </form>
+                                         @endif
                                     </div>
                                 </td>
                             </tr>
@@ -242,14 +250,14 @@
                     @csrf
                     @method('PATCH')
                     <div class="modal-body px-4 pb-4">
-                        <p class="text-secondary small mb-3">Harap isi detail alasan dan rekening pengembalian dana DP Anda. Proses refund dilakukan secara manual oleh Admin/Owner.</p>
+                        <p class="text-secondary small mb-3" id="cancelModalSubtitle">Harap isi detail alasan dan rekening pengembalian dana DP Anda. Proses refund dilakukan secara manual oleh Admin/Owner.</p>
                         
                         <div class="mb-3">
                             <label class="form-label fw-semibold small mb-1">Alasan Pembatalan <span class="text-danger">*</span></label>
                             <textarea name="alasan" class="form-control premium-form-control" rows="2" required placeholder="Misal: Acara ditunda, salah pilih tanggal, dll."></textarea>
                         </div>
 
-                        <div class="p-3 rounded-4" style="background: #fffdfb; border: 1.5px solid rgba(176, 138, 66, 0.15);">
+                        <div class="p-3 rounded-4" id="refundSection" style="background: #fffdfb; border: 1.5px solid rgba(176, 138, 66, 0.15);">
                             <h6 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2" style="font-size: 13px;">
                                 <i class="bi bi-credit-card-2-front text-gold"></i> Rekening Pengembalian Dana (Refund)
                             </h6>
@@ -278,10 +286,28 @@
     </div>
 
     <script>
-        function openCancelModal(actionUrl) {
+        function openCancelModal(actionUrl, requiresRefund) {
             const modalEl = document.getElementById('cancelModal');
             const formEl = document.getElementById('cancelForm');
             formEl.action = actionUrl;
+            
+            const refundSection = document.getElementById('refundSection');
+            const refundInputs = refundSection.querySelectorAll('input');
+            const modalSubtitle = document.getElementById('cancelModalSubtitle');
+
+            if (requiresRefund) {
+                refundSection.style.display = 'block';
+                refundInputs.forEach(input => input.required = true);
+                modalSubtitle.textContent = 'Harap isi detail alasan dan rekening pengembalian dana DP Anda. Proses refund dilakukan secara manual oleh Admin/Owner.';
+            } else {
+                refundSection.style.display = 'none';
+                refundInputs.forEach(input => {
+                    input.required = false;
+                    input.value = '';
+                });
+                modalSubtitle.textContent = 'Harap isi detail alasan pembatalan booking Anda.';
+            }
+
             const modal = new bootstrap.Modal(modalEl);
             modal.show();
         }
@@ -321,5 +347,4 @@
             });
         })();
     </script>
-</div>
 @endsection
