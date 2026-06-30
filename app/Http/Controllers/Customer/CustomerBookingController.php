@@ -79,12 +79,19 @@ class CustomerBookingController extends Controller
                 return redirect()->back()->with('error', 'Permohonan pembatalan untuk booking ini sudah diajukan sebelumnya.');
             }
 
-            $validated = $request->validate([
+            $isPaid = $booking->payment_status !== 'belum_bayar';
+
+            $rules = [
                 'alasan' => 'required|string|max:500',
-                'bank_name' => 'required|string|max:100',
-                'bank_account' => 'required|string|max:100',
-                'account_holder' => 'required|string|max:100',
-            ], [
+            ];
+
+            if ($isPaid) {
+                $rules['bank_name'] = 'required|string|max:100';
+                $rules['bank_account'] = 'required|string|max:100';
+                $rules['account_holder'] = 'required|string|max:100';
+            }
+
+            $validated = $request->validate($rules, [
                 'alasan.required' => 'Alasan pembatalan wajib diisi.',
                 'bank_name.required' => 'Nama bank wajib diisi.',
                 'bank_account.required' => 'Nomor rekening wajib diisi.',
@@ -92,9 +99,13 @@ class CustomerBookingController extends Controller
             ]);
 
             if (in_array($booking->status, ['pending', 'menunggu_konfirmasi', 'diterima'])) {
-                // Format alasan to include bank details
-                $formattedAlasan = 'Alasan: '.$validated['alasan']."\n"
-                    .'Rekening Refund: '.$validated['bank_name'].' - '.$validated['bank_account'].' a.n. '.$validated['account_holder'];
+                // Format alasan to include bank details only if paid
+                if ($isPaid) {
+                    $formattedAlasan = 'Alasan: '.$validated['alasan']."\n"
+                        .'Rekening Refund: '.$validated['bank_name'].' - '.$validated['bank_account'].' a.n. '.$validated['account_holder'];
+                } else {
+                    $formattedAlasan = 'Alasan: '.$validated['alasan'];
+                }
 
                 // Create cancellation request
                 CancellationRequest::create([
@@ -128,5 +139,30 @@ class CustomerBookingController extends Controller
         }
 
         return redirect()->route('customer.dashboard');
+    }
+
+    /**
+     * Withdraw/cancel a pending cancellation request.
+     */
+    public function withdrawCancel(string $bookingCode)
+    {
+        $booking = Booking::where('booking_code', $bookingCode)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$booking) {
+            abort(Response::HTTP_NOT_FOUND);
+        }
+
+        $cancelReq = CancellationRequest::where('booking_id', $booking->id)
+            ->where('status_persetujuan', 'diajukan')
+            ->first();
+
+        if ($cancelReq) {
+            $cancelReq->delete();
+            return redirect()->back()->with('success', 'Pengajuan pembatalan berhasil ditarik kembali.');
+        }
+
+        return redirect()->back()->with('error', 'Tidak ada pengajuan pembatalan aktif yang dapat ditarik.');
     }
 }
