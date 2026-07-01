@@ -16,24 +16,24 @@
         <div class="collapse navbar-collapse" id="adminNavbar">
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-4">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                        href="{{ route('admin.dashboard') }}">Dashboard Overview</a>
+                    <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                        href="{{ route('home') }}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}"
-                        href="{{ route('admin.bookings.index') }}">Booking Baju</a>
+                    <a class="nav-link {{ request()->routeIs('profil') ? 'active' : '' }}"
+                        href="{{ route('profil') }}">Profil</a>
                 </li>
-                @php
-                    $whatsappSetting = \App\Models\WhatsappSetting::first();
-                    $waNumber = $whatsappSetting?->nomor_baju ?: '6283112269289';
-                    $waNumberClean = preg_replace('/[^0-9]/', '', $waNumber);
-                    if (str_starts_with($waNumberClean, '0')) {
-                        $waNumberClean = '62' . substr($waNumberClean, 1);
-                    }
-                    $whatsappLink = "https://wa.me/" . $waNumberClean;
-                @endphp
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ $whatsappLink }}" target="_blank">WhatsApp Baju</a>
+                    <a class="nav-link {{ request()->routeIs('layanan.*') || request()->routeIs('paket.show') ? 'active' : '' }}"
+                        href="{{ route('layanan.index') }}">Layanan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('portofolio') ? 'active' : '' }}"
+                        href="{{ route('portofolio') }}">Portofolio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('pricelist') ? 'active' : '' }}"
+                        href="{{ route('pricelist') }}">Pricelist</a>
                 </li>
             </ul>
 
@@ -41,6 +41,13 @@
                 @auth
                     @php
                         $user = auth()->user();
+                        $whatsappSetting = \App\Models\WhatsappSetting::first();
+                        $waNumber = $whatsappSetting?->nomor_baju ?: '6283112269289';
+                        $waNumberClean = preg_replace('/[^0-9]/', '', $waNumber);
+                        if (str_starts_with($waNumberClean, '0')) {
+                            $waNumberClean = '62' . substr($waNumberClean, 1);
+                        }
+                        $whatsappLink = "https://wa.me/" . $waNumberClean;
                     @endphp
 
                     <div class="dropdown">
@@ -60,6 +67,24 @@
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-4 mt-2">
                             <li class="dropdown-header text-muted small px-3 pt-2 pb-1">
                                 {{ $user->email }}
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider my-1">
+                            </li>
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                                    <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard Overview
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item {{ request()->routeIs('admin.bookings.*') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">
+                                    <i class="bi bi-bag-heart me-2"></i> Booking Baju
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ $whatsappLink }}" target="_blank">
+                                    <i class="bi bi-whatsapp me-2"></i> WhatsApp Baju
+                                </a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider my-1">

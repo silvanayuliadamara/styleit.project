@@ -22,4 +22,12 @@ class PackageItem extends Model
     {
         return $this->belongsTo(ServicePackage::class, 'package_id');
     }
+
+    public function getNameAttribute($value)
+    {
+        if (strtolower($value) === 'makeup wisuda glowing') {
+            return 'Makeup Wisuda/Bridesmaid';
+        }
+        return $value;
+    }
 }

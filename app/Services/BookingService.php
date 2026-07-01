@@ -57,7 +57,36 @@ class BookingService
                     $schedule->incrementTerpakai();
                 }
             }
+            if ($booking->tanggal_acara_2) {
+                $schedule2 = Schedule::where('category_id', $booking->package->category_id)
+                    ->whereDate('tanggal', $booking->tanggal_acara_2)
+                    ->where('jenis_jadwal', $booking->slot_waktu_2)
+                    ->first();
+                if ($schedule2) {
+                    $schedule2->incrementTerpakai();
+                }
+            }
+            if ($booking->tanggal_acara_3) {
+                $schedule3 = Schedule::where('category_id', $booking->package->category_id)
+                    ->whereDate('tanggal', $booking->tanggal_acara_3)
+                    ->where('jenis_jadwal', $booking->slot_waktu_3)
+                    ->first();
+                if ($schedule3) {
+                    $schedule3->incrementTerpakai();
+                }
+            }
         });
+
+        // Send confirmation email
+        try {
+            $booking->load(['user', 'package', 'addons']);
+            if ($booking->user && $booking->user->email) {
+                \Illuminate\Support\Facades\Mail::to($booking->user->email)
+                    ->send(new \App\Mail\BookingInvoiceMail($booking, 'dp_confirmed'));
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send booking DP confirmation email for booking ' . $booking->booking_code . ': ' . $e->getMessage());
+        }
     }
 
     /**
@@ -100,6 +129,17 @@ class BookingService
                 'sisa_pelunasan' => 0,
             ]);
         });
+
+        // Send payment settlement email
+        try {
+            $booking->load(['user', 'package', 'addons']);
+            if ($booking->user && $booking->user->email) {
+                \Illuminate\Support\Facades\Mail::to($booking->user->email)
+                    ->send(new \App\Mail\BookingInvoiceMail($booking, 'lunas'));
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send booking full payment email for booking ' . $booking->booking_code . ': ' . $e->getMessage());
+        }
     }
 
     /**
@@ -109,10 +149,30 @@ class BookingService
     {
         DB::transaction(function () use ($booking) {
             // Decrement schedule if was accepted
-            if ($booking->status === 'diterima' && $booking->schedule_id) {
-                $schedule = Schedule::find($booking->schedule_id);
-                if ($schedule) {
-                    $schedule->decrementTerpakai();
+            if ($booking->status === 'diterima') {
+                if ($booking->schedule_id) {
+                    $schedule = Schedule::find($booking->schedule_id);
+                    if ($schedule) {
+                        $schedule->decrementTerpakai();
+                    }
+                }
+                if ($booking->tanggal_acara_2) {
+                    $schedule2 = Schedule::where('category_id', $booking->package->category_id)
+                        ->whereDate('tanggal', $booking->tanggal_acara_2)
+                        ->where('jenis_jadwal', $booking->slot_waktu_2)
+                        ->first();
+                    if ($schedule2) {
+                        $schedule2->decrementTerpakai();
+                    }
+                }
+                if ($booking->tanggal_acara_3) {
+                    $schedule3 = Schedule::where('category_id', $booking->package->category_id)
+                        ->whereDate('tanggal', $booking->tanggal_acara_3)
+                        ->where('jenis_jadwal', $booking->slot_waktu_3)
+                        ->first();
+                    if ($schedule3) {
+                        $schedule3->decrementTerpakai();
+                    }
                 }
             }
 

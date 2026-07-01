@@ -107,10 +107,10 @@
                                             <i class="bi bi-gear-fill"></i> Kelola
                                         </a>
                                         @if($booking->status == 'diterima' && $booking->payment_status != 'lunas')
-                                            <form action="{{ route('owner.bookings.confirmLunas', $booking->id) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('owner.bookings.confirmLunas', $booking->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin memproses pelunasan booking ini?');">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="lyb-admin-action-btn" style="background: #2d6e25; color: #fff; border-color: #2d6e25;" onclick="return confirm('Konfirmasi pelunasan booking ini?')">
+                                                <button type="submit" class="lyb-admin-action-btn" style="background: #2d6e25; color: #fff; border-color: #2d6e25;">
                                                     Lunas
                                                 </button>
                                             </form>

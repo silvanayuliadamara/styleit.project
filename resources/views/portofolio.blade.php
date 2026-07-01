@@ -25,7 +25,7 @@
                         @else
                             <div class="portfolio-placeholder"><i class="bi bi-image"></i></div>
                         @endif
-                        <h4>{{ $item->title }}</h4>
+                        <h4>{{ trim(preg_replace('/\s*[-–—]\s*.+$/u', '', $item->title)) }}</h4>
                         <span>{{ ['prewedding' => 'Prewedding', 'wedding' => 'Wedding', 'regular' => 'Regular', 'baju' => 'Khusus Baju'][$item->category] ?? ucfirst($item->category) }}</span>
                         <p>{{ $item->description }}</p>
                     </div>

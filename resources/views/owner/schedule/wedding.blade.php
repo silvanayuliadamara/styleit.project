@@ -5,7 +5,7 @@
     <header class="lyb-admin-page-header">
         <div>
             <h2>Kelola Jadwal Wedding & Prewedding</h2>
-            <p>Atur ketersediaan slot pagi, siang, dan sore untuk hari sakral customer. Kuota dibatasi 1 per slot harian.</p>
+            <p>Atur ketersediaan slot pagi dan siang untuk hari sakral customer. Kuota dibatasi 2 untuk pagi dan 1 untuk siang harian.</p>
         </div>
     </header>
 
@@ -68,7 +68,7 @@
 
                                 // Gather slots info
                                 $slotsData = [];
-                                foreach(['pagi', 'siang', 'sore'] as $slot) {
+                                foreach(['pagi', 'siang'] as $slot) {
                                     $schedKey = $dateStr . '_' . $slot;
                                     $schedule = $schedules->get($schedKey)?->first();
                                     $booking = $bookings->get($schedKey)?->first();
@@ -109,7 +109,7 @@
                                 </div>
 
                                 <div class="lyb-cal-slots">
-                                    @foreach(['pagi', 'siang', 'sore'] as $slot)
+                                    @foreach(['pagi', 'siang'] as $slot)
                                         @php
                                             $sInfo = $slotsData[$slot];
                                             $pillClass = $sInfo['booking_exists'] ? 'penuh' : ($sInfo['status'] == 'diblokir' ? 'diblokir' : ($sInfo['status'] == 'belum' || $sInfo['status'] == 'tersedia' ? 'tersedia' : $sInfo['status']));
@@ -305,7 +305,7 @@
             let anyBooked = false;
 
             // Setup slots inside modal
-            for (const slot of ['pagi', 'siang', 'sore']) {
+            for (const slot of ['pagi', 'siang']) {
                 const sInfo = slots[slot];
                 const card = document.getElementById('config-card-' + slot);
                 const body = document.getElementById('config-body-' + slot);
@@ -398,18 +398,7 @@
         }
     </script>
 
-    <style>
-        .blocked-card {
-            background: #f4ede6 !important;
-            border-color: #d8c8be !important;
-            opacity: 0.75;
-        }
-        .locked-slot {
-            border-color: #fde2e2 !important;
-            background: #fff8f8 !important;
-        }
-        .locked-slot .lyb-slot-title span {
-            color: #a03131;
-        }
-    </style>
+    @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/owner-schedule.css') }}">
+@endpush
 @endsection

@@ -1,496 +1,15 @@
 @extends('layouts.app', ['title' => $package->name . ' - Lisa Yuli Belti'])
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/paket-show.css') }}">
+@endpush
+
 @section('content')
-<style>
-    /* Premium LYB Styling Sesuai Screenshot */
-    :root {
-        --lyb-gold: #b08a42;
-        --lyb-gold-light: #fbf8f1;
-        --lyb-gold-border: #eadfd6;
-        --lyb-dark: #211313;
-    }
-
-    body {
-        background-color: #FAF6F0 !important;
-    }
-
-    h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
-        font-family: Georgia, "Times New Roman", serif !important;
-        color: var(--lyb-dark) !important;
-    }
-
-    /* Back Link styling */
-    .back-link {
-        transition: all 0.3s ease;
-    }
-    .back-link:hover {
-        color: var(--lyb-gold) !important;
-        transform: translateX(-4px);
-    }
-
-    /* Cover Image sticky styling */
-    .cover-image-sticky {
-        top: 100px;
-        transition: all 0.3s ease;
-    }
-
-    /* Wedding gallery thumbnails */
-    .thumbnail-container {
-        border: 2px solid transparent;
-        opacity: 0.6;
-        transition: all 0.3s ease;
-    }
-    .thumbnail-container:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-    }
-    .thumbnail-container.active {
-        border-color: var(--lyb-gold) !important;
-        opacity: 1 !important;
-        box-shadow: 0 4px 10px rgba(176, 138, 66, 0.2);
-    }
-
-    /* Month Calendar Grid Styles */
-    .calendar-month-card {
-        background: #fff;
-        border: 1px solid var(--lyb-gold-border);
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 10px 30px rgba(33, 19, 19, 0.02);
-        height: 100%;
-        transition: all 0.3s ease;
-    }
-    .calendar-month-card:hover {
-        box-shadow: 0 15px 35px rgba(33, 19, 19, 0.05);
-    }
-    .calendar-grid-7 {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 12px 8px;
-        text-align: center;
-        align-items: center;
-    }
-    .calendar-day-header {
-        font-size: 11px;
-        font-weight: 700;
-        color: #a3958e;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding-bottom: 4px;
-    }
-    .calendar-day-cell {
-        width: 100%;
-        max-width: 38px;
-        aspect-ratio: 1;
-        margin: 0 auto;
-        align-self: center;
-        justify-self: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        font-size: 13px;
-        font-weight: 600;
-        position: relative;
-        user-select: none;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .calendar-day-cell .day-number {
-        position: relative;
-        z-index: 2;
-    }
-    /* Available day */
-    .calendar-day-cell.available {
-        border: 1px solid #c2e7d0;
-        background-color: #eafaf1;
-        color: #1a7a42;
-        cursor: pointer;
-    }
-    .calendar-day-cell.available:hover {
-        background-color: #1a7a42;
-        color: #fff;
-        border-color: #1a7a42;
-        box-shadow: 0 4px 10px rgba(26, 122, 66, 0.15);
-        transform: scale(1.08);
-    }
-    /* When selected (radio checked) */
-    .calendar-day-cell.available:has(input:checked) {
-        background-color: var(--lyb-gold) !important;
-        color: #fff !important;
-        border-color: var(--lyb-gold) !important;
-        transform: scale(1.12);
-        animation: activePulse 1.2s infinite;
-    }
-    @keyframes activePulse {
-        0% {
-            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 0 rgba(176, 138, 66, 0.4);
-        }
-        70% {
-            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 8px rgba(176, 138, 66, 0);
-        }
-        100% {
-            box-shadow: 0 4px 12px rgba(176, 138, 66, 0.4), 0 0 0 0 rgba(176, 138, 66, 0);
-        }
-    }
-    /* Full day */
-    .calendar-day-cell.full {
-        border: 1px solid #f9d6d6;
-        background-color: #fdf2f2;
-        color: #dc3545;
-        cursor: not-allowed;
-    }
-    .calendar-day-cell.full:hover {
-        transform: none;
-    }
-    /* Blocked day */
-    .calendar-day-cell.blocked {
-        border: 1px solid var(--lyb-gold-border);
-        background-color: #f6f3f0;
-        color: #a3958e;
-        cursor: not-allowed;
-        text-decoration: line-through;
-    }
-    .calendar-day-cell.blocked:hover {
-        transform: none;
-    }
-    /* Empty cell */
-    .calendar-day-cell.empty {
-        background: transparent;
-        border: none;
-        pointer-events: none;
-    }
-    /* Disabled cell (not in 60-day range) */
-    .calendar-day-cell.disabled {
-        color: #ccc;
-        background: transparent;
-        border: none;
-        cursor: not-allowed;
-    }
-
-    /* Month Navigation Buttons */
-    .calendar-nav-btn {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        border: 1px solid var(--lyb-gold-border);
-        border-radius: 50%;
-        background-color: #fff;
-        color: var(--lyb-dark);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .calendar-nav-btn:hover:not(:disabled) {
-        background-color: var(--lyb-gold-light);
-        border-color: var(--lyb-gold);
-        color: var(--lyb-gold);
-        transform: scale(1.05);
-    }
-    .calendar-nav-btn:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        background-color: #f8f9fa;
-        border-color: #e9ecef;
-    }
-
-    /* Calendar Legend Premium */
-    .calendar-legend-custom {
-        display: flex;
-        justify-content: center;
-        gap: 24px;
-        margin-top: 24px;
-        flex-wrap: wrap;
-    }
-    .calendar-legend-custom .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #6f625c;
-    }
-    .calendar-legend-custom .legend-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-    .calendar-legend-custom .available-dot {
-        background-color: #1a7a42;
-        box-shadow: 0 0 6px rgba(26, 122, 66, 0.4);
-    }
-    .calendar-legend-custom .full-dot {
-        background-color: #dc3545;
-        box-shadow: 0 0 6px rgba(220, 53, 69, 0.4);
-    }
-    .calendar-legend-custom .blocked-dot {
-        background-color: #a3958e;
-        box-shadow: 0 0 6px rgba(163, 149, 142, 0.4);
-    }
-
-    /* Mobile adjustments */
-    @media (max-width: 576px) {
-        .calendar-month-card {
-            padding: 16px;
-        }
-        .calendar-grid-7 {
-            gap: 8px 4px;
-        }
-        .calendar-day-cell {
-            max-width: 32px;
-            font-size: 12px;
-        }
-        .calendar-legend-custom {
-            gap: 16px;
-            margin-top: 16px;
-        }
-    }
-
-    /* Interactive Radio & Checkbox Containers (Capsule shape) */
-    .addon-row-clickable, .slot-row-clickable {
-        border: 1px solid var(--lyb-gold-border) !important;
-        background-color: #fff;
-        border-radius: 50px !important;
-        padding: 16px 28px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-    .addon-row-clickable::after, .slot-row-clickable::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle, rgba(176, 138, 66, 0.05) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-    }
-    .addon-row-clickable:hover::after, .slot-row-clickable:hover::after {
-        opacity: 1;
-    }
-    .addon-row-clickable:hover, .slot-row-clickable:hover {
-        background-color: #fffdf9 !important;
-        border-color: var(--lyb-gold) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(176, 138, 66, 0.08);
-    }
-    .addon-row-clickable:has(input:checked), .slot-row-clickable:has(input:checked) {
-        background-color: var(--lyb-gold-light) !important;
-        border-color: var(--lyb-gold) !important;
-        box-shadow: 0 6px 18px rgba(176, 138, 66, 0.12);
-        transform: translateY(-1px);
-    }
-    
-    .addon-row-clickable input[type="checkbox"] {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-        max-width: 20px !important;
-        max-height: 20px !important;
-        border-radius: 4px !important;
-        flex-shrink: 0 !important;
-        aspect-ratio: 1 / 1 !important;
-        border-color: var(--lyb-gold-border) !important;
-        transition: all 0.2s ease;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-    }
-    
-    .slot-row-clickable input[type="radio"] {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-        max-width: 20px !important;
-        max-height: 20px !important;
-        border-radius: 50% !important;
-        flex-shrink: 0 !important;
-        aspect-ratio: 1 / 1 !important;
-        border-color: var(--lyb-gold-border) !important;
-        transition: all 0.2s ease;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-    }
-    
-    /* Make custom styling for radios/checkboxes inside active elements */
-    .addon-row-clickable:has(input:checked) input[type="checkbox"], 
-    .slot-row-clickable:has(input:checked) input[type="radio"] {
-        background-color: var(--lyb-gold) !important;
-        border-color: var(--lyb-gold) !important;
-    }
-
-    /* Softlens Pills layout side-by-side as screenshot */
-    .softlens-container {
-        display: flex;
-        gap: 16px;
-    }
-    .softlens-pill {
-        flex: 1;
-        background: #fff;
-        border: 1px solid var(--lyb-gold-border);
-        border-radius: 50px;
-        padding: 14px 28px;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        user-select: none;
-    }
-    .softlens-pill:hover {
-        border-color: var(--lyb-gold);
-        background-color: var(--lyb-gold-light);
-    }
-    .softlens-pill input[type="radio"] {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        min-height: 20px !important;
-        max-width: 20px !important;
-        max-height: 20px !important;
-        border-radius: 50% !important;
-        flex-shrink: 0 !important;
-        aspect-ratio: 1 / 1 !important;
-        border-color: var(--lyb-gold-border) !important;
-        margin: 0 !important;
-        margin-right: 12px !important;
-        padding: 0 !important;
-        box-sizing: border-box !important;
-        cursor: pointer;
-    }
-    .softlens-pill:has(input:checked) {
-        border-color: var(--lyb-gold) !important;
-        background-color: var(--lyb-gold-light) !important;
-        box-shadow: 0 4px 12px rgba(176, 138, 66, 0.08);
-    }
-    .softlens-pill:has(input:checked) input[type="radio"] {
-        background-color: var(--lyb-gold) !important;
-        border-color: var(--lyb-gold) !important;
-    }
-
-    /* Price Info Box / Summary Box */
-    .premium-card {
-        background-color: #fdfaf6;
-        border: 1px solid var(--lyb-gold-border) !important;
-        border-radius: 20px;
-        padding: 24px;
-        transition: all 0.3s ease;
-    }
-    .premium-card:hover {
-        box-shadow: 0 8px 25px rgba(203, 180, 159, 0.12);
-    }
-
-    .summary-card {
-        background-color: #fff;
-        border: 1px solid var(--lyb-gold-border) !important;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 10px 30px rgba(33, 19, 19, 0.01);
-    }
-
-    /* Action Buttons */
-    .btn-lyb-outline {
-        border: 2px solid var(--lyb-dark);
-        color: var(--lyb-dark);
-        background-color: #fffdfc;
-        font-weight: 700;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .btn-lyb-outline:hover {
-        background-color: var(--lyb-gold-light);
-        border-color: var(--lyb-gold);
-        color: var(--lyb-gold);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(176, 138, 66, 0.1);
-    }
-    .btn-lyb-dark {
-        background-color: var(--lyb-dark);
-        border: 2px solid var(--lyb-dark);
-        color: #fff;
-        font-weight: 700;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-    .btn-lyb-dark::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -150%;
-        width: 50%;
-        height: 100%;
-        background: linear-gradient(
-            to right,
-            transparent,
-            rgba(176, 138, 66, 0.3),
-            rgba(251, 248, 241, 0.5),
-            rgba(176, 138, 66, 0.3),
-            transparent
-        );
-        transform: skewX(-25deg);
-        animation: goldShimmer 4s infinite ease-in-out;
-    }
-    .btn-lyb-dark:hover {
-        background-color: #3d2525;
-        border-color: #3d2525;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(33, 19, 19, 0.25);
-    }
-    @keyframes goldShimmer {
-        0% {
-            left: -150%;
-        }
-        30% {
-            left: 150%;
-        }
-        100% {
-            left: 150%;
-        }
-    }
-
-    /* Dynamic section load transitions */
-    .animate-slide-fade {
-        animation: slideFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes slideFadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(-12px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Spinner rotation */
-    .spinner-icon {
-        display: inline-block;
-        animation: spin 1.2s linear infinite;
-    }
-    @keyframes spin {
-        from {
-            transform: rotate(0deg);
-        }
-        to {
-            transform: rotate(360deg);
-        }
-    }
-    .link-whatsapp-gold {
-        color: var(--lyb-gold) !important;
-        font-weight: 600;
-        font-size: 14px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .link-whatsapp-gold:hover {
-        color: var(--lyb-dark) !important;
-        transform: translateY(-1px);
-    }
-</style>
+<div class="package-detail-page">
+@php
+    $is2xMakeup = in_array($package->code, ['PKG-MU-2X', 'PKG-WED-SILVER', 'PKG-WED-GOLD', 'PKG-WED-GOLD-L']);
+    $is3xMakeup = in_array($package->code, ['PKG-MU-3X', 'PKG-WED-DIAMOND-P', 'PKG-WED-DIAMOND-L']);
+@endphp
 
 <div class="container py-5">
     {{-- Back link --}}
@@ -510,7 +29,7 @@
             <div class="col-lg-5">
                 <div class="position-sticky cover-image-sticky">
                     @if ($package->image)
-                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="@if($package->category->slug === 'baju') aspect-ratio: 4/5; @else aspect-ratio: 3/4; @endif object-fit: cover; border: 1px solid #eadfd6;">
+                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}" class="w-100 rounded-4 shadow-sm" style="@if($package->category->slug === 'baju') aspect-ratio: 4/5; @else aspect-ratio: 3/4; @endif object-fit: cover; object-position: center top !important; border: 1px solid #eadfd6;">
                     @else
                         <div class="w-100 rounded-4 d-flex align-items-center justify-content-center bg-light border text-muted" style="@if($package->category->slug === 'baju') aspect-ratio: 4/5; @else aspect-ratio: 3/4; @endif border-color: #eadfd6 !important;">
                             <i class="bi bi-image" style="font-size: 48px;"></i>
@@ -525,12 +44,23 @@
                 <div class="mb-4">
                     <div class="d-flex align-items-center gap-2 mb-2 text-uppercase" style="letter-spacing: 1.5px; font-size: 12px;">
                         <span class="text-gold-dark fw-bold">{{ $package->category->name }}</span>
-                        @if ($package->is_popular || $package->category->slug === 'wedding')
+                        @if ($package->is_best_seller)
                             <span class="badge rounded-pill px-2.5 py-1" style="background-color: #fbf8f1; color: var(--lyb-gold); border: 1px solid var(--lyb-gold-border); font-size: 10px; font-weight: 700; letter-spacing: 0.5px;">BEST SELLER</span>
                         @endif
                     </div>
                     <h1 class="fw-bold text-dark" style="font-size: 2.2rem; font-family: Georgia, serif !important;">{{ $package->name }}</h1>
-                    <p class="text-secondary mt-2" style="font-size: 15px; line-height: 1.6;">{{ $package->description }}</p>
+                    @php
+                        $points = array_map('trim', explode('+', $package->description));
+                    @endphp
+                    @if(count($points) > 1)
+                        <ul class="text-secondary mt-2 ps-3" style="font-size: 15px; line-height: 1.6; list-style-type: disc;">
+                            @foreach($points as $point)
+                                <li class="mb-1">{{ $point }}</li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-secondary mt-2" style="font-size: 15px; line-height: 1.6;">{!! nl2br(e($package->description)) !!}</p>
+                    @endif
                 </div>
 
                 {{-- Price Info Box --}}
@@ -553,12 +83,10 @@
                 {{-- Includes --}}
                 @if($package->items->isNotEmpty())
                     <div class="mb-4">
-                        <h5 class="fw-bold mb-3" style="color: var(--lyb-dark); font-size: 16px;">Termasuk Paket</h5>
-                        <ul class="list-unstyled d-flex flex-wrap gap-x-4 gap-y-2">
+                        <h5 class="fw-bold mb-2" style="color: var(--lyb-dark); font-size: 16px;">Termasuk Paket</h5>
+                        <ul class="text-secondary ps-4" style="font-size: 14.5px; line-height: 1.8; list-style-type: disc;">
                             @foreach($package->items as $item)
-                                <li class="small text-secondary me-3 d-flex align-items-center" style="font-weight: 500;">
-                                    <i class="bi bi-sparkles me-2" style="color: var(--lyb-gold);"></i>{{ $item->name }} {{ $item->quantity > 1 ? $item->quantity : '' }} {{ $item->unit }}
-                                </li>
+                                <li class="mb-1" style="font-weight: 500;">{{ $item->name }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -663,15 +191,49 @@
                     </div>
                 </div>
 
+                @if($is2xMakeup || $is3xMakeup)
+                <div class="mb-4" id="bookingDate2Container">
+                    <label class="form-label fw-bold mb-2" for="bookingDate2Input" style="color: var(--lyb-dark); font-size: 15px;">Tanggal Acara Kedua (Hari 2) <span class="text-danger">*</span></label>
+                    <input type="date" name="booking_date_2" id="bookingDate2Input" value="{{ old('booking_date_2', $editItem['booking_date_2'] ?? '') }}" class="form-control rounded-4 py-2.5 px-3" style="border: 1px solid var(--lyb-gold-border); background: #fffcf8;" required>
+                    <small class="text-muted mt-1 d-block" style="font-size: 11px;">Silakan pilih tanggal untuk hari kedua acara Anda.</small>
+                </div>
+                @endif
+
+                @if($is3xMakeup)
+                <div class="mb-4" id="bookingDate3Container">
+                    <label class="form-label fw-bold mb-2" for="bookingDate3Input" style="color: var(--lyb-dark); font-size: 15px;">Tanggal Acara Ketiga (Hari 3) <span class="text-danger">*</span></label>
+                    <input type="date" name="booking_date_3" id="bookingDate3Input" value="{{ old('booking_date_3', $editItem['booking_date_3'] ?? '') }}" class="form-control rounded-4 py-2.5 px-3" style="border: 1px solid var(--lyb-gold-border); background: #fffcf8;" required>
+                    <small class="text-muted mt-1 d-block" style="font-size: 11px;">Silakan pilih tanggal untuk hari ketiga acara Anda.</small>
+                </div>
+                @endif
+
                 {{-- Dynamic MUA Slot Selection --}}
-                <div id="slotSelectionContainer" class="mb-4 d-none">
-                    <label class="form-label fw-bold mb-2" style="color: var(--lyb-dark); font-size: 15px;">Pilih Slot Waktu MUA <span class="text-danger">*</span></label>
-                    <div class="d-flex flex-column gap-2" id="slotList">
+                <div id="slotSelectionContainer1" class="mb-4 d-none">
+                    <label class="form-label fw-bold mb-2" style="color: var(--lyb-dark); font-size: 15px;">Pilih Slot Waktu MUA Hari 1 <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-column gap-2" id="slotList1">
                         <!-- Dynamically populated via JS -->
                     </div>
                 </div>
 
-                @if($package->category->slug !== 'baju')
+                @if($is2xMakeup || $is3xMakeup)
+                <div id="slotSelectionContainer2" class="mb-4 d-none">
+                    <label class="form-label fw-bold mb-2" style="color: var(--lyb-dark); font-size: 15px;">Pilih Slot Waktu MUA Hari 2 <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-column gap-2" id="slotList2">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </div>
+                @endif
+
+                @if($is3xMakeup)
+                <div id="slotSelectionContainer3" class="mb-4 d-none">
+                    <label class="form-label fw-bold mb-2" style="color: var(--lyb-dark); font-size: 15px;">Pilih Slot Waktu MUA Hari 3 <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-column gap-2" id="slotList3">
+                        <!-- Dynamically populated via JS -->
+                    </div>
+                </div>
+                @endif
+
+                @if($package->category->slug !== 'baju' && $package->category->slug !== 'regular')
                 <div class="mb-4">
                     <label class="form-label fw-bold" style="color: var(--lyb-dark); font-size: 15px;">Penggunaan Softlens <span class="text-danger">*</span></label>
                     <div class="softlens-container">
@@ -687,6 +249,12 @@
                 </div>
                 @else
                     <input type="hidden" name="softlens" value="0">
+                    @if($package->category->slug === 'regular')
+                        <div class="mb-4 p-3 rounded-4" style="background: #fffdf5; border: 1px solid var(--lyb-gold-border); font-size: 13.5px; color: #6f625c;">
+                            <i class="bi bi-info-circle-fill text-warning me-1"></i>
+                            <strong>Keterangan Softlens:</strong> Layanan ini sudah termasuk <strong>Free Softlens</strong>.
+                        </div>
+                    @endif
                 @endif
 
                 {{-- Dynamic Fitting Date Selection --}}
@@ -711,6 +279,12 @@
                                         <input type="checkbox" name="addons[]" value="{{ $addon->id }}" data-price="{{ $addon->price }}" {{ (old('addons') ? in_array($addon->id, old('addons')) : $isEditAddon) ? 'checked' : '' }} class="form-check-input flex-shrink-0" style="width: 20px; height: 20px;">
                                         <div class="d-flex flex-column">
                                             <span class="fw-semibold text-dark" style="font-size: 14px;">{{ $addon->name }}</span>
+                                            @if($addon->id == 1 || strtolower($addon->name) === 'makeup keluarga')
+                                                <small class="text-muted" style="font-size: 11px;">Notes: 150k per orang</small>
+                                            @endif
+                                            @if($addon->id == 4 || strpos(strtolower($addon->name), 'melati') !== false)
+                                                <small class="text-muted" style="font-size: 11px;">Keterangan: melati depan belakang</small>
+                                            @endif
                                         </div>
                                     </div>
                                     <span class="fw-bold text-gold-dark" style="font-size: 14px;">+Rp{{ number_format($addon->price, 0, ',', '.') }}</span>
@@ -743,23 +317,33 @@
 
                 {{-- Action Buttons --}}
                 <div class="row g-3">
-                    @if(isset($editItem))
+                    @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('owner')))
                         <div class="col-12">
-                            <button type="submit" name="action" value="cart" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
-                                Simpan Perubahan
-                            </button>
+                            <div class="alert alert-warning rounded-4 text-center py-3 mb-0" style="border: 1px dashed var(--lyb-gold-border); background-color: #fffdf5; color: #6f625c;">
+                                <i class="bi bi-exclamation-triangle-fill text-warning me-2" style="font-size: 18px;"></i>
+                                Anda masuk sebagai <strong>{{ ucfirst(auth()->user()->role ?? 'Pengelola') }}</strong>. 
+                                Akun pengelola tidak diperbolehkan melakukan pemesanan. Silakan gunakan akun <strong>Customer</strong> untuk memesan.
+                            </div>
                         </div>
                     @else
-                        <div class="col-sm-6">
-                            <button type="submit" name="action" value="cart" class="btn btn-lyb-outline w-100 py-3 rounded-pill">
-                                Tambah Keranjang
-                            </button>
-                        </div>
-                        <div class="col-sm-6">
-                            <button type="submit" name="action" value="checkout" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
-                                Checkout
-                            </button>
-                        </div>
+                        @if(isset($editItem))
+                            <div class="col-12">
+                                <button type="submit" name="action" value="cart" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        @else
+                            <div class="col-sm-6">
+                                <button type="submit" name="action" value="cart" class="btn btn-lyb-outline w-100 py-3 rounded-pill">
+                                    Tambah Keranjang
+                                </button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="submit" name="action" value="checkout" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
+                                    Checkout
+                                </button>
+                            </div>
+                        @endif
                     @endif
                     <div class="col-12 mt-3 text-start">
                         <a href="https://wa.me/6281227545591?text=Halo%20admin%20LYB,%20saya%20mau%20tanya%20paket%20{{ urlencode($package->name) }}" target="_blank" class="link-whatsapp-gold">
@@ -771,6 +355,7 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 
 <script>
@@ -879,148 +464,283 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotals();
 
     // Date change event
-    document.querySelectorAll('input[name="booking_date"]').forEach((radio) => {
-        radio.addEventListener('change', () => {
-            const dateVal = document.querySelector('input[name="booking_date"]:checked').value;
-            
-            // Show loading state or clear
-            const slotContainer = document.getElementById('slotSelectionContainer');
-            const slotList = document.getElementById('slotList');
-            slotList.innerHTML = '<div class="text-muted small p-2"><i class="bi bi-arrow-clockwise spinner-icon"></i> Mencari slot tersedia...</div>';
+    function renderSlots(data, dayNumber = 1) {
+        const slotContainer = document.getElementById('slotSelectionContainer' + dayNumber);
+        const slotList = document.getElementById('slotList' + dayNumber);
+        if (!slotContainer || !slotList) return;
+
+        const inputName = dayNumber === 1 ? 'slot_waktu' : 'slot_waktu_' + dayNumber;
+        const editSlotWaktu = dayNumber === 1 
+            ? @json($editItem['slot_waktu'] ?? null) 
+            : (dayNumber === 2 ? @json($editItem['slot_waktu_2'] ?? null) : @json($editItem['slot_waktu_3'] ?? null));
+
+        const oldSlotWaktu = dayNumber === 1 
+            ? '{{ old('slot_waktu') }}' 
+            : (dayNumber === 2 ? '{{ old('slot_waktu_2') }}' : '{{ old('slot_waktu_3') }}');
+
+        slotList.innerHTML = '';
+        
+        // Populate slots
+        if (data.slots && Object.keys(data.slots).length > 0) {
             slotContainer.classList.remove('d-none');
             slotContainer.classList.add('animate-slide-fade');
+            for (const [key, value] of Object.entries(data.slots)) {
+                const item = document.createElement('label');
+                item.className = 'd-flex align-items-center justify-content-between p-3 rounded-4 border slot-row-clickable ' + 
+                    (value.available ? 'bg-white cursor-pointer' : 'opacity-50 bg-body-tertiary cursor-not-allowed');
+                
+                const leftPart = document.createElement('div');
+                leftPart.className = 'd-flex align-items-center gap-3';
 
-            fetch(`/paket/{{ $package->code }}/slots?date=${dateVal}`)
-                .then(r => r.json())
-                .then(data => {
-                    slotList.innerHTML = '';
-                    
-                    // Populate slots
-                    if (data.slots && Object.keys(data.slots).length > 0) {
-                        slotContainer.classList.remove('d-none');
-                        slotContainer.classList.add('animate-slide-fade');
-                        for (const [key, value] of Object.entries(data.slots)) {
-                            const item = document.createElement('label');
-                            item.className = 'd-flex align-items-center justify-content-between p-3 rounded-4 border slot-row-clickable ' + 
-                                (value.available ? 'bg-white cursor-pointer' : 'opacity-50 bg-body-tertiary cursor-not-allowed');
-                            
-                            const leftPart = document.createElement('div');
-                            leftPart.className = 'd-flex align-items-center gap-3';
+                const radioInput = document.createElement('input');
+                radioInput.type = 'radio';
+                radioInput.name = inputName;
+                radioInput.value = key;
+                radioInput.id = 'slot_' + dayNumber + '_' + key;
+                radioInput.className = 'form-check-input flex-shrink-0';
+                radioInput.style.width = '20px';
+                radioInput.style.height = '20px';
+                radioInput.style.minWidth = '20px';
+                radioInput.style.minHeight = '20px';
+                radioInput.style.maxWidth = '20px';
+                radioInput.style.maxHeight = '20px';
+                radioInput.required = true;
+                if (!value.available) {
+                    radioInput.disabled = true;
+                }
+                
+                // Check if this slot is selected
+                if (key === editSlotWaktu || key === oldSlotWaktu) {
+                    radioInput.checked = true;
+                }
+                
+                const label = document.createElement('div');
+                label.className = 'd-flex flex-column';
+                
+                const labelTitle = document.createElement('span');
+                labelTitle.className = 'fw-bold text-dark';
+                labelTitle.style.fontSize = '14px';
+                labelTitle.innerText = value.label;
+                label.appendChild(labelTitle);
+                
+                if (value.available && typeof value.remaining !== 'undefined') {
+                    const remainingSpan = document.createElement('span');
+                    remainingSpan.className = 'text-muted small';
+                    remainingSpan.style.fontSize = '11px';
+                    remainingSpan.innerText = `Sisa kuota: ${value.remaining} slot`;
+                    label.appendChild(remainingSpan);
+                }
+                
+                if (!value.available) {
+                    const reason = document.createElement('span');
+                    reason.className = 'text-danger small';
+                    reason.style.fontSize = '11px';
+                    reason.innerText = value.reason;
+                    label.appendChild(reason);
+                }
+                
+                leftPart.appendChild(radioInput);
+                leftPart.appendChild(label);
+                item.appendChild(leftPart);
+                slotList.appendChild(item);
+            }
+        } else {
+            slotContainer.classList.add('d-none');
+            slotContainer.classList.remove('animate-slide-fade');
+        }
+        
+        // Fitting date logic
+        if (dayNumber === 1) {
+            const fittingContainer = document.getElementById('fittingDateContainer');
+            const fittingInput = document.getElementById('tanggalFittingInput');
+            const editTanggalFitting = @json($editItem['tanggal_fitting'] ?? null);
 
-                            const radioInput = document.createElement('input');
-                            radioInput.type = 'radio';
-                            radioInput.name = 'slot_waktu';
-                            radioInput.value = key;
-                            radioInput.id = 'slot_' + key;
-                            radioInput.className = 'form-check-input flex-shrink-0';
-                            radioInput.style.width = '20px';
-                            radioInput.style.height = '20px';
-                            radioInput.style.minWidth = '20px';
-                            radioInput.style.minHeight = '20px';
-                            radioInput.style.maxWidth = '20px';
-                            radioInput.style.maxHeight = '20px';
-                            radioInput.required = true;
-                            if (!value.available) {
-                                radioInput.disabled = true;
-                            }
-                            
-                            // Check if this slot is selected
-                            if (key === editSlotWaktu || key === '{{ old('slot_waktu') }}') {
-                                radioInput.checked = true;
-                            }
-                            
-                            const label = document.createElement('div');
-                            label.className = 'd-flex flex-column';
-                            
-                            const labelTitle = document.createElement('span');
-                            labelTitle.className = 'fw-bold text-dark';
-                            labelTitle.style.fontSize = '14px';
-                            labelTitle.innerText = value.label;
-                            label.appendChild(labelTitle);
-                            
-                            if (!value.available) {
-                                const reason = document.createElement('span');
-                                reason.className = 'text-danger small';
-                                reason.style.fontSize = '11px';
-                                reason.innerText = value.reason;
-                                label.appendChild(reason);
-                            }
-                            
-                            leftPart.appendChild(radioInput);
-                            leftPart.appendChild(label);
-                            item.appendChild(leftPart);
-                            slotList.appendChild(item);
-                        }
-                    } else {
-                        slotContainer.classList.add('d-none');
-                        slotContainer.classList.remove('animate-slide-fade');
-                    }
-                    
-                    // Fitting date logic
-                    const fittingContainer = document.getElementById('fittingDateContainer');
-                    const fittingInput = document.getElementById('tanggalFittingInput');
-                    if (data.needs_fitting) {
-                        fittingContainer.classList.remove('d-none');
-                        fittingContainer.classList.add('animate-slide-fade');
-                        fittingInput.required = true;
-                        
-                        // No minimum date constraint (all dates before booking date are available)
-                        fittingInput.removeAttribute('min');
-                        
-                        // Max date is event_date - 1 day
-                        const eventDate = new Date(dateVal);
-                        eventDate.setDate(eventDate.getDate() - 1);
-                        
-                        const maxDateStr = eventDate.toISOString().split('T')[0];
-                        fittingInput.max = maxDateStr;
-                        
-                        if (editTanggalFitting) {
-                            fittingInput.value = editTanggalFitting;
-                        } else if ('{{ old('tanggal_fitting') }}') {
-                            fittingInput.value = '{{ old('tanggal_fitting') }}';
-                        }
-                    } else {
-                        fittingContainer.classList.add('d-none');
-                        fittingContainer.classList.remove('animate-slide-fade');
-                        fittingInput.required = false;
-                        fittingInput.value = '';
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot.</div>';
-                });
-        });
+            if (data.needs_fitting) {
+                fittingContainer.classList.remove('d-none');
+                fittingContainer.classList.add('animate-slide-fade');
+                fittingInput.required = true;
+                
+                fittingInput.removeAttribute('min');
+                
+                const eventDate = new Date(data.date || document.querySelector('input[name="booking_date"]:checked')?.value);
+                if (!isNaN(eventDate.getTime())) {
+                    eventDate.setDate(eventDate.getDate() - 1);
+                    const maxDateStr = eventDate.toISOString().split('T')[0];
+                    fittingInput.max = maxDateStr;
+                }
+                
+                if (editTanggalFitting) {
+                    fittingInput.value = editTanggalFitting;
+                } else if ('{{ old('tanggal_fitting') }}') {
+                    fittingInput.value = '{{ old('tanggal_fitting') }}';
+                }
+            } else {
+                fittingContainer.classList.add('d-none');
+                fittingContainer.classList.remove('animate-slide-fade');
+                fittingInput.required = false;
+                fittingInput.value = '';
+            }
+        }
+    }
+
+    async function loadSlotsForDay(dayNumber) {
+        let dateVal = '';
+        if (dayNumber === 1) {
+            const selectedRadio = document.querySelector('input[name="booking_date"]:checked');
+            dateVal = selectedRadio ? selectedRadio.value : '';
+        } else if (dayNumber === 2) {
+            dateVal = document.getElementById('bookingDate2Input')?.value || '';
+        } else if (dayNumber === 3) {
+            dateVal = document.getElementById('bookingDate3Input')?.value || '';
+        }
+
+        const slotContainer = document.getElementById('slotSelectionContainer' + dayNumber);
+        if (!dateVal) {
+            if (slotContainer) slotContainer.classList.add('d-none');
+            return;
+        }
+
+        // Show loading spinner immediately for instant response
+        const slotList = document.getElementById('slotList' + dayNumber);
+        if (slotContainer && slotList) {
+            slotContainer.classList.remove('d-none');
+            slotList.innerHTML = '<div class="text-secondary small p-2"><i class="bi bi-arrow-repeat spinner-icon"></i> Memuat slot MUA...</div>';
+        }
+
+        try {
+            const res = await fetch(`/paket/{{ $package->code }}/slots?date=${dateVal}`);
+            const data = await res.json();
+            renderSlots(data, dayNumber);
+        } catch (err) {
+            console.error(err);
+            const slotList = document.getElementById('slotList' + dayNumber);
+            if (slotList) {
+                slotList.innerHTML = '<div class="text-danger small p-2">Gagal mengambil jadwal slot.</div>';
+            }
+        }
+    }
+
+    // Register event listeners
+    document.querySelectorAll('input[name="booking_date"]').forEach((radio) => {
+        radio.addEventListener('change', () => loadSlotsForDay(1));
     });
 
-    // Trigger change event for already checked booking date on page load (e.g., from old input or edit data)
-    const selectedRadio = document.querySelector('input[name="booking_date"]:checked');
-    if (selectedRadio) {
-        selectedRadio.dispatchEvent(new Event('change'));
+    const date2Input = document.getElementById('bookingDate2Input');
+    const date3Input = document.getElementById('bookingDate3Input');
+
+    if (date2Input) {
+        date2Input.addEventListener('change', () => loadSlotsForDay(2));
+        
+        // Prevent selecting a date before the primary date
+        document.querySelectorAll('input[name="booking_date"]').forEach((radio) => {
+            radio.addEventListener('change', () => {
+                if (radio.checked) {
+                    date2Input.min = radio.value;
+                    if (date2Input.value && date2Input.value < radio.value) {
+                        date2Input.value = '';
+                        loadSlotsForDay(2);
+                    }
+                }
+            });
+        });
+    }
+
+    if (date3Input) {
+        date3Input.addEventListener('change', () => loadSlotsForDay(3));
+        
+        // Prevent selecting a date before the second date
+        if (date2Input) {
+            date2Input.addEventListener('change', () => {
+                date3Input.min = date2Input.value;
+                if (date3Input.value && date3Input.value < date2Input.value) {
+                    date3Input.value = '';
+                    loadSlotsForDay(3);
+                }
+            });
+        }
+    }
+
+    // Trigger on load if radio already selected (e.g. edit/old)
+    const selectedRadioOnLoad = document.querySelector('input[name="booking_date"]:checked');
+    if (selectedRadioOnLoad) {
+        // Run sequentially to prevent concurrent request deadlock
+        (async () => {
+            await loadSlotsForDay(1);
+            if (date2Input) {
+                date2Input.min = selectedRadioOnLoad.value;
+                if (date2Input.value) {
+                    await loadSlotsForDay(2);
+                }
+            }
+            if (date2Input && date2Input.value && date3Input) {
+                date3Input.min = date2Input.value;
+                if (date3Input.value) {
+                    await loadSlotsForDay(3);
+                }
+            }
+        })();
     }
 
     // Frontend validation form submit handler
     const bookingForm = document.getElementById('bookingForm');
     if (bookingForm) {
         bookingForm.addEventListener('submit', function(e) {
+            @if($is3xMakeup)
+            const dateVal1 = document.querySelector('input[name="booking_date"]:checked')?.value;
+            const dateVal2 = document.getElementById('bookingDate2Input')?.value;
+            const dateVal3 = document.getElementById('bookingDate3Input')?.value;
+            if (!dateVal1 || !dateVal2 || !dateVal3) {
+                e.preventDefault();
+                alert('Silakan pilih tanggal booking utama, tanggal kedua, dan tanggal ketiga.');
+                return false;
+            }
+            @elseif($is2xMakeup)
+            const dateVal1 = document.querySelector('input[name="booking_date"]:checked')?.value;
+            const dateVal2 = document.getElementById('bookingDate2Input')?.value;
+            if (!dateVal1 || !dateVal2) {
+                e.preventDefault();
+                alert('Silakan pilih tanggal booking utama dan tanggal acara kedua.');
+                return false;
+            }
+            @else
             const selectedDate = document.querySelector('input[name="booking_date"]:checked');
             if (!selectedDate) {
                 e.preventDefault();
                 alert('Silakan pilih tanggal booking terlebih dahulu pada kalender.');
                 return false;
             }
-            
-            const slotContainer = document.getElementById('slotSelectionContainer');
-            if (slotContainer && !slotContainer.classList.contains('d-none')) {
+            @endif
+            const slotContainer1 = document.getElementById('slotSelectionContainer1');
+            if (slotContainer1 && !slotContainer1.classList.contains('d-none')) {
                 const selectedSlot = document.querySelector('input[name="slot_waktu"]:checked');
                 if (!selectedSlot) {
                     e.preventDefault();
-                    alert('Silakan pilih slot waktu MUA (Pagi, Siang, atau Sore).');
+                    alert('Silakan pilih slot waktu MUA Hari 1.');
+                    return false;
+                }
+            }
+
+            const slotContainer2 = document.getElementById('slotSelectionContainer2');
+            if (slotContainer2 && !slotContainer2.classList.contains('d-none')) {
+                const selectedSlot2 = document.querySelector('input[name="slot_waktu_2"]:checked');
+                if (!selectedSlot2) {
+                    e.preventDefault();
+                    alert('Silakan pilih slot waktu MUA Hari 2.');
+                    return false;
+                }
+            }
+
+            const slotContainer3 = document.getElementById('slotSelectionContainer3');
+            if (slotContainer3 && !slotContainer3.classList.contains('d-none')) {
+                const selectedSlot3 = document.querySelector('input[name="slot_waktu_3"]:checked');
+                if (!selectedSlot3) {
+                    e.preventDefault();
+                    alert('Silakan pilih slot waktu MUA Hari 3.');
                     return false;
                 }
             }
             
-            @if($package->category->slug !== 'baju')
+            @if($package->category->slug !== 'baju' && $package->category->slug !== 'regular')
             const selectedSoftlens = document.querySelector('input[name="softlens"]:checked');
             if (!selectedSoftlens) {
                 e.preventDefault();
@@ -1030,11 +750,11 @@ document.addEventListener('DOMContentLoaded', () => {
             @endif
 
             const fittingContainer = document.getElementById('fittingDateContainer');
-            if (fittingContainer && !fittingContainer.classList.contains('d-none')) {
-                const fittingInput = document.getElementById('tanggalFittingInput');
+            const fittingInput = document.getElementById('tanggalFittingInput');
+            if (fittingContainer && !fittingContainer.classList.contains('d-none') && fittingInput && fittingInput.required) {
                 if (!fittingInput.value) {
                     e.preventDefault();
-                    alert('Silakan pilih tanggal fitting ke gallery.');
+                    alert('Silakan pilih tanggal fitting pakaian terlebih dahulu.');
                     return false;
                 }
             }

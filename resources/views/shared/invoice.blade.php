@@ -2,6 +2,10 @@
 
 @section('title', 'Invoice INV-' . $booking->booking_code . ' — LYB')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
+@endpush
+
 @section('content')
 <div class="invoice-wrap">
 
@@ -21,6 +25,10 @@
 
     <div class="invoice-card">
         <div class="invoice-inner">
+            <!-- Watermark background logo -->
+            <div class="invoice-watermark">
+                <img src="{{ asset('images/logo.png') }}" alt="Watermark Logo">
+            </div>
 
             <div class="invoice-header">
                 <div class="invoice-brand-area">
@@ -31,9 +39,9 @@
                     </div>
                 </div>
                 <div class="invoice-number-area">
-                    <p class="invoice-label">INVOICE</p>
-                    <p class="invoice-code">INV-{{ $booking->booking_code }}</p>
-                    <p class="invoice-booking-ref">Booking: {{ $booking->booking_code }}</p>
+                    <p class="invoice-label" style="font-size: 15px; font-weight: 700; color: #211313; margin: 0; letter-spacing: 1px;">
+                        INVOICE ({{ ($booking->user ?? null)->name ?? 'Client' }})
+                    </p>
                 </div>
             </div>
 
@@ -103,16 +111,26 @@
                             <td>
                                 <p class="invoice-item-name">{{ $booking->package->name ?? 'Paket Layanan' }}</p>
                                 @if($booking->tanggal_acara ?? null)
-                                    <p class="invoice-item-desc">Tgl Acara: {{ $booking->tanggal_acara->translatedFormat('d M Y') }}</p>
+                                    <p class="invoice-item-desc">Hari 1: {{ $booking->tanggal_acara->translatedFormat('d M Y') }} ({{ ucfirst($booking->slot_waktu) }})</p>
                                 @endif
-                                @if($booking->slot_waktu ?? null)
-                                    <p class="invoice-item-desc">Slot Waktu: {{ ucfirst($booking->slot_waktu) }}</p>
+                                @if($booking->tanggal_acara_2 ?? null)
+                                    <p class="invoice-item-desc">Hari 2: {{ \Carbon\Carbon::parse($booking->tanggal_acara_2)->translatedFormat('d M Y') }} ({{ ucfirst($booking->slot_waktu_2) }})</p>
+                                @endif
+                                @if($booking->tanggal_acara_3 ?? null)
+                                    <p class="invoice-item-desc">Hari 3: {{ \Carbon\Carbon::parse($booking->tanggal_acara_3)->translatedFormat('d M Y') }} ({{ ucfirst($booking->slot_waktu_3) }})</p>
                                 @endif
                                 @if($booking->softlens ?? null)
                                     <p class="invoice-item-desc">Softlens: Ya</p>
                                 @endif
                                 @if($booking->notes ?? null)
-                                    <p class="invoice-item-desc">{{ $booking->notes }}</p>
+                                    @php
+                                        $cleanNotes = preg_replace('/Tanggal Acara (Kedua|Ketiga): \d{4}-\d{2}-\d{2}/', '', $booking->notes);
+                                        $cleanNotes = preg_replace('/Slot Hari (2|3): (pagi|siang)/', '', $cleanNotes);
+                                        $cleanNotes = trim(preg_replace('/\s+/', ' ', $cleanNotes));
+                                    @endphp
+                                    @if(!empty($cleanNotes))
+                                        <p class="invoice-item-desc">Catatan: {{ $cleanNotes }}</p>
+                                    @endif
                                 @endif
                             </td>
                             <td>Rp{{ number_format(($booking->subtotal ?? null) ?? ($booking->total_price ?? 0), 0, ',', '.') }}</td>

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/owner.css') }}?v={{ time() }}">
+    @stack('styles')
 </head>
 
 <body class="lyb-admin-body">
@@ -150,6 +151,7 @@
             });
         });
     </script>
+    @stack('scripts')
 </body>
 
 </html>

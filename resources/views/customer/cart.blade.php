@@ -1,7 +1,10 @@
 @extends('layouts.app', ['title' => 'Keranjang Booking - Lisa Yuli Belti'])
 
 @section('content')
-    @include('customer.cart.partials.styles')
+<div class="cart-page">
+    @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/cart.css') }}">
+@endpush
 
     @include('customer.cart.partials.hero')
 
@@ -32,4 +35,5 @@
     </section>
 
     @include('customer.cart.partials.scripts')
+</div>
 @endsection

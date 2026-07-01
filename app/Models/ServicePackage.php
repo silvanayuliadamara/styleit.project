@@ -34,6 +34,23 @@ class ServicePackage extends Model
         return $this->hasMany(PackageItem::class, 'package_id');
     }
 
+    public function getItemsAttribute()
+    {
+        $items = $this->relationLoaded('items') ? $this->getRelation('items') : $this->items()->get();
+        $items = collect($items->all());
+        
+        if ($this->category_id == 3) {
+            $freeSoftlens = new PackageItem([
+                'package_id' => $this->id,
+                'name' => 'Free Softlens',
+                'quantity' => 1,
+                'unit' => 'x'
+            ]);
+            $items->push($freeSoftlens);
+        }
+        return $items;
+    }
+
     public function bookings(): HasMany
     {
         return $this->hasMany(Booking::class, 'package_id');
@@ -42,5 +59,41 @@ class ServicePackage extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'package_id');
+    }
+
+    public function getNameAttribute($value)
+    {
+        if ($this->category_id == 3) {
+            return 'Wisuda/Bridesmaid';
+        }
+        $name = trim(str_ireplace('Jasa ', '', $value));
+        $name = preg_replace('/\s+-\s+[AB]$/i', '', $name);
+        $name = preg_replace('/\s+[AB]$/i', '', $name);
+        $name = preg_replace('/\s*\(\d+jt\)/i', '', $name);
+        return trim($name);
+    }
+
+    public function getDescriptionAttribute($value)
+    {
+        if ($this->category_id == 3) {
+            return '';
+        }
+        return $value;
+    }
+
+    public function getDpAmountAttribute($value)
+    {
+        $dp = ($this->butuh_makeup && $this->butuh_baju) ? 1000000 : 500000;
+        return min($dp, $this->price);
+    }
+
+    public function getIsBestSellerAttribute()
+    {
+        return \Cache::remember('best_seller_package_id', 60, function () {
+            return \App\Models\Booking::select('package_id')
+                ->groupBy('package_id')
+                ->orderByRaw('COUNT(*) DESC')
+                ->value('package_id');
+        }) == $this->id;
     }
 }
