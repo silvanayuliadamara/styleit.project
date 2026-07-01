@@ -63,7 +63,7 @@ Dengan adanya aplikasi StyleIt Project, proses pemesanan layanan dapat dilakukan
 | 7 | Checkout | Proses booking dengan upload bukti pembayaran DP |
 | 8 | Booking Customer | Riwayat dan detail booking dengan kode unik LYB-PREV-xxxxx |
 | 9 | Dashboard Customer | Ringkasan aktivitas customer setelah login |
-| 10 | Invoice | Generate dan unduh invoice booking dalam format PDF |
+| 10 | Invoice | Tampilan invoice dan cetak langsung via web (CSS print-friendly) |
 
 ---
 
@@ -72,7 +72,7 @@ Dengan adanya aplikasi StyleIt Project, proses pemesanan layanan dapat dilakukan
 | Teknologi | Keterangan |
 |-----------|------------|
 | Laravel | Framework PHP utama |
-| PHP 8.2+ | Bahasa pemrograman backend |
+| PHP 8.3+ | Bahasa pemrograman backend |
 | Blade Template | Template engine Laravel untuk tampilan |
 | CSS | Styling tampilan frontend |
 | MySQL 8.0 | Database utama |
@@ -88,19 +88,20 @@ Dengan adanya aplikasi StyleIt Project, proses pemesanan layanan dapat dilakukan
 
 | Package | Versi | Fungsi |
 |---------|-------|--------|
-| barryvdh/laravel-dompdf | ^3.1 | Generate invoice PDF dari Blade |
-| spatie/laravel-permission | ^6.0 | Pengelolaan role dan permission (customer, admin, owner) |
+| spatie/laravel-permission | ^8.0 | Pengelolaan role dan permission (customer, admin, owner) |
+| midtrans/midtrans-php | ^2.6 | Integrasi payment gateway untuk pembayaran DP online via Snap |
+| mews/captcha | ^3.5 | Pembuatan dan validasi captcha pada form login |
+| intervention/image | ^4.1 | Resize, crop, dan kompres gambar upload (paket layanan) |
 | Laravel Authentication | Bawaan | Login, logout, session, dan pengecekan user aktif |
 | Laravel Validation | Bawaan | Validasi input form |
 | Laravel File Storage | Bawaan | Upload dan penyimpanan file gambar |
+| CSS Web Print (Native) | Bawaan | Cetak/simpan invoice langsung via fitur cetak browser |
 
 ### Dependency Rencana Pengembangan
 
 | Package | Fungsi |
 |---------|--------|
-| midtrans/midtrans-php | Integrasi payment gateway untuk pembayaran DP online |
 | maatwebsite/excel | Export laporan keuangan dan rekap transaksi ke Excel |
-| intervention/image-laravel | Resize dan kompres gambar upload |
 | Laravel Mail / Notification | Notifikasi booking dan invoice via email |
 
 Dokumentasi lengkap dependency tersedia di [docs/dependency.md](docs/dependency.md).
