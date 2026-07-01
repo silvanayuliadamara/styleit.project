@@ -302,5 +302,6 @@ public function show(Booking $booking)
 | 29 Juni 2026 | Database Migration | Migrasi data kategori, paket, addon, dan portofolio dari static `PreviewData` ke database. | Tim Developer |
 | 30 Juni 2026 | Routing | Merapikan grouping route di `web.php` menggunakan prefix dan middleware per-role secara konsisten. | Tim Developer |
 | 1 Juli 2026 | FormRequest | Ekstraksi validasi input `AuthController` dan `CartController` ke dedicated `LoginRequest`, `RegisterRequest`, dan `StoreCartRequest`. | Tim Developer |
+| 1 Juli 2026 | Service & Request | Ekstraksi validasi checkout ke `StoreCheckoutRequest` dan pemindahan logika bisnis transaksi checkout ke `CheckoutService` (SRP & Clean Controller). | Tim Developer |
 
 > Setiap refactoring yang selesai dikerjakan wajib didokumentasikan di tabel ini beserta tanggal, area yang diubah, deskripsi singkat perubahan, dan nama anggota yang melakukan.
