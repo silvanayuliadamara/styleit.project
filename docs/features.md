@@ -15,13 +15,13 @@ Fitur login digunakan agar user dapat masuk ke sistem menggunakan akun yang suda
 - Owner
 
 ### Alur Fitur
-User membuka halaman login, lalu memasukkan email, kata sandi, dan kode captcha yang tertera. Sistem akan memvalidasi kecocokan kredensial dan kevalidan kode captcha. Jika data benar dan captcha sesuai, user diarahkan ke halaman dashboard sesuai role masing-masing. Jika kredensial salah atau captcha tidak cocok, sistem menampilkan pesan error. User juga dapat menekan tombol refresh captcha untuk menyegarkan kode yang ditampilkan.
+User membuka halaman login, lalu memasukkan email, kata sandi, kode captcha yang tertera, serta dapat mencentang opsi "Ingat Saya" (Remember Me) untuk mempertahankan sesi login di perangkat pribadi. Sistem akan memvalidasi kecocokan kredensial dan kevalidan kode captcha menggunakan LoginRequest. Jika data benar dan captcha sesuai, user diarahkan ke halaman dashboard sesuai role masing-masing. Jika kredensial salah atau captcha tidak cocok, sistem menampilkan pesan error. User juga dapat menekan tombol refresh captcha untuk menyegarkan kode yang ditampilkan.
 
 ### Route / Controller Terkait
-- Route: `GET /login` (tampilan login)
-- Route: `POST /login` (proses autentikasi dan validasi captcha)
-- Route: `GET /refresh-captcha` (refresh gambar captcha secara asinkron)
-- Controller: `AuthController`
+Route: GET /login (tampilan login)
+Route: POST /login (proses autentikasi dengan validasi LoginRequest)
+Route: GET /refresh-captcha (refresh gambar captcha secara asinkron)
+Controller: AuthController
 
 ### Screenshot Fitur
 ![Screenshot Login](screenshots/login.png)
