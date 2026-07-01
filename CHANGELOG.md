@@ -330,3 +330,11 @@ Memperbarui stylesheet public/css/auth.css dengan gaya visual khusus untuk check
 Memperbarui halaman masuk resources/views/auth/login.blade.php dengan checkbox "Ingat Saya".
 Memperbarui dokumen docs/refactoring.md dengan status selesai pada seluruh kandidat refactoring dan mengisi tabel riwayat refactoring.
 Memperbarui README.md untuk menautkan dokumen kontribusi pengembang dan pengujian sistem.
+
+### Refactor
+Ekstraksi logika validasi dari controller ke FormRequest terdedikasi (LoginRequest, RegisterRequest, StoreCartRequest).
+
+### Impacted Modules
+Auth Module (Login & Register)
+Cart Module (Keranjang Belanja)
+Documentation & Quality Assurance Modules
