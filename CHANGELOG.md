@@ -338,3 +338,25 @@ Ekstraksi logika validasi dari controller ke FormRequest terdedikasi (LoginReque
 Auth Module (Login & Register)
 Cart Module (Keranjang Belanja)
 Documentation & Quality Assurance Modules
+
+---
+
+## Released - Version 1.5.0 - 2026-07-01
+
+### Added
+- Menambahkan kelas FormRequest baru: `app/Http/Requests/Checkout/StoreCheckoutRequest.php` untuk menangani validasi checkout secara dinamis.
+- Menambahkan kelas Service baru: `app/Services/CheckoutService.php` untuk mengisolasi logika transaksi database, slot locking, pembuatan booking, dan pengiriman email.
+- Menambahkan feature test baru: `tests/Feature/CheckoutControllerTest.php` untuk menguji skenario validasi dinamis (alamat opsional vs wajib) dan pembuatan booking.
+
+### Changed
+- Memperbarui `CheckoutController.php` dengan menyederhanakan method `store()` secara signifikan dari 598 baris menjadi 196 baris melalui delegasi tugas ke request dan service baru.
+- Memperbarui `README.md` dengan menyelaraskan versi PHP (8.3+), merapikan dependensi aktif (memindahkan Midtrans, Captcha, dan Intervention Image ke status terimplementasi), serta menghapus referensi DomPDF.
+- Memperbarui `docs/dependency.md` dan `docs/dokumentasi-dependency-laravel.md` dengan mengganti referensi DomPDF ke fitur native browser `CSS Web Print`.
+
+### Refactor
+- Ekstraksi logika validasi dan pengolahan transaksi checkout ke layer FormRequest dan Service.
+
+### Impacted Modules
+- Checkout & Payment Module
+- Test Suite Module
+- Documentation Module
