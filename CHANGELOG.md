@@ -318,7 +318,15 @@ Format changelog mengikuti kategori:
 - Owner Package Module (Image Compression)
 
 ### Released - Version 1.4.0 - 2026-07-01
+
 ### Added
 Menambahkan fitur "Ingat Saya" (Remember Me) pada halaman login untuk mempertahankan sesi pengguna menggunakan persistent cookie bawaan Laravel.
 Menambahkan kelas FormRequest khusus: app/Http/Requests/Auth/LoginRequest.php, app/Http/Requests/Auth/RegisterRequest.php, dan app/Http/Requests/Cart/StoreCartRequest.php.
 Menambahkan dokumentasi pembagian tugas tim pengembang pada docs/kontribusi.md.
+
+### Changed
+Memperbarui AuthController.php dan CartController.php untuk menggunakan FormRequest khusus menggantikan validasi inline (menyelesaikan refactoring kandidat #1 secara penuh).
+Memperbarui stylesheet public/css/auth.css dengan gaya visual khusus untuk checkbox "Ingat Saya" agar sesuai dengan tema emas premium StyleIt.
+Memperbarui halaman masuk resources/views/auth/login.blade.php dengan checkbox "Ingat Saya".
+Memperbarui dokumen docs/refactoring.md dengan status selesai pada seluruh kandidat refactoring dan mengisi tabel riwayat refactoring.
+Memperbarui README.md untuk menautkan dokumen kontribusi pengembang dan pengujian sistem.
