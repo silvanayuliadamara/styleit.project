@@ -121,33 +121,29 @@ https://spatie.be/docs/laravel-permission
 
 ---
 
-## 5. Laravel DomPDF
+## 5. CSS Web Print (Native)
 
 ### What
-Laravel DomPDF adalah package untuk membuat file PDF dari tampilan Blade Laravel.
+CSS Web Print adalah pemanfaatan fitur cetak bawaan browser yang dioptimalkan menggunakan styling khusus `@media print` dalam CSS untuk mencetak halaman web langsung ke printer fisik atau menyimpannya sebagai file PDF secara lokal.
 
 ### Why
-Package ini dibutuhkan karena sistem memiliki fitur invoice. Invoice booking dapat dicetak atau diunduh dalam bentuk PDF oleh customer maupun owner.
+Awalnya direncanakan menggunakan library backend `barryvdh/laravel-dompdf`. Namun, proses rendering HTML/CSS kompleks ke dalam bentuk file PDF di server memerlukan resource tinggi dan sering kali mengalami kegagalan tata letak (tidak kompatibel dengan Grid/Flexbox modern). Menggunakan CSS Web Print jauh lebih ringan, cepat, dan 100% kompatibel dengan gaya kustom di halaman web karena langsung diproses oleh engine rendering browser pengguna.
 
 ### Who
-Digunakan oleh customer untuk melihat atau mengunduh invoice, admin untuk melihat invoice booking, dan owner untuk arsip transaksi.
+Digunakan oleh customer saat ingin mencetak atau menyimpan invoice booking mereka, serta oleh admin/owner untuk kepentingan pencatatan fisik dan arsip.
 
 ### When
-Digunakan setelah booking berhasil dibuat atau ketika user membuka halaman invoice dan menekan tombol cetak/download.
+Digunakan ketika pengguna menekan tombol "Cetak Invoice" di halaman invoice, yang secara asinkron memicu fungsi cetak bawaan browser (`window.print()`).
 
 ### Where
-Digunakan pada fitur booking, pembayaran DP, dan invoice.
+Diterapkan pada halaman invoice (`shared/invoice.blade.php`) dan diatur tata letaknya melalui berkas stylesheet `public/css/invoice.css`.
 
 ### How
-Laravel DomPDF bekerja dengan mengubah view Blade menjadi file PDF. Package `barryvdh/laravel-dompdf` merupakan wrapper DomPDF untuk Laravel dan diinstal menggunakan Composer.
-
-```bash
-composer require barryvdh/laravel-dompdf --no-audit
-```
+Metode ini diimplementasikan dengan menambahkan query `@media print` pada file CSS. Di dalamnya, komponen antarmuka yang tidak diperlukan (seperti navbar, tombol kembali, tombol cetak, dll.) disembunyikan menggunakan `display: none !important`, serta mengatur ukuran halaman menjadi kertas A4 dengan margin yang pas.
 
 ### Referensi
-barryvdh/laravel-dompdf Documentation
-https://github.com/barryvdh/laravel-dompdf
+MDN Web Docs — Printing (CSS media query)
+https://developer.mozilla.org/en-US/docs/Web/CSS/@media#print
 
 ---
 
