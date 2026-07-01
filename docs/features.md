@@ -37,12 +37,12 @@ Fitur register digunakan agar customer dapat membuat akun baru sebelum melakukan
 - Customer
 
 ### Alur Fitur
-Customer membuka halaman register, lalu mengisi data akun yang terdiri dari enam field: Nama Lengkap, No. HP, Username Instagram, Email, Kata Sandi, dan Konfirmasi Kata Sandi. Sistem melakukan validasi data. Jika data valid, akun customer disimpan ke database dan customer dapat login ke sistem.
+Customer membuka halaman register, lalu mengisi data akun yang terdiri dari enam field: Nama Lengkap, No. HP, Username Instagram, Email, Kata Sandi, dan Konfirmasi Kata Sandi. Sistem melakukan validasi data menggunakan RegisterRequest. Jika data valid, akun customer disimpan ke database dan customer dapat login ke sistem.
 
 ### Route / Controller Terkait
-- Route: `GET /register`
-- Route: `POST /register`
-- Controller: `AuthController`
+Route: GET /register
+Route: POST /register (pendaftaran dengan validasi RegisterRequest)
+Controller: AuthController
 
 ### Screenshot Fitur
 ![Screenshot Register](screenshots/register.png)
