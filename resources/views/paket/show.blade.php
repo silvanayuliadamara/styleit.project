@@ -317,23 +317,33 @@
 
                 {{-- Action Buttons --}}
                 <div class="row g-3">
-                    @if(isset($editItem))
+                    @if(auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('owner')))
                         <div class="col-12">
-                            <button type="submit" name="action" value="cart" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
-                                Simpan Perubahan
-                            </button>
+                            <div class="alert alert-warning rounded-4 text-center py-3 mb-0" style="border: 1px dashed var(--lyb-gold-border); background-color: #fffdf5; color: #6f625c;">
+                                <i class="bi bi-exclamation-triangle-fill text-warning me-2" style="font-size: 18px;"></i>
+                                Anda masuk sebagai <strong>{{ ucfirst(auth()->user()->role ?? 'Pengelola') }}</strong>. 
+                                Akun pengelola tidak diperbolehkan melakukan pemesanan. Silakan gunakan akun <strong>Customer</strong> untuk memesan.
+                            </div>
                         </div>
                     @else
-                        <div class="col-sm-6">
-                            <button type="submit" name="action" value="cart" class="btn btn-lyb-outline w-100 py-3 rounded-pill">
-                                Tambah Keranjang
-                            </button>
-                        </div>
-                        <div class="col-sm-6">
-                            <button type="submit" name="action" value="checkout" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
-                                Checkout
-                            </button>
-                        </div>
+                        @if(isset($editItem))
+                            <div class="col-12">
+                                <button type="submit" name="action" value="cart" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        @else
+                            <div class="col-sm-6">
+                                <button type="submit" name="action" value="cart" class="btn btn-lyb-outline w-100 py-3 rounded-pill">
+                                    Tambah Keranjang
+                                </button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button type="submit" name="action" value="checkout" class="btn btn-lyb-dark w-100 py-3 rounded-pill">
+                                    Checkout
+                                </button>
+                            </div>
+                        @endif
                     @endif
                     <div class="col-12 mt-3 text-start">
                         <a href="https://wa.me/6281227545591?text=Halo%20admin%20LYB,%20saya%20mau%20tanya%20paket%20{{ urlencode($package->name) }}" target="_blank" class="link-whatsapp-gold">
