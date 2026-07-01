@@ -317,3 +317,8 @@ Format changelog mengikuti kategori:
 - Checkout & Payment Module
 - Owner Package Module (Image Compression)
 
+### Released - Version 1.4.0 - 2026-07-01
+### Added
+Menambahkan fitur "Ingat Saya" (Remember Me) pada halaman login untuk mempertahankan sesi pengguna menggunakan persistent cookie bawaan Laravel.
+Menambahkan kelas FormRequest khusus: app/Http/Requests/Auth/LoginRequest.php, app/Http/Requests/Auth/RegisterRequest.php, dan app/Http/Requests/Cart/StoreCartRequest.php.
+Menambahkan dokumentasi pembagian tugas tim pengembang pada docs/kontribusi.md.
