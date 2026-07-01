@@ -246,4 +246,5 @@ Proyek ini dikembangkan oleh mahasiswa dalam rangka Project-Based Learning pada 
 | [docs/dependency.md](docs/dependency.md) | Dokumentasi dependency project |
 | [docs/refactoring.md](docs/refactoring.md) | Dokumentasi keputusan refactoring |
 | [docs/github-actions.md](docs/github-actions.md) | Dokumentasi konfigurasi CI/CD |
+| [docs/kontribusi.md](docs/kontribusi.md) | Dokumentasi kontribusi pengembang |
 | [CHANGELOG.md](CHANGELOG.md) | Riwayat perubahan project |
