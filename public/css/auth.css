@@ -731,3 +731,32 @@ input.is-invalid:focus {
 .otp-card {
     animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* REMEMBER ME CHECKBOX STYLES */
+.remember-me-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.remember-me-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: #b08a42; /* Premium brand gold color */
+    border-radius: 4px;
+}
+
+.remember-me-label {
+    display: inline-block !important; /* Override general label block display */
+    margin-bottom: 0 !important;
+    font-size: 13px;
+    color: #6f5a4c;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+}
+

@@ -320,11 +320,7 @@
         }
     </script>
 
-    <style>
-        .blocked-card {
-            background: #f4ede6 !important;
-            border-color: #d8c8be !important;
-            opacity: 0.75;
-        }
-    </style>
+    @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/owner-schedule.css') }}">
+@endpush
 @endsection

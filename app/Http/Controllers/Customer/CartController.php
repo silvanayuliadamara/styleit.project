@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Addon;
 use App\Models\ServicePackage;
 use App\Support\PreviewData;
+use App\Http\Requests\Cart\StoreCartRequest;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -17,55 +18,16 @@ class CartController extends Controller
         return view('customer.cart', compact('cart'));
     }
 
-    public function store(Request $request)
+    public function store(StoreCartRequest $request)
     {
+        $validated = $request->validated();
+
         // Try fetching package from database first, fallback to PreviewData
-        $package = ServicePackage::with('category')->find($request->package_id);
+        $package = ServicePackage::with('category')->find($validated['package_id']);
         if (! $package) {
-            $package = PreviewData::packageById((int) $request->package_id);
+            $package = PreviewData::packageById((int) $validated['package_id']);
         }
         abort_if(! $package, 404);
-
-        $categorySlug = $package->category->slug ?? '';
-
-        $is2xMakeup = $package && in_array($package->code, ['PKG-MU-2X', 'PKG-WED-SILVER', 'PKG-WED-GOLD', 'PKG-WED-GOLD-L']);
-
-        $rules = [
-            'package_id' => ['required', 'integer'],
-            'booking_date' => ['required', 'date', 'after_or_equal:today'],
-            'softlens' => ['required', 'boolean'],
-            'addons' => ['nullable', 'array'],
-            'addons.*' => ['integer'],
-            'action' => ['nullable', 'in:cart,checkout'],
-            'edit_key' => ['nullable', 'string'],
-        ];
-
-        if ($is2xMakeup) {
-            $rules['booking_date_2'] = ['required', 'date', 'after_or_equal:today'];
-        } else {
-            $rules['booking_date_2'] = ['nullable', 'date'];
-        }
-
-        if ($categorySlug === 'wedding' || $categorySlug === 'prewedding' || $categorySlug === 'regular') {
-            $rules['slot_waktu'] = ['required', 'string', 'in:pagi,siang'];
-        } else {
-            $rules['slot_waktu'] = ['nullable', 'string'];
-        }
-
-        if ($categorySlug === 'baju') {
-            $rules['tanggal_fitting'] = ['required', 'date', 'before:booking_date'];
-        } else {
-            $rules['tanggal_fitting'] = ['nullable', 'date'];
-        }
-
-        $validated = $request->validate($rules, [
-            'booking_date.required' => 'Tanggal booking wajib dipilih.',
-            'booking_date_2.required' => 'Tanggal booking kedua wajib dipilih untuk paket ini.',
-            'softlens.required' => 'Status penggunaan softlens wajib dipilih.',
-            'slot_waktu.required' => 'Slot waktu MUA wajib dipilih.',
-            'tanggal_fitting.required' => 'Tanggal fitting wajib dipilih.',
-            'tanggal_fitting.before' => 'Tanggal fitting harus sebelum tanggal booking.',
-        ]);
 
         $addons = collect([]);
         if (count($validated['addons'] ?? []) > 0) {
@@ -98,8 +60,11 @@ class CartController extends Controller
             'category_name' => $package->category->name ?? '',
             'booking_date' => $validated['booking_date'],
             'booking_date_2' => $validated['booking_date_2'] ?? null,
+            'booking_date_3' => $validated['booking_date_3'] ?? null,
             'softlens' => (bool) ($validated['softlens'] ?? false),
             'slot_waktu' => $validated['slot_waktu'] ?? null,
+            'slot_waktu_2' => $validated['slot_waktu_2'] ?? null,
+            'slot_waktu_3' => $validated['slot_waktu_3'] ?? null,
             'tanggal_fitting' => $validated['tanggal_fitting'] ?? null,
             'addons' => $addons->map(fn ($addon) => ['id' => $addon->id, 'name' => $addon->name, 'price' => $addon->price])->values()->all(),
             'subtotal' => $subtotal,

@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -154,23 +156,12 @@ class AuthController extends Controller
             ->with('success', 'Kata sandi berhasil diperbarui. Silakan masuk kembali.');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-            'captcha' => ['required', 'captcha'],
-        ], [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'password.required' => 'Kata sandi wajib diisi.',
-            'captcha.required' => 'Captcha wajib diisi.',
-            'captcha.captcha' => 'Kode captcha salah.',
-        ]);
-
         $credentials = $request->only('email', 'password');
+        $remember = $request->filled('remember');
 
-        if (! Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials, $remember)) {
             return back()
                 ->with('login_error', 'Email atau kata sandi salah.')
                 ->onlyInput('email');
@@ -185,31 +176,13 @@ class AuthController extends Controller
         } elseif ($user->hasRole('admin')) {
             return redirect()->route('admin.dashboard');
         } else {
-            return redirect()->route('home');
+            return redirect()->intended(route('home'));
         }
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'max:20', 'unique:users,phone'],
-            'instagram' => ['nullable', 'string', 'max:50'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'min:8'],
-            'password_confirmation' => ['required', 'same:password'],
-        ], [
-            'name.required' => 'Nama lengkap wajib diisi.',
-            'phone.required' => 'Nomor telepon wajib diisi.',
-            'phone.unique' => 'Nomor telepon sudah terdaftar.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah terdaftar.',
-            'password.required' => 'Kata sandi wajib diisi.',
-            'password.min' => 'Kata sandi minimal 8 karakter.',
-            'password_confirmation.required' => 'Konfirmasi sandi wajib diisi.',
-            'password_confirmation.same' => 'Konfirmasi sandi tidak sama.',
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
             'name' => $validated['name'],
