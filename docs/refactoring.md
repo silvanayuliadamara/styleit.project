@@ -99,7 +99,7 @@ public function register(RegisterRequest $request)
 ```
 
 **Prioritas:** 🔴 Tinggi
-**Status:** ⬜ Belum dikerjakan
+**Status:** ✅ Selesai (Ekstraksi seluruh validasi login, register, dan cart ke dedicated FormRequest)
 
 ---
 
@@ -301,5 +301,6 @@ public function show(Booking $booking)
 | 28 Juni 2026 | Service Layer | Pembentukan `BookingService` untuk memusatkan logika pembayaran DP, pelunasan, dan pembatalan otomatis. | Tim Developer |
 | 29 Juni 2026 | Database Migration | Migrasi data kategori, paket, addon, dan portofolio dari static `PreviewData` ke database. | Tim Developer |
 | 30 Juni 2026 | Routing | Merapikan grouping route di `web.php` menggunakan prefix dan middleware per-role secara konsisten. | Tim Developer |
+| 1 Juli 2026 | FormRequest | Ekstraksi validasi input `AuthController` dan `CartController` ke dedicated `LoginRequest`, `RegisterRequest`, dan `StoreCartRequest`. | Tim Developer |
 
 > Setiap refactoring yang selesai dikerjakan wajib didokumentasikan di tabel ini beserta tanggal, area yang diubah, deskripsi singkat perubahan, dan nama anggota yang melakukan.
