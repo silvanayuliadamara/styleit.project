@@ -143,13 +143,36 @@ class CheckoutController extends Controller
                             }
 
                             // Lock and check active bookings count
-                            $activeCount = Booking::whereDate('tanggal_acara', $item['booking_date'])
-                                ->where('slot_waktu', $item['slot_waktu'])
-                                ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
+                            $activeCount = Booking::whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
+                                ->where(function ($q) use ($item) {
+                                    $targetDate = $item['booking_date'];
+                                    $targetSlot = $item['slot_waktu'];
+                                    $q->where(function ($sq) use ($targetDate, $targetSlot) {
+                                        $sq->whereDate('tanggal_acara', $targetDate)
+                                           ->where('slot_waktu', $targetSlot);
+                                    })
+                                    ->orWhere(function ($sq) use ($targetDate, $targetSlot) {
+                                        $sq->where('notes', 'LIKE', '%' . $targetDate . '%')
+                                           ->where('notes', 'LIKE', '%Slot Hari 2: ' . $targetSlot . '%');
+                                    })
+                                    ->orWhere(function ($sq) use ($targetDate, $targetSlot) {
+                                        $sq->where('notes', 'LIKE', '%' . $targetDate . '%')
+                                           ->where('notes', 'LIKE', '%Slot Hari 3: ' . $targetSlot . '%');
+                                    });
+                                })
                                 ->lockForUpdate()
                                 ->count();
 
-                            if ($activeCount >= $maxBookings) {
+                            // Count how many times this specific date and slot is requested in the current item
+                            $requestedInCurrent = 1;
+                            if (!empty($item['booking_date_2']) && $item['booking_date_2'] === $item['booking_date'] && $item['slot_waktu_2'] === $item['slot_waktu']) {
+                                $requestedInCurrent++;
+                            }
+                            if (!empty($item['booking_date_3']) && $item['booking_date_3'] === $item['booking_date'] && $item['slot_waktu_3'] === $item['slot_waktu']) {
+                                $requestedInCurrent++;
+                            }
+
+                            if (($activeCount + $requestedInCurrent) > $maxBookings) {
                                 throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu']) . " pada tanggal " . $item['booking_date'] . " sudah dibooking pelanggan lain.");
                             }
 
@@ -179,31 +202,51 @@ class CheckoutController extends Controller
                             if (! empty($item['booking_date_2'])) {
                                 $isBlocked2 = Schedule::whereIn('category_id', $categoryIds)
                                     ->whereDate('tanggal', $item['booking_date_2'])
-                                    ->where('jenis_jadwal', $item['slot_waktu'])
+                                    ->where('jenis_jadwal', $item['slot_waktu_2'])
                                     ->where('status', 'diblokir')
                                     ->lockForUpdate()
                                     ->exists();
 
                                 if ($isBlocked2) {
-                                    throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu']) . " pada tanggal " . $item['booking_date_2'] . " (Tanggal 2) diblokir oleh MUA.");
+                                    throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu_2']) . " pada tanggal " . $item['booking_date_2'] . " (Tanggal 2) diblokir oleh MUA.");
                                 }
 
-                                $activeCount2 = Booking::where(function ($q) use ($item) {
-                                        $q->whereDate('tanggal_acara', $item['booking_date_2'])
-                                          ->orWhere('notes', 'LIKE', '%' . $item['booking_date_2'] . '%');
+                                $activeCount2 = Booking::whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
+                                    ->where(function ($q) use ($item) {
+                                        $targetDate = $item['booking_date_2'];
+                                        $targetSlot = $item['slot_waktu_2'];
+                                        $q->where(function ($sq) use ($targetDate, $targetSlot) {
+                                            $sq->whereDate('tanggal_acara', $targetDate)
+                                               ->where('slot_waktu', $targetSlot);
+                                        })
+                                        ->orWhere(function ($sq) use ($targetDate, $targetSlot) {
+                                            $sq->where('notes', 'LIKE', '%' . $targetDate . '%')
+                                               ->where('notes', 'LIKE', '%Slot Hari 2: ' . $targetSlot . '%');
+                                        })
+                                        ->orWhere(function ($sq) use ($targetDate, $targetSlot) {
+                                            $sq->where('notes', 'LIKE', '%' . $targetDate . '%')
+                                               ->where('notes', 'LIKE', '%Slot Hari 3: ' . $targetSlot . '%');
+                                        });
                                     })
-                                    ->where('slot_waktu', $item['slot_waktu'])
-                                    ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
                                     ->lockForUpdate()
                                     ->count();
 
-                                if ($activeCount2 >= $maxBookings) {
-                                    throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu']) . " pada tanggal " . $item['booking_date_2'] . " (Tanggal 2) sudah dibooking pelanggan lain.");
+                                // Count how many times this specific date and slot is requested in the current item
+                                $requestedInCurrent2 = 1;
+                                if ($item['booking_date'] === $item['booking_date_2'] && $item['slot_waktu'] === $item['slot_waktu_2']) {
+                                    $requestedInCurrent2++;
+                                }
+                                if (!empty($item['booking_date_3']) && $item['booking_date_3'] === $item['booking_date_2'] && $item['slot_waktu_3'] === $item['slot_waktu_2']) {
+                                    $requestedInCurrent2++;
+                                }
+
+                                if (($activeCount2 + $requestedInCurrent2) > $maxBookings) {
+                                    throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu_2']) . " pada tanggal " . $item['booking_date_2'] . " (Tanggal 2) sudah dibooking pelanggan lain.");
                                 }
 
                                 $schedule2 = Schedule::where('category_id', $catId)
                                     ->whereDate('tanggal', $item['booking_date_2'])
-                                    ->where('jenis_jadwal', $item['slot_waktu'])
+                                    ->where('jenis_jadwal', $item['slot_waktu_2'])
                                     ->lockForUpdate()
                                     ->first();
 
@@ -211,9 +254,76 @@ class CheckoutController extends Controller
                                     Schedule::create([
                                         'category_id' => $catId,
                                         'tanggal' => $item['booking_date_2'],
-                                        'jenis_jadwal' => $item['slot_waktu'],
-                                        'jam_mulai' => $item['slot_waktu'] == 'pagi' ? '06:00' : '12:00',
-                                        'jam_selesai' => $item['slot_waktu'] == 'pagi' ? '11:00' : '16:00',
+                                        'jenis_jadwal' => $item['slot_waktu_2'],
+                                        'jam_mulai' => $item['slot_waktu_2'] == 'pagi' ? '06:00' : '12:00',
+                                        'jam_selesai' => $item['slot_waktu_2'] == 'pagi' ? '11:00' : '16:00',
+                                        'kuota' => $maxBookings,
+                                        'terpakai' => 0,
+                                        'status' => 'tersedia',
+                                        'created_by' => Auth::id(),
+                                    ]);
+                                }
+                            }
+
+                            // Process tertiary date if exists
+                            if (! empty($item['booking_date_3'])) {
+                                $isBlocked3 = Schedule::whereIn('category_id', $categoryIds)
+                                    ->whereDate('tanggal', $item['booking_date_3'])
+                                    ->where('jenis_jadwal', $item['slot_waktu_3'])
+                                    ->where('status', 'diblokir')
+                                    ->lockForUpdate()
+                                    ->exists();
+
+                                if ($isBlocked3) {
+                                    throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu_3']) . " pada tanggal " . $item['booking_date_3'] . " (Tanggal 3) diblokir oleh MUA.");
+                                }
+
+                                $activeCount3 = Booking::whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
+                                    ->where(function ($q) use ($item) {
+                                        $targetDate = $item['booking_date_3'];
+                                        $targetSlot = $item['slot_waktu_3'];
+                                        $q->where(function ($sq) use ($targetDate, $targetSlot) {
+                                            $sq->whereDate('tanggal_acara', $targetDate)
+                                               ->where('slot_waktu', $targetSlot);
+                                        })
+                                        ->orWhere(function ($sq) use ($targetDate, $targetSlot) {
+                                            $sq->where('notes', 'LIKE', '%' . $targetDate . '%')
+                                               ->where('notes', 'LIKE', '%Slot Hari 2: ' . $targetSlot . '%');
+                                        })
+                                        ->orWhere(function ($sq) use ($targetDate, $targetSlot) {
+                                            $sq->where('notes', 'LIKE', '%' . $targetDate . '%')
+                                               ->where('notes', 'LIKE', '%Slot Hari 3: ' . $targetSlot . '%');
+                                        });
+                                    })
+                                    ->lockForUpdate()
+                                    ->count();
+
+                                // Count how many times this specific date and slot is requested in the current item
+                                $requestedInCurrent3 = 1;
+                                if ($item['booking_date'] === $item['booking_date_3'] && $item['slot_waktu'] === $item['slot_waktu_3']) {
+                                    $requestedInCurrent3++;
+                                }
+                                if ($item['booking_date_2'] === $item['booking_date_3'] && $item['slot_waktu_2'] === $item['slot_waktu_3']) {
+                                    $requestedInCurrent3++;
+                                }
+
+                                if (($activeCount3 + $requestedInCurrent3) > $maxBookings) {
+                                    throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu_3']) . " pada tanggal " . $item['booking_date_3'] . " (Tanggal 3) sudah dibooking pelanggan lain.");
+                                }
+
+                                $schedule3 = Schedule::where('category_id', $catId)
+                                    ->whereDate('tanggal', $item['booking_date_3'])
+                                    ->where('jenis_jadwal', $item['slot_waktu_3'])
+                                    ->lockForUpdate()
+                                    ->first();
+
+                                if (! $schedule3) {
+                                    Schedule::create([
+                                        'category_id' => $catId,
+                                        'tanggal' => $item['booking_date_3'],
+                                        'jenis_jadwal' => $item['slot_waktu_3'],
+                                        'jam_mulai' => $item['slot_waktu_3'] == 'pagi' ? '06:00' : '12:00',
+                                        'jam_selesai' => $item['slot_waktu_3'] == 'pagi' ? '11:00' : '16:00',
                                         'kuota' => $maxBookings,
                                         'terpakai' => 0,
                                         'status' => 'tersedia',
@@ -255,6 +365,15 @@ class CheckoutController extends Controller
                     $notes = $validated['notes'] ?? null;
                     if (! empty($item['booking_date_2'])) {
                         $notes = ($notes ? $notes . "\n" : "") . "Tanggal Acara Kedua: " . $item['booking_date_2'];
+                        if (! empty($item['slot_waktu_2'])) {
+                            $notes .= "\nSlot Hari 2: " . $item['slot_waktu_2'];
+                        }
+                    }
+                    if (! empty($item['booking_date_3'])) {
+                        $notes = ($notes ? $notes . "\n" : "") . "Tanggal Acara Ketiga: " . $item['booking_date_3'];
+                        if (! empty($item['slot_waktu_3'])) {
+                            $notes .= "\nSlot Hari 3: " . $item['slot_waktu_3'];
+                        }
                     }
 
                     $booking = Booking::create([
@@ -328,6 +447,19 @@ class CheckoutController extends Controller
             session(['cart' => $remainingCart]);
         }
         session()->forget('checkout_keys');
+
+        // Send invoice email to customer for each created booking
+        foreach ($createdBookings as $booking) {
+            try {
+                $booking->load(['user', 'package', 'addons']);
+                if ($booking->user && $booking->user->email) {
+                    \Illuminate\Support\Facades\Mail::to($booking->user->email)
+                        ->send(new \App\Mail\BookingInvoiceMail($booking, 'created'));
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Failed to send booking invoice email for booking ' . $booking->booking_code . ': ' . $e->getMessage());
+            }
+        }
 
         if ($request->expectsJson()) {
             $midtransService = app(MidtransService::class);

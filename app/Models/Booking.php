@@ -189,10 +189,19 @@ class Booking extends Model
                         if ($booking->tanggal_acara_2) {
                             $schedule2 = Schedule::where('category_id', $booking->package->category_id)
                                 ->whereDate('tanggal', $booking->tanggal_acara_2)
-                                ->where('jenis_jadwal', $booking->slot_waktu)
+                                ->where('jenis_jadwal', $booking->slot_waktu_2)
                                 ->first();
                             if ($schedule2) {
                                 $schedule2->decrementTerpakai();
+                            }
+                        }
+                        if ($booking->tanggal_acara_3) {
+                            $schedule3 = Schedule::where('category_id', $booking->package->category_id)
+                                ->whereDate('tanggal', $booking->tanggal_acara_3)
+                                ->where('jenis_jadwal', $booking->slot_waktu_3)
+                                ->first();
+                            if ($schedule3) {
+                                $schedule3->decrementTerpakai();
                             }
                         }
                     }
@@ -270,6 +279,30 @@ class Booking extends Model
             return $matches[1];
         }
         return null;
+    }
+
+    public function getTanggalAcara3Attribute(): ?string
+    {
+        if ($this->notes && preg_match('/Tanggal Acara Ketiga: (\d{4}-\d{2}-\d{2})/', $this->notes, $matches)) {
+            return $matches[1];
+        }
+        return null;
+    }
+
+    public function getSlotWaktu2Attribute(): string
+    {
+        if ($this->notes && preg_match('/Slot Hari 2: (pagi|siang)/', $this->notes, $matches)) {
+            return $matches[1];
+        }
+        return $this->slot_waktu;
+    }
+
+    public function getSlotWaktu3Attribute(): string
+    {
+        if ($this->notes && preg_match('/Slot Hari 3: (pagi|siang)/', $this->notes, $matches)) {
+            return $matches[1];
+        }
+        return $this->slot_waktu;
     }
 }
 

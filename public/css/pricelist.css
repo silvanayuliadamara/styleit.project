@@ -1,0 +1,197 @@
+/* ── Hero Load Animations ── */
+    @keyframes heroFadeDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes heroFadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes lineExpand {
+        from {
+            width: 0;
+        }
+        to {
+            width: 40px;
+        }
+    }
+
+    .pricelist-hero-label {
+        opacity: 0;
+        animation: heroFadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .pricelist-hero-line {
+        width: 0;
+        animation: lineExpand 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+    .pricelist-hero-title {
+        opacity: 0;
+        animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    }
+
+    /* ── Category Divider Animation ── */
+    .pricelist-divider {
+        height: 1px;
+        background: linear-gradient(90deg, #d4b87a 0%, #eadfd6 60%, transparent 100%);
+        width: 0;
+        transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+        margin-bottom: 28px;
+    }
+    .pricelist-category.revealed .pricelist-divider {
+        width: 100%;
+    }
+
+    /* ── Stagger Delay Classes ── */
+    .delay-100 { transition-delay: 0.1s !important; }
+    .delay-200 { transition-delay: 0.2s !important; }
+    .delay-300 { transition-delay: 0.3s !important; }
+    .delay-400 { transition-delay: 0.4s !important; }
+
+    /* ── Card Sizing & Hover ── */
+    .pricelist-card {
+        background: #ffffff;
+        border: 1px solid #f0e8dd;
+        border-radius: 16px;
+        transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1), 
+                    border-color 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+    }
+    .pricelist-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(56, 37, 20, 0.08);
+        border-color: #d4b87a;
+    }
+
+    .pricelist-img-wrapper {
+        width: 110px;
+        height: 147px;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #eadfd6;
+        flex-shrink: 0;
+        background-color: #fbf8f1;
+        position: relative;
+    }
+    .pricelist-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pricelist-card:hover .pricelist-img {
+        transform: scale(1.08);
+    }
+    .pricelist-img-placeholder {
+        width: 100%;
+        height: 100%;
+        background-color: #fbf8f1;
+        color: #b08a42;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    /* Glass shine sweep effect */
+    .pricelist-img-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+        );
+        transform: skewX(-20deg);
+        pointer-events: none;
+    }
+    .pricelist-card:hover .pricelist-img-wrapper::after {
+        left: 150%;
+        transition: left 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Price Shift Hover */
+    .pricelist-price-amount {
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+    }
+    .pricelist-card:hover .pricelist-price-amount {
+        transform: translateX(-4px);
+        color: #b08a42;
+    }
+
+    /* ── Action Button Micro-Animations ── */
+    .pricelist-card-action .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    .pricelist-card-action .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1d1209, #3a2a1a);
+        transition: opacity 0.3s ease;
+        z-index: -1;
+        border-radius: inherit;
+    }
+    .pricelist-card-action .btn::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #b08a42, #d4b87a);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+        border-radius: inherit;
+    }
+    .pricelist-card-action .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(176, 138, 66, 0.25);
+        color: #fff;
+    }
+    .pricelist-card-action .btn:hover::after {
+        opacity: 1;
+    }
+    .pricelist-card-action .btn i {
+        font-size: 12px;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pricelist-card-action .btn:hover i {
+        transform: translateX(4px);
+    }
+
+    @media (max-width: 768px) {
+        .pricelist-img-wrapper {
+            width: 120px;
+            height: 160px;
+            border-radius: 12px;
+        }
+    }
