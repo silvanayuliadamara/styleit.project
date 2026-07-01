@@ -14,11 +14,11 @@
         <div class="row g-5 align-items-center">
             <!-- Studio Image Panel with nice layout and animations -->
             <div class="col-lg-5 scroll-reveal fade-left">
-                <div class="image-panel overflow-hidden position-relative border-0" 
+                <div class="image-panel overflow-hidden position-relative border-0"
                      style="min-height: 480px; border-radius: 24px; background: url('{{ asset('images/studio_front.png') }}') no-repeat center center; background-size: cover; box-shadow: 0 20px 50px rgba(33, 19, 19, 0.12);">
-                    <div class="position-absolute bottom-0 start-0 end-0 p-4" 
+                    <div class="position-absolute bottom-0 start-0 end-0 p-4"
                          style="background: linear-gradient(transparent, rgba(33, 19, 19, 0.9)); border-radius: 0 0 24px 24px;">
-                        <span class="badge text-uppercase px-3 py-2 mb-2" 
+                        <span class="badge text-uppercase px-3 py-2 mb-2"
                               style="background-color: var(--lyb-gold, #b08a42); color: #fff; font-size: 10px; letter-spacing: 1px; font-weight: 700; border-radius: 6px;">
                             Official Studio
                         </span>
@@ -28,45 +28,64 @@
                 </div>
             </div>
 
-            <!-- Brand Story & Details -->
-            <div class="col-lg-7 scroll-reveal fade-right">
-                <div class="section-heading mb-4">
-                    <span style="color: var(--lyb-gold, #b08a42); font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">Brand Story</span>
-                    <h2 class="mt-2 mb-3" style="font-family: Georgia, serif; color: var(--lyb-dark, #211313); font-weight: 700;">Karya Lahir dari Hati</h2>
-                    <p class="text-muted" style="font-size: 15px; line-height: 1.8;">Berdiri sejak 2018 oleh Lisa Yuli Belti, LYB telah mempercantik ratusan pengantin dengan sentuhan personal yang hangat. Setiap riasan kami rancang untuk menonjolkan kecantikan alami Anda.</p>
-                    <p class="text-muted mb-0" style="font-size: 15px; line-height: 1.8;">LYB adalah studio makeup dan wedding gallery yang menghadirkan riasan elegan, glamor lembut, dan koleksi baju pengantin premium.</p>
-                </div>
-                <div class="row g-3 mt-2">
-                    <div class="col-md-6 scroll-reveal delay-100">
-                        <div class="info-card h-100">
-                            <i class="bi bi-geo-alt" style="color: var(--lyb-gold, #b08a42); font-size: 28px;"></i>
-                            <strong>Alamat</strong>
-                            <span class="small text-muted">Jl. Lintas Raya Padang-Bukittinggi, Pasar Lubuk Alung, Sumatera Barat</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6 scroll-reveal delay-200">
-                        <div class="info-card h-100">
-                            <i class="bi bi-whatsapp" style="color: var(--lyb-gold, #b08a42); font-size: 28px;"></i>
-                            <strong>WhatsApp</strong>
-                            <span class="small text-muted">+62 812-2754-5591<br>+62 831-1226-9289</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6 scroll-reveal delay-300">
-                        <div class="info-card h-100">
-                            <i class="bi bi-clock" style="color: var(--lyb-gold, #b08a42); font-size: 28px;"></i>
-                            <strong>Jam Operasional</strong>
-                            <span class="small text-muted">Senin – Minggu, 10.00 – 21.00 WIB</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6 scroll-reveal delay-400">
-                        <div class="info-card h-100">
-                            <i class="bi bi-instagram" style="color: var(--lyb-gold, #b08a42); font-size: 28px;"></i>
-                            <strong>Instagram</strong>
-                            <span class="small text-muted">@lisayulibelti</span>
-                        </div>
-                    </div>
+            <!-- Baris pertama -->
+            <div class="col-lg-5">
+                <div class="section-heading">
+                    <span>Brand Story</span>
+                    <h2>Karya Lahir dari Hati</h2>
+                    <p>
+                        Berdiri sejak 2018 oleh Lisa Yuli Belti, LYB telah
+                        mempercantik ratusan pengantin dengan sentuhan personal
+                        yang hangat. Setiap riasan kami rancang untuk
+                        menonjolkan kecantikan alami Anda.
+                    </p>
+                    <p>
+                        LYB adalah studio makeup dan wedding gallery yang
+                        menghadirkan riasan elegan, glamor lembut, dan koleksi
+                        baju pengantin premium.
+                    </p>
                 </div>
             </div>
+        </div>
+
+        <!-- Baris kedua: Card informasi -->
+        <div class="row g-3 mt-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="info-card">
+                    <i class="bi bi-geo-alt" style="color: var(--lyb-gold, #b08a42); font-size: 28px;"></i>
+                    <strong>Alamat</strong>
+                    <span>Jl. Lintas Raya Padang-Bukittinggi, Pasar Lubuk Alung, Sumatera Barat</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="info-card">
+                    <i class="bi bi-whatsapp" style="color: var(--lyb-gold, #b08a42); font-size: 28px;"></i>
+                    <strong>WhatsApp</strong>
+                    <span>
+                        +62 812-2754-5591<br>
+                        +62 831-1226-9289
+                    </span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="info-card">
+                   <i class="bi bi-clock" style="color: var(--lyb-gold, #b08a42); font-size: 28px;"></i>
+                    <strong>Jam Operasional</strong>
+                    <span>Senin – Minggu, 10.00 – 21.00 WIB</span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="info-card">
+                    <i class="bi bi-instagram" style="color: var(--lyb-gold, #b08a42); font-size: 28px;"></i>
+                    <strong>Instagram</strong>
+                    <span>@lisayulibelti</span>
+                </div>
+            </div>
+        </div>
+    </div>
         <!-- Stats Section -->
         <div class="row g-4 mt-5 pt-5 border-top justify-content-center text-center">
             <div class="col-md-4 scroll-reveal delay-100">
@@ -116,14 +135,14 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Gallery of 2 Certificates -->
             <div class="col-lg-8 scroll-reveal fade-right">
                 <div class="row g-4">
                     <!-- Certificate 1: Modern Bridal -->
                     <div class="col-md-6">
                         <div class="certificate-wrapper p-3 bg-white border shadow-sm rounded-4 position-relative" style="border-radius: 20px; border: 1px solid var(--lyb-line); margin: 0 auto;">
-                            <img src="{{ asset('images/sertifikat_mua.png') }}" alt="Sertifikat MUA Modern" class="img-fluid rounded-3" style="border-radius: 10px; display: block; width: 100%; aspect-ratio: 1.41/1; object-fit: cover;">
+                            <img src="{{ asset('images/sertifikat_mua.png') }}" alt="Sertifikat MUA Modern" class="img-fluid rounded-3" style="border-radius: 10px; display: block; width: 100%; aspect-ratio: 1.41/1; object-fit: contain; background: #fdfbf9;">
                             <div class="certificate-hover-overlay" style="border-radius: 20px;">
                                 <a href="{{ asset('images/sertifikat_mua.png') }}" target="_blank" class="btn btn-light rounded-circle shadow" style="width: 46px; height: 46px; display: inline-flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-fullscreen text-dark fs-6"></i>
@@ -138,7 +157,7 @@
                     <!-- Certificate 2: Traditional Minang Adat -->
                     <div class="col-md-6">
                         <div class="certificate-wrapper p-3 bg-white border shadow-sm rounded-4 position-relative" style="border-radius: 20px; border: 1px solid var(--lyb-line); margin: 0 auto;">
-                            <img src="{{ asset('images/sertifikat_adat.png') }}" alt="Sertifikat MUA Tradisional Adat" class="img-fluid rounded-3" style="border-radius: 10px; display: block; width: 100%; aspect-ratio: 1.41/1; object-fit: cover;">
+                            <img src="{{ asset('images/sertifikat_adat.png') }}" alt="Sertifikat MUA Tradisional Adat" class="img-fluid rounded-3" style="border-radius: 10px; display: block; width: 100%; aspect-ratio: 1.41/1; object-fit: contain; background: #fdfbf9;">
                             <div class="certificate-hover-overlay" style="border-radius: 20px;">
                                 <a href="{{ asset('images/sertifikat_adat.png') }}" target="_blank" class="btn btn-light rounded-circle shadow" style="width: 46px; height: 46px; display: inline-flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-fullscreen text-dark fs-6"></i>
@@ -173,13 +192,13 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="map-embed-wrapper position-relative" style="min-height: 400px;">
-                        <iframe 
-                            src="https://maps.google.com/maps?q=-0.6780417,100.2902302&hl=id&z=16&output=embed" 
-                            width="100%" 
-                            height="400" 
-                            style="border:0; display: block;" 
-                            allowfullscreen="" 
-                            loading="lazy" 
+                        <iframe
+                            src="https://maps.google.com/maps?q=-0.6780417,100.2902302&hl=id&z=16&output=embed"
+                            width="100%"
+                            height="400"
+                            style="border:0; display: block;"
+                            allowfullscreen=""
+                            loading="lazy"
                             referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
