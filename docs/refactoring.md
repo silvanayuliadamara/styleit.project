@@ -182,7 +182,7 @@ $booking = Booking::create([
 ```
 
 **Prioritas:** 🔴 Tinggi
-**Status:** ⬜ Belum dikerjakan
+**Status:** ✅ Selesai (Migrasi penuh ke database MySQL menggunakan Eloquent)
 
 ---
 
@@ -227,7 +227,7 @@ public function store(StoreCartRequest $request)
 ```
 
 **Prioritas:** 🔴 Tinggi (dikerjakan bersamaan dengan kandidat #2)
-**Status:** ⬜ Belum dikerjakan
+**Status:** ✅ Selesai (Logika transaksi diisolasi di BookingService)
 
 ---
 
@@ -253,7 +253,7 @@ Route::middleware(['auth', 'role:customer'])
 ```
 
 **Prioritas:** 🟡 Sedang
-**Status:** ⬜ Belum dikerjakan
+**Status:** ✅ Selesai (Route dikelompokkan dengan prefix dan middleware per-role secara rapi)
 
 ---
 
@@ -289,7 +289,7 @@ public function show(Booking $booking)
 ```
 
 **Prioritas:** 🟢 Rendah (bergantung pada selesainya kandidat #2)
-**Status:** ⬜ Belum dikerjakan
+**Status:** ✅ Selesai (Route Model Binding digunakan untuk binding data booking berdasarkan booking_code secara otomatis)
 
 ---
 
@@ -297,6 +297,9 @@ public function show(Booking $booking)
 
 | Tanggal | Area | Deskripsi | Dilakukan oleh |
 |---------|------|-----------|----------------|
-| — | — | Belum ada entri refactoring final pada dokumen ini. | — |
+| 27 Juni 2026 | Route & Controller | Penggunaan Route Model Binding pada `CustomerBookingController` dan `OwnerBookingController` menggunakan `booking_code`. | Tim Developer |
+| 28 Juni 2026 | Service Layer | Pembentukan `BookingService` untuk memusatkan logika pembayaran DP, pelunasan, dan pembatalan otomatis. | Tim Developer |
+| 29 Juni 2026 | Database Migration | Migrasi data kategori, paket, addon, dan portofolio dari static `PreviewData` ke database. | Tim Developer |
+| 30 Juni 2026 | Routing | Merapikan grouping route di `web.php` menggunakan prefix dan middleware per-role secara konsisten. | Tim Developer |
 
 > Setiap refactoring yang selesai dikerjakan wajib didokumentasikan di tabel ini beserta tanggal, area yang diubah, deskripsi singkat perubahan, dan nama anggota yang melakukan.
