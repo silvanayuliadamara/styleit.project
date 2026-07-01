@@ -11,8 +11,8 @@ Dokumen ini berisi daftar dependency/package yang digunakan dan direncanakan pad
 |   1 | Laravel Authentication      | Mengelola login, logout, session, dan user aktif | Dibutuhkan untuk akses customer, admin, dan owner                               | Bawaan Laravel   | Konfigurasi guard atau session harus tepat                               |
 |   2 | Laravel Validation          | Memvalidasi input form                           | Mencegah data kosong, format salah, atau data tidak valid                       | Bawaan Laravel   | Rule validasi harus sesuai kebutuhan form                                |
 |   3 | Laravel File Storage        | Mengelola upload dan penyimpanan file            | Dibutuhkan untuk gambar portofolio, logo, banner, sertifikat, dan paket layanan | Bawaan Laravel   | Permission storage harus diperhatikan                                    |
-|   4 | barryvdh/laravel-dompdf     | Generate PDF dari Blade Laravel                  | Dibutuhkan untuk invoice atau bukti booking PDF                                 | ^3.1             | Perlu kompatibilitas dengan Laravel dan dapat menambah ukuran dependency |
-|   5 | Spatie Laravel Permission   | Mengelola role dan permission                    | Dibutuhkan untuk role customer, admin, dan owner                                | ^6.x             | Perlu konfigurasi role yang rapi                                         |
+|   4 | CSS Web Print (Native)       | Cetak invoice langsung via browser               | Cetak atau simpan PDF secara responsif dan ringan (tanpa render server-side)    | Bawaan Browser   | Memerlukan styling CSS @media print yang tepat                           |
+|   5 | Spatie Laravel Permission   | Mengelola role dan permission                    | Dibutuhkan untuk role customer, admin, dan owner                                | ^8.0             | Perlu konfigurasi role yang rapi                                         |
 |   6 | Midtrans PHP                | Integrasi payment gateway                        | Dibutuhkan untuk pembayaran DP online via Snap                                  | ^2.6             | Perlu konfigurasi API key dan keamanan transaksi                         |
 |   7 | Mews Captcha                | Pembuatan dan validasi captcha                   | Keamanan tambahan pada form login untuk mencegah brute force                    | ^3.5             | Membutuhkan ekstensi PHP GD terinstall di server                         |
 |   8 | Laravel Excel               | Export/import data Excel                         | Dibutuhkan untuk laporan keuangan dan rekap transaksi                           | Rencana/Opsional | Perlu maintenance package dan format data                                |
@@ -24,35 +24,34 @@ Dokumen ini berisi daftar dependency/package yang digunakan dan direncanakan pad
 
 ## 2. Dependency yang Sudah Diimplementasikan
 
-### 2.1 barryvdh/laravel-dompdf
+### 2.1 CSS Web Print (Native Browser)
 
 #### Fungsi
-`barryvdh/laravel-dompdf` adalah package Laravel yang digunakan untuk membuat file PDF dari tampilan Blade.
+Fitur cetak bawaan browser yang dikustomisasi menggunakan styling CSS `@media print` untuk menghasilkan format cetak invoice yang ramah kertas/PDF tanpa overhead rendering di sisi server.
 
 #### Alasan Digunakan
-Project StyleIt memiliki kebutuhan fitur invoice atau bukti booking. Dengan DomPDF, invoice dapat dikembangkan agar bisa dicetak atau diunduh dalam bentuk PDF.
+Awalnya direncanakan menggunakan `barryvdh/laravel-dompdf`. Namun, setelah dievaluasi, rendering PDF di server memakan resource komputasi besar dan rentan mengalami masalah kompatibilitas library CSS (seperti Flexbox/Grid). Penggunaan CSS Web Print memungkinkan pengguna menekan tombol "Cetak" dan langsung mencetak fisik atau menyimpan sebagai file PDF menggunakan mesin render browser lokal yang andal.
 
-#### Cara Install
-```bash
-composer require barryvdh/laravel-dompdf --no-audit
-```
-
-#### Perubahan File
-Setelah dependency DomPDF ditambahkan, file yang berubah adalah:
-```text
-composer.json
-composer.lock
-```
-
-Pada `composer.json`, package yang ditambahkan adalah:
-```json
-"barryvdh/laravel-dompdf": "^3.1"
+#### Cara Implementasi
+Pemisahan gaya layout biasa dengan gaya cetak di dalam file CSS menggunakan query media:
+```css
+@media print {
+    /* Sembunyikan navigasi, tombol cetak, footer */
+    nav, .invoice-topnav, footer {
+        display: none !important;
+    }
+    /* Atur batas halaman dan margin kertas A4 */
+    @page {
+        size: A4;
+        margin: 0.8cm 1.0cm !important;
+    }
+}
 ```
 
 #### Dampak pada Project
-- Project dapat dikembangkan untuk generate invoice PDF.
-- File `composer.json` dan `composer.lock` bertambah.
-- Anggota kelompok lain dapat menjalankan `composer install` agar dependency terpasang sesuai versi yang sama.
+- Menghindari penambahan dependency berat di `composer.json`.
+- Proses cetak instan karena tidak memerlukan waktu rendering di sisi server.
+- Layout invoice tetap responsif dan konsisten dengan tampilan web asli.
 
 ---
 
@@ -192,8 +191,9 @@ Fitur notifikasi email untuk mengabarkan status booking terbaru ke customer seca
 
 ## 5. Kendala Implementasi Dependency
 
-### 5.1 barryvdh/laravel-dompdf
-Masalah sertifikat SSL lokal pada Composer (`curl error 60`). Solusinya adalah melakukan instalasi pada komputer tim lain yang normal, melakukan commit `composer.lock`, kemudian melakukan `git pull` dan `composer install` pada komputer yang terkendala.
+### 5.1 barryvdh/laravel-dompdf (Dialihkan)
+Ditemukan kendala SSL lokal pada instalasi Composer (`curl error 60`) dan inkonsistensi rendering layout CSS modern (Flexbox/Grid) pada library DomPDF. 
+*Solusi:* Sistem dialihkan untuk menggunakan CSS Web Print (`@media print`) bawaan browser yang terbukti jauh lebih kompatibel dengan CSS kustom dan tidak memerlukan instalasi pustaka backend tambahan.
 
 ### 5.2 spatie/laravel-permission
 *Error* saat registrasi dikarenakan trait `HasRoles` belum didaftarkan pada model `User`, serta tabel roles kosong. Diselesaikan dengan mendaftarkan trait dan menjalankan `RoleSeeder` sebelum sistem digunakan.
@@ -209,8 +209,8 @@ Membutuhkan pustaka grafik GD (`GD Library`) terpasang pada konfigurasi PHP serv
 ## 6. Kesimpulan
 
 Pada tahapan project StyleIt saat ini, dependency yang telah sukses diimplementasikan dan dikonfigurasi penuh adalah:
-- `barryvdh/laravel-dompdf` — Cetak invoice PDF.
-- `spatie/laravel-permission` — Pembagian hak akses akun.
+- `spatie/laravel-permission` — Pembagian hak akses akun (customer, admin, owner).
 - `midtrans/midtrans-php` — Pembayaran DP digital via Midtrans Snap.
 - `mews/captcha` — Keamanan autentikasi halaman login.
 - `intervention/image` — Kompresi dan manipulasi gambar paket layanan.
+- `CSS Web Print (Native)` — Mekanisme cetak & ekspor PDF invoice langsung via browser.
