@@ -75,6 +75,11 @@
     </div>
     @endif
 
+    <div class="form-group remember-me-group">
+        <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+        <label for="remember" class="remember-me-label">Ingat Saya</label>
+    </div>
+
     <button type="submit" class="btn-primary">Masuk</button>
 </form>
 

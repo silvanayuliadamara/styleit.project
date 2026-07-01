@@ -174,8 +174,9 @@ class AuthController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
+        $remember = $request->filled('remember');
 
-        if (! Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials, $remember)) {
             return back()
                 ->with('login_error', 'Email atau kata sandi salah.')
                 ->onlyInput('email');
