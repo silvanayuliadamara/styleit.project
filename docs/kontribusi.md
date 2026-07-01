@@ -8,7 +8,7 @@ Dokumen ini disusun untuk menjelaskan kontribusi masing-masing anggota tim dalam
 
 | Nama Anggota | NIM | Peran Utama | Modul / Tanggung Jawab Utama |
 | :--- | :--- | :--- | :--- |
-| **Silvana Yulia Damara** | 2411081023 | Project Manager & Integrator | Manajemen repositori, integrasi sistem, modul Autentikasi (Captcha, Remember Me), desain database utama, dan penyusunan dokumentasi proyek. |
+| **Silvana Yulia Damara** | 2411081023 | Project Manager, Backend & Integration Developer | Manajemen repositori & integrasi, Autentikasi (Captcha, Remember Me), Sistem Transaksi Inti & Optimasi (sentralisasi `BookingService` & penanganan concurrency locking pada checkout), Scheduled Artisan Command untuk pembatalan booking otomatis, fitur pembatalan pengajuan, validasi refund dinamis di Dashboard, serta perbaikan layout responsif. |
 | **Salwa Aprilia** | 2411082029 | System Analyst & Frontend Dev | Desain UI/UX, implementasi halaman publik (Home, Profil, Portofolio, Pricelist, Detail Layanan) beserta seluruh aset gambar dan CSS pendukung. |
 | **Nurul Asyifa** | 2411082018 | Lead Programmer (Backend) | Alur transaksi utama (Keranjang Belanja, Checkout, Integrasi Payment Gateway Midtrans), penjadwalan pembatalan otomatis (*cron job*), dan email otomatis. |
 | **Muhammad Abdul Hafiz** | 2311082025 | Quality Assurance (QA) | Pembuatan unit testing (`php artisan test`), skenario pengujian fungsionalitas, verifikasi bug, dan penyusunan dokumentasi pengujian. |
@@ -24,7 +24,7 @@ Jika melihat grafik kontribusi di GitHub, terdapat perbedaan jumlah komit yang c
   * **Nurul Asyifa** hanya memiliki **19 komit**, tetapi berkontribusi sebanyak **8.049++ baris kode**.
   * **Salwa Aprilia** hanya memiliki **34 komit**, tetapi berkontribusi sebanyak **7.343++ baris kode**.
   Ini membuktikan bahwa kontribusi kode riil mereka sangat besar.
-* **Gaya Komit Integrasi (Silvana):** Sebagai Project Manager dan Integrator, Silvana melakukan banyak komit kecil (*micro-commits*) untuk perbaikan minor, integrasi file dari anggota lain, penyesuaian konfigurasi, dan penulisan dokumentasi (.md) proyek secara berkala. Hal ini membuat jumlah komitnya tercatat **162 komit**.
+* **Gaya Komit Aktif & Inkremental (Silvana):** Sebagai Project Manager dan Backend Developer, Silvana bertanggung jawab penuh atas integrasi arsitektur sistem, optimalisasi backend (seperti `BookingService` dan *concurrency control*), penulisan skrip otomasi cron job, perbaikan bug di seluruh modul, serta penyempurnaan UI. Gaya komit Silvana bersifat berkala dan detail (*feature & refactor-driven commits*), sehingga jumlah komitnya tercatat **162 komit** yang mendokumentasikan evolusi sistem secara bertahap.
 
 ### 2. Peran Non-Code/QA (Hafiz)
 * Sebagai Quality Assurance (QA), Muhammad Abdul Hafiz fokus pada pembuatan skenario uji dan pengujian fungsionalitas aplikasi. Tugas QA tidak memerlukan penulisan kode produksi baru secara terus-menerus, melainkan fokus pada pembuatan unit test di direktori `tests/` dan pengujian manual (*black-box testing*).
