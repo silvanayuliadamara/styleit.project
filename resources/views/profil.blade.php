@@ -123,7 +123,7 @@
                     <!-- Certificate 1: Modern Bridal -->
                     <div class="col-md-6">
                         <div class="certificate-wrapper p-3 bg-white border shadow-sm rounded-4 position-relative" style="border-radius: 20px; border: 1px solid var(--lyb-line); margin: 0 auto;">
-                            <img src="{{ asset('images/sertifikat_mua.png') }}" alt="Sertifikat MUA Modern" class="img-fluid rounded-3" style="border-radius: 10px; display: block; width: 100%; aspect-ratio: 1.41/1; object-fit: contain; background: #fdfbf9;">
+                            <img src="{{ asset('images/sertifikat_mua.png') }}" alt="Sertifikat MUA Modern" class="img-fluid rounded-3" style="border-radius: 10px; display: block; width: 100%; aspect-ratio: 1.41/1; object-fit: cover;">
                             <div class="certificate-hover-overlay" style="border-radius: 20px;">
                                 <a href="{{ asset('images/sertifikat_mua.png') }}" target="_blank" class="btn btn-light rounded-circle shadow" style="width: 46px; height: 46px; display: inline-flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-fullscreen text-dark fs-6"></i>
@@ -138,7 +138,7 @@
                     <!-- Certificate 2: Traditional Minang Adat -->
                     <div class="col-md-6">
                         <div class="certificate-wrapper p-3 bg-white border shadow-sm rounded-4 position-relative" style="border-radius: 20px; border: 1px solid var(--lyb-line); margin: 0 auto;">
-                            <img src="{{ asset('images/sertifikat_adat.png') }}" alt="Sertifikat MUA Tradisional Adat" class="img-fluid rounded-3" style="border-radius: 10px; display: block; width: 100%; aspect-ratio: 1.41/1; object-fit: contain; background: #fdfbf9;">
+                            <img src="{{ asset('images/sertifikat_adat.png') }}" alt="Sertifikat MUA Tradisional Adat" class="img-fluid rounded-3" style="border-radius: 10px; display: block; width: 100%; aspect-ratio: 1.41/1; object-fit: cover;">
                             <div class="certificate-hover-overlay" style="border-radius: 20px;">
                                 <a href="{{ asset('images/sertifikat_adat.png') }}" target="_blank" class="btn btn-light rounded-circle shadow" style="width: 46px; height: 46px; display: inline-flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-fullscreen text-dark fs-6"></i>
