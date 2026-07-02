@@ -21,13 +21,13 @@ Jika melihat grafik kontribusi di GitHub, terdapat perbedaan jumlah komit yang c
 
 ### 1. Perbedaan Jumlah Komit vs. Baris Kode (Lines of Code)
 * **Gaya Komit Milestones (Nurul & Salwa):** Nurul (Lead Programmer) dan Salwa (Frontend Developer) bekerja secara lokal dan baru melakukan komit ketika seluruh fitur/modul selesai sepenuhnya (*milestone-based commits*).
-  * **Nurul Asyifa** hanya memiliki **19 komit**, tetapi berkontribusi sebanyak **8.049++ baris kode**.
-  * **Salwa Aprilia** hanya memiliki **34 komit**, tetapi berkontribusi sebanyak **7.343++ baris kode**.
+  * **Nurul Asyifa** memiliki **42 komit**, tetapi berkontribusi sebanyak **8.781++ baris kode**.
+  * **Salwa Aprilia** memiliki **41 komit**, tetapi berkontribusi sebanyak **7.534++ baris kode**.
   Ini membuktikan bahwa kontribusi kode riil mereka sangat besar.
-* **Gaya Komit Aktif & Inkremental (Silvana):** Sebagai Project Manager dan Backend Developer, Silvana bertanggung jawab penuh atas integrasi arsitektur sistem, optimalisasi backend (seperti `BookingService` dan *concurrency control*), penulisan skrip otomasi cron job, perbaikan bug di seluruh modul, serta penyempurnaan UI. Gaya komit Silvana bersifat berkala dan detail (*feature & refactor-driven commits*), sehingga jumlah komitnya tercatat **162 komit** yang mendokumentasikan evolusi sistem secara bertahap.
+* **Gaya Komit Aktif & Inkremental (Silvana):** Sebagai Project Manager dan Backend Developer, Silvana bertanggung jawab penuh atas integrasi arsitektur sistem, optimalisasi backend (seperti `BookingService` dan *concurrency control*), penulisan skrip otomasi cron job, perbaikan bug di seluruh modul, serta penyempurnaan UI. Gaya komit Silvana bersifat berkala dan detail (*feature & refactor-driven commits*), sehingga jumlah komitnya tercatat **163 komit** dengan kontribusi **43.244++ baris kode** yang mendokumentasikan evolusi sistem secara bertahap.
 
 ### 2. Peran Non-Code/QA (Hafiz)
-* Sebagai Quality Assurance (QA), Muhammad Abdul Hafiz fokus pada pembuatan skenario uji dan pengujian fungsionalitas aplikasi. Tugas QA tidak memerlukan penulisan kode produksi baru secara terus-menerus, melainkan fokus pada pembuatan unit test di direktori `tests/` dan pengujian manual (*black-box testing*).
+* Sebagai Quality Assurance (QA), Muhammad Abdul Hafiz fokus pada pembuatan skenario uji dan pengujian fungsionalitas aplikasi. Tugas QA berfokus pada pembuatan unit & feature test di direktori `tests/` serta pengujian manual (*black-box testing*), dengan kontribusi tercatat **10 komit** dan **546++ baris kode**.
 
 ---
 
