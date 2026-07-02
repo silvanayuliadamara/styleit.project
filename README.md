@@ -172,20 +172,41 @@ styleit.project/
 
 ## Screenshot
 
-> Screenshot akan ditambahkan setelah tampilan UI selesai dikerjakan.
+Berikut adalah beberapa tampilan antarmuka (UI) dari StyleIt Project:
 
+### 1. Halaman Publik & Autentikasi
 | Halaman | Preview |
 |---------|---------|
-| Home | ![Screenshot Home](docs/screenshots/home.png)|
-| Login | ![Screenshot Home](docs/screenshots/logim.png) |
-| Register | ![Screenshot Register](docs/screenshots/register.png) |
-| Profil Usaha | ![Screenshot Profil Usaha](docs/screenshots/profil-usaha.png) |
-| Portofolio | ![Screenshot Portofolio](docs/screenshots/portofolio.png) |
-| Pricelist | ![Screenshot Pricelist](docs/screenshots/pricelist.png) |
-| Keranjang | ![Screenshot Keranjang](docs/screenshots/keranjang.png) |
-| Checkout | ![Screenshot Checkout](docs/screenshots/checkout.png) |
-| Booking Customer | ![Screenshot Booking Customer](docs/screenshots/booking-customer.png) |
-| Dashboard Customer | ![Screenshot Dashboard Customer](docs/screenshots/dashboard-customer.png) |
+| **Home** | ![Screenshot Home](docs/screenshots/home.png) |
+| **Login** | ![Screenshot Login](docs/screenshots/login.png) |
+| **Register** | ![Screenshot Register](docs/screenshots/register.png) |
+| **Profil Usaha** | ![Screenshot Profil Usaha](docs/screenshots/profil-usaha.png) |
+| **Portofolio** | ![Screenshot Portofolio](docs/screenshots/portofolio.png) |
+| **Pricelist** | ![Screenshot Pricelist](docs/screenshots/pricelist.png) |
+
+### 2. Fitur & Halaman Customer
+| Halaman | Preview |
+|---------|---------|
+| **Ubah Profil** | ![Screenshot Ubah Profil](docs/screenshots/ubah-profil.png) |
+| **Keranjang** | ![Screenshot Keranjang](docs/screenshots/keranjang.png) |
+| **Checkout (Midtrans)** | ![Screenshot Checkout](docs/screenshots/checkout.png) |
+| **Dashboard Customer** | ![Screenshot Dashboard Customer](docs/screenshots/dashboard-customer.png) |
+| **Invoice** | ![Screenshot Invoice](docs/screenshots/invoice.png) |
+
+### 3. Detail Paket Layanan
+| Paket | Preview |
+|---------|---------|
+| **Paket Prewedding** | ![Screenshot Paket Prewedding](docs/screenshots/paket/paket-prewedding.png) |
+| **Paket Wedding** | ![Screenshot Paket Wedding](docs/screenshots/paket/paket-wedding.png) |
+| **Paket Regular** | ![Screenshot Paket Regular](docs/screenshots/paket/paket-regular.png) |
+| **Paket Khusus Baju** | ![Screenshot Paket Khusus Baju](docs/screenshots/paket/paket-khusus-baju.png) |
+
+### 4. Halaman Dashboard Pengelola (Admin & Owner)
+| Halaman | Preview |
+|---------|---------|
+| **Dashboard Admin** | ![Screenshot Dashboard Admin](docs/screenshots/dashboard-admin.png) |
+| **Dashboard Owner** | ![Screenshot Dashboard Owner](docs/screenshots/dashboard-owner.png) |
+
 
 ---
 
