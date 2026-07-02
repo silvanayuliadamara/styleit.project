@@ -190,6 +190,7 @@ Berikut adalah beberapa tampilan antarmuka (UI) dari StyleIt Project:
 | **Ubah Profil** | ![Screenshot Ubah Profil](docs/screenshots/ubah-profil.png) |
 | **Keranjang** | ![Screenshot Keranjang](docs/screenshots/keranjang.png) |
 | **Checkout (Midtrans)** | ![Screenshot Checkout](docs/screenshots/checkout.png) |
+| **DP Berhasil** | ![Screenshot DP Berhasil](docs/screenshots/dp-berhasil.png) |
 | **Dashboard Customer** | ![Screenshot Dashboard Customer](docs/screenshots/dashboard-customer.png) |
 | **Invoice** | ![Screenshot Invoice](docs/screenshots/invoice.png) |
 
