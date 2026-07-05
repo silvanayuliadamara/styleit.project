@@ -48,115 +48,118 @@
                 $days = $gridData['days'];
                 $monthName = $gridData['monthName'];
             @endphp
-            <div class="col-12 col-xl-6">
+            <div class="col-12 col-xxl-6">
                 <h5 class="fw-bold mb-3" style="color: #211313;">{{ $monthName }}</h5>
-                <div class="lyb-cal-grid shadow-sm p-3 bg-white" style="border-radius: 20px; border: 1px solid #eadfd6;">
-                    <!-- Days Headers -->
-                    @foreach(['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $dayName)
-                        <div class="lyb-cal-dayname">{{ $dayName }}</div>
-                    @endforeach
+                <div style="overflow-x: auto; border-radius: 20px; border: 1px solid #eadfd6; background: #fff;" class="shadow-sm">
+                    <div class="lyb-cal-grid p-3 bg-white">
+                        <!-- Days Headers -->
+                        @foreach(['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $dayName)
+                            <div class="lyb-cal-dayname">{{ $dayName }}</div>
+                        @endforeach
 
-                    <!-- Cells -->
-                    @foreach($days as $day)
-                        @if($day === null)
-                            <div class="lyb-cal-cell empty"></div>
-                        @else
-                            @php
-                                $dateStr = $day->toDateString();
-                                $isToday = $day->isToday();
-                                $isPast = $day->isPast() && !$isToday;
+                        <!-- Cells -->
+                        @foreach($days as $day)
+                            @if($day === null)
+                                <div class="lyb-cal-cell empty"></div>
+                            @else
+                                @php
+                                    $dateStr = $day->toDateString();
+                                    $isToday = $day->isToday();
+                                    $isPast = $day->isPast() && !$isToday;
 
-                                $slotsData = [];
-                                foreach(['pagi', 'siang'] as $slot) {
-                                    $schedKey = $dateStr . '_' . $slot;
-                                    $schedule = $schedules->get($schedKey)?->first();
+                                    $slotsData = [];
+                                    foreach(['pagi', 'siang'] as $slot) {
+                                        $schedKey = $dateStr . '_' . $slot;
+                                        $schedule = $schedules->get($schedKey)?->first();
 
-                                    // Bookings count for regular
-                                    $regBookings = $bookings->get($schedKey) ?? collect([]);
-                                    $bookedCount = $regBookings->count();
+                                        // Bookings count for regular
+                                        $regBookings = $bookings->get($schedKey) ?? collect([]);
+                                        $bookedCount = $regBookings->count();
 
-                                    // Check if blocked by wedding/prewedding booking
-                                    $wedBook = $weddingBookings->get($schedKey)?->first();
+                                        // Check if blocked by wedding/prewedding booking
+                                        $wedBook = $weddingBookings->get($schedKey)?->first();
 
-                                    $status = 'belum';
-                                    $kuota = $schedule ? $schedule->kuota : 3; // default regular kuota is 3
+                                        $status = 'belum';
+                                        $kuota = $schedule ? $schedule->kuota : 3; // default regular kuota is 3
 
-                                    if ($wedBook) {
-                                        $status = 'wedding_blocked';
-                                    } elseif ($schedule) {
-                                        $status = $schedule->status;
-                                        if ($status == 'tersedia' && $bookedCount >= $kuota) {
-                                            $status = 'penuh';
+                                        if ($wedBook) {
+                                            $status = 'wedding_blocked';
+                                        } elseif ($schedule) {
+                                            $status = $schedule->status;
+                                            if ($status == 'tersedia' && $bookedCount >= $kuota) {
+                                                $status = 'penuh';
+                                            }
+                                        } else {
+                                            $status = 'diblokir'; // default is blocked/closed from the start
                                         }
-                                    } else {
-                                        $status = 'diblokir'; // default is blocked/closed from the start
+
+                                        $slotsData[$slot] = [
+                                            'status' => $status,
+                                            'db_status' => $schedule ? $schedule->status : 'diblokir',
+                                            'kuota' => $kuota,
+                                            'booked_count' => $bookedCount,
+                                            'jam_mulai' => $schedule ? $schedule->jam_mulai->format('H:i') : ($slot == 'pagi' ? '06:00' : ($slot == 'siang' ? '12:00' : '17:00')),
+                                            'jam_selesai' => $schedule ? $schedule->jam_selesai->format('H:i') : ($slot == 'pagi' ? '11:00' : ($slot == 'siang' ? '16:00' : '21:00')),
+                                            'catatan' => $schedule ? $schedule->catatan : '',
+                                            'wedding_blocked' => $wedBook ? 1 : 0,
+                                            'wedding_booking_details' => $wedBook ? $wedBook->booking_code . ' - ' . ($wedBook->user->name ?? '') : '',
+                                        ];
                                     }
+                                @endphp
 
-                                    $slotsData[$slot] = [
-                                        'status' => $status,
-                                        'db_status' => $schedule ? $schedule->status : 'diblokir',
-                                        'kuota' => $kuota,
-                                        'booked_count' => $bookedCount,
-                                        'jam_mulai' => $schedule ? $schedule->jam_mulai->format('H:i') : ($slot == 'pagi' ? '06:00' : ($slot == 'siang' ? '12:00' : '17:00')),
-                                        'jam_selesai' => $schedule ? $schedule->jam_selesai->format('H:i') : ($slot == 'pagi' ? '11:00' : ($slot == 'siang' ? '16:00' : '21:00')),
-                                        'catatan' => $schedule ? $schedule->catatan : '',
-                                        'wedding_blocked' => $wedBook ? 1 : 0,
-                                        'wedding_booking_details' => $wedBook ? $wedBook->booking_code . ' - ' . ($wedBook->user->name ?? '') : '',
-                                    ];
-                                }
-                            @endphp
+                                <div class="lyb-cal-cell {{ $isToday ? 'today' : '' }} {{ $isPast ? 'past' : '' }}"
+                                     onclick="openModal('{{ $dateStr }}', '{{ $day->translatedFormat('d F Y') }}', '{{ $isPast ? 1 : 0 }}')"
+                                     id="cell_{{ $dateStr }}"
+                                     data-date="{{ $dateStr }}"
+                                     data-slots="{{ json_encode($slotsData) }}">
 
-                            <div class="lyb-cal-cell {{ $isToday ? 'today' : '' }} {{ $isPast ? 'past' : '' }}"
-                                 onclick="openModal('{{ $dateStr }}', '{{ $day->translatedFormat('d F Y') }}', '{{ $isPast ? 1 : 0 }}')"
-                                 id="cell_{{ $dateStr }}"
-                                 data-date="{{ $dateStr }}"
-                                 data-slots="{{ json_encode($slotsData) }}">
+                                    <div class="lyb-cal-date">
+                                        {{ $day->day }}
+                                        @if($isToday)
+                                            <span class="lyb-cal-today-dot"></span>
+                                        @endif
+                                    </div>
 
-                                <div class="lyb-cal-date">
-                                    {{ $day->day }}
-                                    @if($isToday)
-                                        <span class="lyb-cal-today-dot"></span>
-                                    @endif
+                                    <div class="lyb-cal-slots">
+                                        @foreach(['pagi', 'siang'] as $slot)
+                                            @php
+                                                $sInfo = $slotsData[$slot];
+                                                $pillClass = $sInfo['wedding_blocked'] ? 'wedding-block' : ($sInfo['status'] == 'penuh' ? 'penuh' : ($sInfo['status'] == 'diblokir' ? 'diblokir' : 'tersedia'));
+
+                                                if ($sInfo['wedding_blocked']) {
+                                                    $qtyLabel = 'BLOCKED MUA';
+                                                } elseif ($sInfo['status'] == 'diblokir') {
+                                                    $qtyLabel = 'BLOK';
+                                                } else {
+                                                    $qtyLabel = $sInfo['booked_count'] . '/' . $sInfo['kuota'];
+                                                }
+
+                                                $titleAttr = '';
+                                                if ($sInfo['wedding_blocked']) {
+                                                    $titleAttr = 'Terblokir Booking Wedding: ' . $sInfo['wedding_booking_details'];
+                                                } elseif ($sInfo['status'] == 'penuh') {
+                                                    $titleAttr = 'Kuota penuh (' . $sInfo['booked_count'] . '/' . $sInfo['kuota'] . ')';
+                                                } elseif ($sInfo['catatan']) {
+                                                    $titleAttr = 'Catatan: ' . $sInfo['catatan'];
+                                                }
+                                            @endphp
+                                            <div class="lyb-slot-pill {{ $pillClass }}" {!! $titleAttr ? 'title="' . e($titleAttr) . '"' : '' !!}>
+                                                <span>{{ strtoupper($slot) }}</span>
+                                                <span class="lyb-slot-qty">{{ $qtyLabel }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
-
-                                <div class="lyb-cal-slots">
-                                    @foreach(['pagi', 'siang'] as $slot)
-                                        @php
-                                            $sInfo = $slotsData[$slot];
-                                            $pillClass = $sInfo['wedding_blocked'] ? 'wedding-block' : ($sInfo['status'] == 'penuh' ? 'penuh' : ($sInfo['status'] == 'diblokir' ? 'diblokir' : 'tersedia'));
-
-                                            if ($sInfo['wedding_blocked']) {
-                                                $qtyLabel = 'BLOCKED MUA';
-                                            } elseif ($sInfo['status'] == 'diblokir') {
-                                                $qtyLabel = 'BLOK';
-                                            } else {
-                                                $qtyLabel = $sInfo['booked_count'] . '/' . $sInfo['kuota'];
-                                            }
-
-                                            $titleAttr = '';
-                                            if ($sInfo['wedding_blocked']) {
-                                                $titleAttr = 'Terblokir Booking Wedding: ' . $sInfo['wedding_booking_details'];
-                                            } elseif ($sInfo['status'] == 'penuh') {
-                                                $titleAttr = 'Kuota penuh (' . $sInfo['booked_count'] . '/' . $sInfo['kuota'] . ')';
-                                            } elseif ($sInfo['catatan']) {
-                                                $titleAttr = 'Catatan: ' . $sInfo['catatan'];
-                                            }
-                                        @endphp
-                                        <div class="lyb-slot-pill {{ $pillClass }}" {!! $titleAttr ? 'title="' . e($titleAttr) . '"' : '' !!}>
-                                            <span>{{ strtoupper($slot) }}</span>
-                                            <span class="lyb-slot-qty">{{ $qtyLabel }}</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-                    @endforeach
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
             </div>
             @endforeach
         </div>
     </section>
 
+    @push('modals')
     {{-- Schedule Modal --}}
     <div class="modal fade lyb-sched-modal" id="scheduleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered">
@@ -179,7 +182,7 @@
                         </div>
 
                         <div class="d-flex flex-column gap-3">
-                            @foreach(['pagi', 'siang', 'sore'] as $slot)
+                            @foreach(['pagi', 'siang'] as $slot)
                                 <div class="lyb-slot-config" id="config-card-{{ $slot }}">
                                     <div class="lyb-slot-config-head" onclick="toggleActiveSlot('{{ $slot }}')">
                                         <div class="lyb-slot-title">
@@ -257,6 +260,7 @@
         <input type="hidden" name="category_type" value="regular">
         <input type="hidden" name="tanggal" id="reset-tanggal">
     </form>
+    @endpush
 
     <script>
         let myModal;
