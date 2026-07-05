@@ -410,13 +410,22 @@ class OwnerScheduleController extends Controller
                             'status' => $status,
                         ]);
                     } else {
+                        $kuota = 1;
+                        if ($categoryType === 'baju') {
+                            $kuota = 5;
+                        } elseif ($categoryType === 'regular') {
+                            $kuota = 3;
+                        } elseif ($categoryType === 'wedding_prewedding') {
+                            $kuota = ($jenis === 'pagi') ? 2 : 1;
+                        }
+
                         Schedule::create([
                             'category_id' => $catId,
                             'tanggal' => $tanggal,
                             'jenis_jadwal' => $jenis,
                             'jam_mulai' => $times['start'],
                             'jam_selesai' => $times['end'],
-                            'kuota' => $categoryType === 'baju' ? 5 : 1,
+                            'kuota' => $kuota,
                             'terpakai' => 0,
                             'status' => $status,
                             'created_by' => Auth::id(),

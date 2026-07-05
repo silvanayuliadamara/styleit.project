@@ -44,81 +44,84 @@
                 $days = $gridData['days'];
                 $monthName = $gridData['monthName'];
             @endphp
-            <div class="col-12 col-xl-6">
+            <div class="col-12 col-xxl-6">
                 <h5 class="fw-bold mb-3" style="color: #211313;">{{ $monthName }}</h5>
-                <div class="lyb-cal-grid shadow-sm p-3 bg-white" style="border-radius: 20px; border: 1px solid #eadfd6;">
-                    <!-- Days Headers -->
-                    @foreach(['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $dayName)
-                        <div class="lyb-cal-dayname">{{ $dayName }}</div>
-                    @endforeach
+                <div style="overflow-x: auto; border-radius: 20px; border: 1px solid #eadfd6; background: #fff;" class="shadow-sm">
+                    <div class="lyb-cal-grid p-3 bg-white">
+                        <!-- Days Headers -->
+                        @foreach(['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $dayName)
+                            <div class="lyb-cal-dayname">{{ $dayName }}</div>
+                        @endforeach
 
-                    <!-- Cells -->
-                    @foreach($days as $day)
-                        @if($day === null)
-                            <div class="lyb-cal-cell empty"></div>
-                        @else
-                            @php
-                                $dateStr = $day->toDateString();
-                                $isToday = $day->isToday();
-                                $isPast = $day->isPast() && !$isToday;
+                        <!-- Cells -->
+                        @foreach($days as $day)
+                            @if($day === null)
+                                <div class="lyb-cal-cell empty"></div>
+                            @else
+                                @php
+                                    $dateStr = $day->toDateString();
+                                    $isToday = $day->isToday();
+                                    $isPast = $day->isPast() && !$isToday;
 
-                                // Schedules for Baju on this date
-                                $bajuSchedObj = $schedules->get($dateStr)?->first();
+                                    // Schedules for Baju on this date
+                                    $bajuSchedObj = $schedules->get($dateStr)?->first();
 
-                                // Bookings count on this date based on tanggal_fitting
-                                $bajuBookings = $bookings->get($dateStr) ?? collect([]);
-                                $bookedCount = $bajuBookings->count();
+                                    // Bookings count on this date based on tanggal_fitting
+                                    $bajuBookings = $bookings->get($dateStr) ?? collect([]);
+                                    $bookedCount = $bajuBookings->count();
 
-                                $quota = $bajuSchedObj ? $bajuSchedObj->kuota : 5; // default baju kuota is 5
-                                $status = $bajuSchedObj ? $bajuSchedObj->status : 'tersedia';
+                                    $quota = $bajuSchedObj ? $bajuSchedObj->kuota : 5; // default baju kuota is 5
+                                    $status = $bajuSchedObj ? $bajuSchedObj->status : 'tersedia';
 
-                                if ($status === 'tersedia' && $bookedCount >= $quota) {
-                                    $status = 'penuh';
-                                }
+                                    if ($status === 'tersedia' && $bookedCount >= $quota) {
+                                        $status = 'penuh';
+                                    }
 
-                                $slotsData = [
-                                    'baju' => [
-                                        'status' => $status,
-                                        'kuota' => $quota,
-                                        'booked_count' => $bookedCount,
-                                        'jam_mulai' => $bajuSchedObj ? $bajuSchedObj->jam_mulai->format('H:i') : '08:00',
-                                        'jam_selesai' => $bajuSchedObj ? $bajuSchedObj->jam_selesai->format('H:i') : '17:00',
-                                        'catatan' => $bajuSchedObj ? $bajuSchedObj->catatan : '',
-                                    ]
-                                ];
+                                    $slotsData = [
+                                        'baju' => [
+                                            'status' => $status,
+                                            'kuota' => $quota,
+                                            'booked_count' => $bookedCount,
+                                            'jam_mulai' => $bajuSchedObj ? $bajuSchedObj->jam_mulai->format('H:i') : '08:00',
+                                            'jam_selesai' => $bajuSchedObj ? $bajuSchedObj->jam_selesai->format('H:i') : '17:00',
+                                            'catatan' => $bajuSchedObj ? $bajuSchedObj->catatan : '',
+                                        ]
+                                    ];
 
-                                $pillClass = ($status == 'penuh' ? 'penuh' : ($status == 'diblokir' ? 'diblokir' : 'tersedia'));
-                                $qtyLabel = ($status == 'diblokir' ? 'BLOK' : $bookedCount . '/' . $quota);
-                            @endphp
+                                    $pillClass = ($status == 'penuh' ? 'penuh' : ($status == 'diblokir' ? 'diblokir' : 'tersedia'));
+                                    $qtyLabel = ($status == 'diblokir' ? 'BLOK' : $bookedCount . '/' . $quota);
+                                @endphp
 
-                            <div class="lyb-cal-cell {{ $isToday ? 'today' : '' }} {{ $isPast ? 'past' : '' }}"
-                                 onclick="openModal('{{ $dateStr }}', '{{ $day->translatedFormat('d F Y') }}', '{{ $isPast ? 1 : 0 }}')"
-                                 id="cell_{{ $dateStr }}"
-                                 data-date="{{ $dateStr }}"
-                                 data-slots="{{ json_encode($slotsData) }}">
+                                <div class="lyb-cal-cell {{ $isToday ? 'today' : '' }} {{ $isPast ? 'past' : '' }}"
+                                     onclick="openModal('{{ $dateStr }}', '{{ $day->translatedFormat('d F Y') }}', '{{ $isPast ? 1 : 0 }}')"
+                                     id="cell_{{ $dateStr }}"
+                                     data-date="{{ $dateStr }}"
+                                     data-slots="{{ json_encode($slotsData) }}">
 
-                                <div class="lyb-cal-date">
-                                    {{ $day->day }}
-                                    @if($isToday)
-                                        <span class="lyb-cal-today-dot"></span>
-                                    @endif
-                                </div>
+                                    <div class="lyb-cal-date">
+                                        {{ $day->day }}
+                                        @if($isToday)
+                                            <span class="lyb-cal-today-dot"></span>
+                                        @endif
+                                    </div>
 
-                                <div class="lyb-cal-slots">
-                                    <div class="lyb-slot-pill {{ $pillClass }}">
-                                        <span>BAJU</span>
-                                        <span class="lyb-slot-qty">{{ $qtyLabel }}</span>
+                                    <div class="lyb-cal-slots">
+                                        <div class="lyb-slot-pill {{ $pillClass }}">
+                                            <span>BAJU</span>
+                                            <span class="lyb-slot-qty">{{ $qtyLabel }}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endif
-                    @endforeach
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
             </div>
             @endforeach
         </div>
     </section>
 
+    @push('modals')
     {{-- Schedule Modal --}}
     <div class="modal fade lyb-sched-modal" id="scheduleModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-md modal-dialog-centered">
@@ -211,6 +214,7 @@
         <input type="hidden" name="category_type" value="baju">
         <input type="hidden" name="tanggal" id="reset-tanggal">
     </form>
+    @endpush
 
     <script>
         let myModal;

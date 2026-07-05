@@ -200,7 +200,7 @@ class OwnerBookingController extends Controller
 
     public function laporan(Request $request)
     {
-        $bookings = Booking::with(['user', 'package.items', 'addons'])
+        $bookings = Booking::with(['user', 'package.items', 'addons', 'payments'])
             ->whereNotIn('status', Booking::CANCELLED_STATUSES)
             ->get();
 
@@ -258,7 +258,7 @@ class OwnerBookingController extends Controller
 
     public function exportLaporanCsv()
     {
-        $bookings = Booking::with(['user', 'package.items', 'addons'])
+        $bookings = Booking::with(['user', 'package.items', 'addons', 'payments'])
             ->whereNotIn('status', Booking::CANCELLED_STATUSES)
             ->get();
 

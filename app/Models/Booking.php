@@ -115,10 +115,10 @@ class Booking extends Model
 
     public function getGatewayFeeAttribute(): int
     {
-        $hasOnlinePayment = $this->payments()
+        $hasOnlinePayment = $this->payments
             ->whereNull('proof_image')
             ->where('status', 'diterima')
-            ->exists();
+            ->isNotEmpty();
 
         return $hasOnlinePayment ? (int) config('services.midtrans.gateway_fee', 4400) : 0;
     }

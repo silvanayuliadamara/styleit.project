@@ -181,8 +181,9 @@
 /* Calendar Grid */
 .lyb-cal-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 6px;
+    min-width: 680px;
 }
 
 .lyb-cal-dayname {
@@ -201,7 +202,7 @@
     background: #fff;
     border: 1px solid #eadfd6;
     border-radius: 16px;
-    padding: 12px;
+    padding: 10px 8px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
@@ -260,13 +261,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 3px 7px;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 3px 6px;
     border-radius: 6px;
     font-family: Arial, sans-serif;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.3px;
-    line-height: 1;
+    line-height: 1.2;
 }
 
 .lyb-slot-pill .lyb-slot-qty {
@@ -511,6 +514,7 @@
 @media (max-width: 768px) {
     .lyb-cal-grid {
         gap: 4px;
+        min-width: 100%;
     }
 
     .lyb-cal-cell {
