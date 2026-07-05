@@ -200,6 +200,9 @@ class OwnerBookingController extends Controller
 
     public function laporan(Request $request)
     {
+        // Berikan waktu eksekusi lebih lama (120 detik) karena latency database remote (Clever Cloud) sangat tinggi
+        set_time_limit(120);
+
         $bookings = Booking::with(['user', 'package.items', 'addons'])
             ->whereNotIn('status', Booking::CANCELLED_STATUSES)
             ->get();
