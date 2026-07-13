@@ -115,23 +115,16 @@
                                         @foreach(['pagi', 'siang'] as $slot)
                                             @php
                                                 $sInfo = $slotsData[$slot];
-                                                $isPenuh = $sInfo['booked_count'] >= $sInfo['kuota'];
-                                                $pillClass = $isPenuh ? 'penuh' : ($sInfo['status'] == 'diblokir' ? 'diblokir' : 'tersedia');
+                                                $pillClass = ($sInfo['status'] == 'diblokir' ? 'diblokir' : 'tersedia');
 
                                                 if ($sInfo['status'] == 'diblokir') {
                                                     $qtyLabel = 'BLOK';
-                                                } elseif ($isPenuh) {
-                                                    $qtyLabel = 'BOOKED';
-                                                } elseif ($sInfo['booked_count'] > 0) {
-                                                    $qtyLabel = $sInfo['booked_count'] . '/' . $sInfo['kuota'];
                                                 } else {
                                                     $qtyLabel = 'BUKA';
                                                 }
 
                                                 $titleAttr = '';
-                                                if ($sInfo['booked_count'] > 0) {
-                                                    $titleAttr = 'Booked: ' . $sInfo['booking_details'];
-                                                } elseif ($sInfo['catatan']) {
+                                                if ($sInfo['catatan']) {
                                                     $titleAttr = 'Catatan: ' . $sInfo['catatan'];
                                                 }
                                             @endphp

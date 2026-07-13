@@ -89,10 +89,11 @@ class OwnerScheduleController extends Controller
             });
 
         // Get bookings (active only)
-        $bookings = Booking::whereIn('package_id', function ($q) use ($weddingCat, $preweddingCat) {
-            $q->select('id')->from('service_packages')
-                ->whereIn('category_id', [$weddingCat->id, $preweddingCat->id]);
-        })
+        $bookings = Booking::with('schedule')
+            ->whereIn('package_id', function ($q) use ($weddingCat, $preweddingCat) {
+                $q->select('id')->from('service_packages')
+                    ->whereIn('category_id', [$weddingCat->id, $preweddingCat->id]);
+            })
             ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
             ->whereBetween('tanggal_acara', [$startDate, $endDate])
             ->get()
@@ -151,26 +152,10 @@ class OwnerScheduleController extends Controller
             });
 
         // Bookings for regular
-        $bookings = Booking::whereIn('package_id', function ($q) use ($regularCat) {
-            $q->select('id')->from('service_packages')->where('category_id', $regularCat->id);
-        })
-            ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
-            ->whereBetween('tanggal_acara', [$startDate, $endDate])
-            ->get()
-            ->groupBy(function ($item) {
-                $date = $item->tanggal_acara ? $item->tanggal_acara->toDateString() : ($item->booking_date ? $item->booking_date->toDateString() : null);
-                if (! $date && $item->schedule) {
-                    $date = $item->schedule->tanggal->toDateString();
-                }
-
-                return $date.'_'.($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
-            });
-
-        // Wedding/Prewedding bookings on these days (to auto-block regular)
-        $weddingBookings = Booking::whereIn('package_id', function ($q) use ($weddingCat, $preweddingCat) {
-            $q->select('id')->from('service_packages')
-                ->whereIn('category_id', [$weddingCat?->id ?? 0, $preweddingCat?->id ?? 0]);
-        })
+        $bookings = Booking::with('schedule')
+            ->whereIn('package_id', function ($q) use ($regularCat) {
+                $q->select('id')->from('service_packages')->where('category_id', $regularCat->id);
+            })
             ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
             ->whereBetween('tanggal_acara', [$startDate, $endDate])
             ->get()
@@ -191,7 +176,7 @@ class OwnerScheduleController extends Controller
             'regularCat' => $regularCat,
             'schedules' => $schedules,
             'bookings' => $bookings,
-            'weddingBookings' => $weddingBookings,
+            'weddingBookings' => collect([]),
         ]);
     }
 
@@ -299,13 +284,19 @@ class OwnerScheduleController extends Controller
         }
 
         DB::transaction(function () use ($categoryIds, $tanggal, $slots) {
+            // Eager load all existing schedules for these categories on this date in 1 query
+            $existingSchedules = Schedule::whereIn('category_id', $categoryIds)
+                ->whereDate('tanggal', $tanggal)
+                ->get()
+                ->groupBy(function($item) {
+                    return $item->category_id . '_' . $item->jenis_jadwal;
+                });
+
             foreach ($categoryIds as $catId) {
                 foreach ($slots as $jenisJadwal => $slotData) {
-                    // Cek jika schedule sudah ada
-                    $schedule = Schedule::where('category_id', $catId)
-                        ->where('tanggal', $tanggal)
-                        ->where('jenis_jadwal', $jenisJadwal)
-                        ->first();
+                    // Check in memory
+                    $key = $catId . '_' . $jenisJadwal;
+                    $schedule = isset($existingSchedules[$key]) ? $existingSchedules[$key]->first() : null;
 
                     // Get default times if null/missing
                     $defaultTimes = [
@@ -401,7 +392,7 @@ class OwnerScheduleController extends Controller
             foreach ($categoryIds as $catId) {
                 foreach ($defaultSlots as $jenis => $times) {
                     $schedule = Schedule::where('category_id', $catId)
-                        ->where('tanggal', $tanggal)
+                        ->whereDate('tanggal', $tanggal)
                         ->where('jenis_jadwal', $jenis)
                         ->first();
 
@@ -478,7 +469,7 @@ class OwnerScheduleController extends Controller
         DB::transaction(function () use ($categoryIds, $tanggal) {
             // Kita hanya hapus schedule yang terpakai-nya 0 (tidak ada booking)
             Schedule::whereIn('category_id', $categoryIds)
-                ->where('tanggal', $tanggal)
+                ->whereDate('tanggal', $tanggal)
                 ->where('terpakai', 0)
                 ->delete();
         });

@@ -300,8 +300,9 @@
 }
 
 .lyb-slot-pill.wedding-block {
-    background: #fff4cc;
-    color: #896414;
+    background: #e8e4e4;
+    color: #888;
+    text-decoration: line-through;
 }
 
 /* =========================

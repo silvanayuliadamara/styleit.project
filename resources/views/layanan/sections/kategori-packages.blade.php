@@ -107,8 +107,60 @@
                                     </div>
                                 @endforeach
                             </div>
-                        </div>
+                 @endif
+
+                {{-- 3. Paket Wedding Lainnya (Fallback) --}}
+                @php
+                    $otherPackages = $category->packages->diff($makeupAndAttire)->diff($makeupOnly);
+                @endphp
+
+                @if($otherPackages->isNotEmpty())
+                    <div class="col-12 mb-3 mt-5 scroll-reveal">
+                        <h2 class="fw-bold text-gold-dark" style="font-family: Georgia, serif;">Wedding Packages</h2>
+                        <div class="pricelist-divider" style="height: 1px; background: linear-gradient(90deg, #d4b87a 0%, #eadfd6 60%, transparent 100%); width: 100%; margin-bottom: 20px;"></div>
                     </div>
+                    @foreach($otherPackages as $package)
+                        <div class="col-md-6 col-lg-4 scroll-reveal delay-{{ (($loop->index % 3) + 1) * 100 }} mb-4">
+                            <div class="price-card h-100">
+                                {{-- Package Image --}}
+                                <div class="pkg-img-wrap">
+                                    @if($package->image)
+                                        <img src="{{ str_starts_with($package->image, 'images/') ? asset($package->image) : asset('storage/' . $package->image) }}" alt="{{ $package->name }}">
+                                    @else
+                                        <div class="pkg-no-img">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="text-center mb-2">
+                                    <small>{{ $category->name }}</small>
+                                    <h3 class="mt-1" style="font-size: 21px;">{{ $package->name }}</h3>
+                                </div>
+
+                                <p class="text-center px-1" style="font-size: 13.5px; line-height: 1.6; color: #6f625c; min-height: 44px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ $package->description }}</p>
+
+                                <div class="pkg-divider"><i class="bi bi-suit-diamond-fill"></i></div>
+
+                                <div class="pkg-price-block">
+                                    <div class="price">Rp{{ number_format($package->price, 0, ',', '.') }}</div>
+                                    <div class="dp">DP Rp{{ number_format($package->dp_amount, 0, ',', '.') }}</div>
+                                </div>
+
+                                <div class="pkg-divider"><i class="bi bi-suit-diamond-fill"></i></div>
+
+                                @if($package->items->count())
+                                    <ul class="mini-list mb-4 px-1">
+                                        @foreach($package->items as $item)
+                                            <li>{{ $item->name }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+
+                                <a href="{{ route('paket.show', $package->code) }}" class="btn-dark-custom w-100 text-center mt-auto">Pesan Sekarang</a>
+                            </div>
+                        </div>
+                    @endforeach
                 @endif
 
 

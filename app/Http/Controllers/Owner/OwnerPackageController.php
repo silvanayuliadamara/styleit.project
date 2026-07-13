@@ -45,7 +45,7 @@ class OwnerPackageController extends Controller
             'softlens_wajib_pilih' => 'nullable|boolean',
             'status' => 'required|in:aktif,nonaktif',
             'sort_order' => 'nullable|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
 
             // Items
             'items' => 'nullable|array',
@@ -58,7 +58,14 @@ class OwnerPackageController extends Controller
         ]);
 
         DB::transaction(function () use ($request, $validated) {
-            $validated['slug'] = Str::slug($validated['name']);
+            $slug = Str::slug($validated['name']);
+            $originalSlug = $slug;
+            $count = 1;
+            while (ServicePackage::where('slug', $slug)->exists()) {
+                $slug = $originalSlug . '-' . $count;
+                $count++;
+            }
+            $validated['slug'] = $slug;
             $validated['is_popular'] = $request->has('is_popular');
             $validated['butuh_makeup'] = $request->has('butuh_makeup');
             $validated['butuh_baju'] = $request->has('butuh_baju');
@@ -119,7 +126,7 @@ class OwnerPackageController extends Controller
             'softlens_wajib_pilih' => 'nullable|boolean',
             'status' => 'required|in:aktif,nonaktif',
             'sort_order' => 'nullable|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
 
             // Items
             'items' => 'nullable|array',
@@ -132,7 +139,14 @@ class OwnerPackageController extends Controller
         ]);
 
         DB::transaction(function () use ($request, $validated, $package) {
-            $validated['slug'] = Str::slug($validated['name']);
+            $slug = Str::slug($validated['name']);
+            $originalSlug = $slug;
+            $count = 1;
+            while (ServicePackage::where('slug', $slug)->where('id', '!=', $package->id)->exists()) {
+                $slug = $originalSlug . '-' . $count;
+                $count++;
+            }
+            $validated['slug'] = $slug;
             $validated['is_popular'] = $request->has('is_popular');
             $validated['butuh_makeup'] = $request->has('butuh_makeup');
             $validated['butuh_baju'] = $request->has('butuh_baju');

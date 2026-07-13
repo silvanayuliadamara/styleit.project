@@ -100,19 +100,29 @@
             <div class="row">
                 <div class="col-md-6 form-group-premium">
                     <label for="password">Kata Sandi Baru</label>
-                    <input type="password" id="password" name="password" 
-                           class="form-control form-control-premium @error('password') is-invalid @enderror" 
-                           placeholder="Minimal 8 karakter">
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" 
+                               class="form-control form-control-premium @error('password') is-invalid @enderror" 
+                               placeholder="Minimal 8 karakter">
+                        <button type="button" class="toggle-password" onclick="toggleProfilePassword('password', this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                     @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback d-block" style="margin-top: 6px;">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="col-md-6 form-group-premium">
                     <label for="password_confirmation">Konfirmasi Kata Sandi Baru</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" 
-                           class="form-control form-control-premium" 
-                           placeholder="Ulangi kata sandi baru">
+                    <div class="password-wrapper">
+                        <input type="password" id="password_confirmation" name="password_confirmation" 
+                               class="form-control form-control-premium" 
+                               placeholder="Ulangi kata sandi baru">
+                        <button type="button" class="toggle-password" onclick="toggleProfilePassword('password_confirmation', this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -124,4 +134,25 @@
         </form>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        function toggleProfilePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+
+            if (!input || !icon) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        }
+    </script>
+@endpush
 @endsection

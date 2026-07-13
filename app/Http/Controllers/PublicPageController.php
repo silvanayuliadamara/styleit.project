@@ -43,7 +43,7 @@ class PublicPageController extends Controller
     {
         $slugOrder = ['prewedding' => 1, 'wedding' => 2, 'baju' => 3, 'regular' => 4];
         $categories = ServiceCategory::with(['packages' => function ($q) {
-            $q->orderBy('price', 'desc');
+            $q->where('status', 'aktif')->orderBy('price', 'desc');
         }])->get()->sortBy(function ($cat) use ($slugOrder) {
             return $slugOrder[$cat->slug] ?? 99;
         })->values();
@@ -54,7 +54,7 @@ class PublicPageController extends Controller
     public function kategori(string $slug)
     {
         $category = ServiceCategory::with(['packages' => function ($q) {
-            $q->orderBy('price', 'desc');
+            $q->where('status', 'aktif')->orderBy('price', 'desc');
         }])->where('slug', $slug)->first();
 
         abort_if(! $category, Response::HTTP_NOT_FOUND);
@@ -129,12 +129,12 @@ class PublicPageController extends Controller
     {
         $slugOrder = ['prewedding' => 1, 'wedding' => 2, 'baju' => 3, 'regular' => 4];
         $categories = ServiceCategory::with(['packages' => function ($q) {
-            $q->orderBy('price', 'desc');
+            $q->where('status', 'aktif')->orderBy('price', 'desc');
         }])->get()->sortBy(function ($cat) use ($slugOrder) {
             return $slugOrder[$cat->slug] ?? 99;
         })->values();
 
-        $packages = ServicePackage::with('category')->orderBy('price', 'desc')->get();
+        $packages = ServicePackage::with('category')->where('status', 'aktif')->orderBy('price', 'desc')->get();
 
         return view('pricelist', compact('categories', 'packages'));
     }

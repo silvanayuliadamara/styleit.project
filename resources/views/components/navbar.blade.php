@@ -114,11 +114,6 @@
                             {{-- Menu khusus customer --}}
                             @if ($user->hasRole('customer'))
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('customer.bookings.index') }}">
-                                        <i class="bi bi-calendar-check me-2"></i> Riwayat Booking
-                                    </a>
-                                </li>
-                                <li>
                                     <a class="dropdown-item" href="{{ route('customer.cart.index') }}">
                                         <i class="bi bi-bag me-2"></i> Keranjang
                                     </a>

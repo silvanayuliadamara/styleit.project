@@ -88,8 +88,8 @@
                                         ]
                                     ];
 
-                                    $pillClass = ($status == 'penuh' ? 'penuh' : ($status == 'diblokir' ? 'diblokir' : 'tersedia'));
-                                    $qtyLabel = ($status == 'diblokir' ? 'BLOK' : $bookedCount . '/' . $quota);
+                                    $pillClass = ($status == 'diblokir' ? 'diblokir' : 'tersedia');
+                                    $qtyLabel = ($status == 'diblokir' ? 'BLOK' : 'BUKA');
                                 @endphp
 
                                 <div class="lyb-cal-cell {{ $isToday ? 'today' : '' }} {{ $isPast ? 'past' : '' }}"

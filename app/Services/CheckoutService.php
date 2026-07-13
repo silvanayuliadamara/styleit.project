@@ -177,7 +177,9 @@ class CheckoutService
                                 $requestedInCurrent2++;
                             }
 
-                            if (($activeCount2 + $requestedInCurrent2) > $maxBookings) {
+                            $maxBookings2 = ($item['slot_waktu_2'] === 'pagi') ? 2 : 1;
+
+                            if (($activeCount2 + $requestedInCurrent2) > $maxBookings2) {
                                 throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu_2']) . " pada tanggal " . $item['booking_date_2'] . " (Tanggal 2) sudah dibooking pelanggan lain.");
                             }
 
@@ -194,7 +196,7 @@ class CheckoutService
                                     'jenis_jadwal' => $item['slot_waktu_2'],
                                     'jam_mulai' => $item['slot_waktu_2'] == 'pagi' ? '06:00' : '12:00',
                                     'jam_selesai' => $item['slot_waktu_2'] == 'pagi' ? '11:00' : '16:00',
-                                    'kuota' => $maxBookings,
+                                    'kuota' => $maxBookings2,
                                     'terpakai' => 0,
                                     'status' => 'tersedia',
                                     'created_by' => Auth::id(),
@@ -244,7 +246,9 @@ class CheckoutService
                                 $requestedInCurrent3++;
                             }
 
-                            if (($activeCount3 + $requestedInCurrent3) > $maxBookings) {
+                            $maxBookings3 = ($item['slot_waktu_3'] === 'pagi') ? 2 : 1;
+
+                            if (($activeCount3 + $requestedInCurrent3) > $maxBookings3) {
                                 throw new \Exception("Slot waktu " . ucfirst($item['slot_waktu_3']) . " pada tanggal " . $item['booking_date_3'] . " (Tanggal 3) sudah dibooking pelanggan lain.");
                             }
 
@@ -261,7 +265,7 @@ class CheckoutService
                                     'jenis_jadwal' => $item['slot_waktu_3'],
                                     'jam_mulai' => $item['slot_waktu_3'] == 'pagi' ? '06:00' : '12:00',
                                     'jam_selesai' => $item['slot_waktu_3'] == 'pagi' ? '11:00' : '16:00',
-                                    'kuota' => $maxBookings,
+                                    'kuota' => $maxBookings3,
                                     'terpakai' => 0,
                                     'status' => 'tersedia',
                                     'created_by' => Auth::id(),

@@ -76,15 +76,10 @@
                                         $regBookings = $bookings->get($schedKey) ?? collect([]);
                                         $bookedCount = $regBookings->count();
 
-                                        // Check if blocked by wedding/prewedding booking
-                                        $wedBook = $weddingBookings->get($schedKey)?->first();
-
                                         $status = 'belum';
                                         $kuota = $schedule ? $schedule->kuota : 3; // default regular kuota is 3
 
-                                        if ($wedBook) {
-                                            $status = 'wedding_blocked';
-                                        } elseif ($schedule) {
+                                        if ($schedule) {
                                             $status = $schedule->status;
                                             if ($status == 'tersedia' && $bookedCount >= $kuota) {
                                                 $status = 'penuh';
@@ -101,8 +96,8 @@
                                             'jam_mulai' => $schedule ? $schedule->jam_mulai->format('H:i') : ($slot == 'pagi' ? '06:00' : ($slot == 'siang' ? '12:00' : '17:00')),
                                             'jam_selesai' => $schedule ? $schedule->jam_selesai->format('H:i') : ($slot == 'pagi' ? '11:00' : ($slot == 'siang' ? '16:00' : '21:00')),
                                             'catatan' => $schedule ? $schedule->catatan : '',
-                                            'wedding_blocked' => $wedBook ? 1 : 0,
-                                            'wedding_booking_details' => $wedBook ? $wedBook->booking_code . ' - ' . ($wedBook->user->name ?? '') : '',
+                                            'wedding_blocked' => 0,
+                                            'wedding_booking_details' => '',
                                         ];
                                     }
                                 @endphp
@@ -124,22 +119,16 @@
                                         @foreach(['pagi', 'siang'] as $slot)
                                             @php
                                                 $sInfo = $slotsData[$slot];
-                                                $pillClass = $sInfo['wedding_blocked'] ? 'wedding-block' : ($sInfo['status'] == 'penuh' ? 'penuh' : ($sInfo['status'] == 'diblokir' ? 'diblokir' : 'tersedia'));
+                                                $pillClass = ($sInfo['status'] == 'diblokir' ? 'diblokir' : 'tersedia');
 
-                                                if ($sInfo['wedding_blocked']) {
-                                                    $qtyLabel = 'BLOCKED MUA';
-                                                } elseif ($sInfo['status'] == 'diblokir') {
+                                                if ($sInfo['status'] == 'diblokir') {
                                                     $qtyLabel = 'BLOK';
                                                 } else {
-                                                    $qtyLabel = $sInfo['booked_count'] . '/' . $sInfo['kuota'];
+                                                    $qtyLabel = 'BUKA';
                                                 }
 
                                                 $titleAttr = '';
-                                                if ($sInfo['wedding_blocked']) {
-                                                    $titleAttr = 'Terblokir Booking Wedding: ' . $sInfo['wedding_booking_details'];
-                                                } elseif ($sInfo['status'] == 'penuh') {
-                                                    $titleAttr = 'Kuota penuh (' . $sInfo['booked_count'] . '/' . $sInfo['kuota'] . ')';
-                                                } elseif ($sInfo['catatan']) {
+                                                if ($sInfo['catatan']) {
                                                     $titleAttr = 'Catatan: ' . $sInfo['catatan'];
                                                 }
                                             @endphp
@@ -191,7 +180,6 @@
                                             <span class="lyb-slot-time" id="time-display-{{ $slot }}">(00:00 - 00:00 WIB)</span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
-                                            <span id="badge-wedding-block-{{ $slot }}" class="lyb-slot-wedding-badge d-none"><i class="bi bi-shield-fill-exclamation"></i> Terblokir MUA Wedding</span>
                                             <span id="badge-booked-{{ $slot }}" class="lyb-slot-booked-badge d-none">Booked (<span id="booked-count-text-{{ $slot }}">0</span>)</span>
                                             <label class="lyb-sched-switch" id="switch-container-{{ $slot }}" onclick="event.stopPropagation()">
                                                 <input type="hidden" name="slots[{{ $slot }}][status]" value="diblokir">
@@ -336,7 +324,6 @@
                 const body = document.getElementById('config-body-' + slot);
                 const checkbox = document.getElementById('status-' + slot);
                 const switchContainer = document.getElementById('switch-container-' + slot);
-                const badgeWeddingBlock = document.getElementById('badge-wedding-block-' + slot);
                 const badgeBooked = document.getElementById('badge-booked-' + slot);
                 const bookedCountText = document.getElementById('booked-count-text-' + slot);
 
@@ -345,7 +332,6 @@
                 body.style.display = 'none';
                 checkbox.disabled = false;
                 checkbox.checked = (sInfo.db_status !== 'diblokir');
-                badgeWeddingBlock.classList.add('d-none');
                 badgeBooked.classList.add('d-none');
 
                 document.getElementById('kuota-' + slot).value = sInfo.kuota;
@@ -360,21 +346,15 @@
                     allBlocked = false;
                 }
 
-                // Apply locking for Wedding Block
-                if (sInfo.wedding_blocked) {
-                    card.classList.add('wedding-locked-slot');
-                    badgeWeddingBlock.classList.remove('d-none');
-                }
+                // Keep switch container visible and enabled for overriding
+                switchContainer.classList.remove('d-none');
+                checkbox.disabled = false;
 
                 // If booked, display count
                 if (sInfo.booked_count > 0) {
                     badgeBooked.classList.remove('d-none');
                     bookedCountText.innerText = sInfo.booked_count + '/' + sInfo.kuota;
                 }
-
-                // Keep switch container visible and enabled for overriding
-                switchContainer.classList.remove('d-none');
-                checkbox.disabled = false;
 
                 if (sInfo.db_status !== 'diblokir') {
                     card.classList.add('active-slot');

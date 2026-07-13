@@ -123,12 +123,6 @@
                                     <label class="form-check-label text-secondary" for="softlens_wajib_pilih">Customer wajib memilih opsi Softlens saat checkout</label>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="form-check form-switch py-1">
-                                    <input class="form-check-input" type="checkbox" name="is_popular" id="is_popular" value="1">
-                                    <label class="form-check-label text-secondary" for="is_popular">Tandai paket sebagai Populer (Rekomendasi)</label>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

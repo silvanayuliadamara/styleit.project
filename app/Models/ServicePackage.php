@@ -96,4 +96,32 @@ class ServicePackage extends Model
                 ->value('package_id');
         }) == $this->id;
     }
+
+    public function getIsPopularAttribute()
+    {
+        return \Cache::remember('popular_package_id_' . $this->id, 60, function () {
+            // 1. Dapatkan top 3 paket yang paling banyak dipesan
+            $topBookedIds = \App\Models\Booking::select('package_id')
+                ->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima', 'selesai'])
+                ->groupBy('package_id')
+                ->orderByRaw('COUNT(*) DESC')
+                ->take(3)
+                ->pluck('package_id')
+                ->toArray();
+
+            if (in_array($this->id, $topBookedIds)) {
+                return true;
+            }
+
+            // 2. Dapatkan rata-rata rating review untuk paket ini
+            $avgRating = $this->reviews()->where('status_review', 'tampil')->avg('rating');
+            $reviewsCount = $this->reviews()->where('status_review', 'tampil')->count();
+
+            if ($avgRating >= 4.5 && $reviewsCount >= 2) {
+                return true;
+            }
+
+            return false;
+        });
+    }
 }
