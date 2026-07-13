@@ -54,7 +54,7 @@
                         <div class="d-flex flex-column gap-3">
                             @foreach($cart as $item)
                                 <div class="booking-item-card">
-                                    <img src="{{ $item['package_image'] ? asset('storage/' . $item['package_image']) : asset('images/categories/wedding/cover.jpeg') }}" class="booking-item-img" alt="{{ $item['package_name'] }}">
+                                    <img src="{{ $item['package_image'] ? (str_starts_with($item['package_image'], 'images/') ? asset($item['package_image']) : asset('storage/' . $item['package_image'])) : asset('images/categories/wedding/cover.jpeg') }}" class="booking-item-img" alt="{{ $item['package_name'] }}">
                                     <div class="booking-item-info">
                                         <div class="booking-item-title">{{ $item['package_name'] }}</div>
                                         <div class="booking-item-meta">

@@ -32,7 +32,7 @@
             {{-- Image --}}
             <div class="cart-img-wrapper">
                 @if(!empty($item['package_image']))
-                    <img src="{{ asset('storage/' . $item['package_image']) }}" alt="{{ $item['package_name'] }}" class="cart-img">
+                    <img src="{{ str_starts_with($item['package_image'], 'images/') ? asset($item['package_image']) : asset('storage/' . $item['package_image']) }}" alt="{{ $item['package_name'] }}" class="cart-img">
                 @else
                     <div class="cart-img-placeholder">
                         <i class="bi bi-stars"></i>
