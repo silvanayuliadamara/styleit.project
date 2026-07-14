@@ -198,10 +198,22 @@
                     </div>
 
                     <div class="text-center pt-2">
-                        <span class="badge w-100 py-2 fs-6 {{ $booking->payment_status == 'lunas' ? 'bg-success' : ($booking->payment_status == 'dp_diterima' ? 'bg-info' : ($booking->payment_status == 'dp_diupload' ? 'bg-warning' : 'bg-secondary')) }}">
+                        <span class="badge w-100 py-2 fs-6 {{ $booking->payment_status == 'lunas' ? 'bg-success' : ($booking->payment_status == 'dp_diterima' ? 'bg-info' : ($booking->payment_status == 'dp_diupload' ? 'bg-warning' : ($booking->payment_status == 'dp_dikembalikan' ? 'bg-secondary' : 'bg-secondary'))) }}">
                             STATUS: {{ str_replace('_', ' ', strtoupper($booking->payment_status)) }}
                         </span>
                     </div>
+
+                    @if($booking->latestCancellationRequest && $booking->latestCancellationRequest->dp_dikembalikan)
+                        <div class="mt-3 p-3 rounded-3" style="background: #fef3e2; border: 1px solid #f5c842;">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <i class="bi bi-arrow-return-left" style="color: #d97706; font-size: 16px;"></i>
+                                <span class="fw-bold" style="color: #92400e; font-size: 13px;">DP Dikembalikan</span>
+                            </div>
+                            <p class="mb-0 small" style="color: #78350f;">
+                                DP sebesar <strong>Rp{{ number_format($booking->latestCancellationRequest->jumlah_dp_dikembalikan, 0, ',', '.') }}</strong> dikembalikan kepada customer karena pembatalan disetujui.
+                            </p>
+                        </div>
+                    @endif
                 </div>
             </div>
             </div>

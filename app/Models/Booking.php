@@ -291,7 +291,7 @@ class Booking extends Model
 
     public function getSlotWaktu2Attribute(): string
     {
-        if ($this->notes && preg_match('/Slot Hari 2: (pagi|siang)/', $this->notes, $matches)) {
+        if ($this->notes && preg_match('/Slot Hari 2: (pagi|siang|sore)/', $this->notes, $matches)) {
             return $matches[1];
         }
         return $this->slot_waktu;
@@ -299,7 +299,7 @@ class Booking extends Model
 
     public function getSlotWaktu3Attribute(): string
     {
-        if ($this->notes && preg_match('/Slot Hari 3: (pagi|siang)/', $this->notes, $matches)) {
+        if ($this->notes && preg_match('/Slot Hari 3: (pagi|siang|sore)/', $this->notes, $matches)) {
             return $matches[1];
         }
         return $this->slot_waktu;

@@ -233,6 +233,12 @@
                     </tbody>
                 </table>
             </div>
+
+            @if($bookings->hasPages())
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $bookings->links() }}
+                </div>
+            @endif
         </div>
     </section>
 

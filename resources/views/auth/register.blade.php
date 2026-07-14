@@ -57,10 +57,61 @@
                     'name' => 'password_confirmation',
                     'class' => 'full'
                 ])
+
+                @if(!config('captcha.disable'))
+                <div class="form-group full">
+                    <label for="captcha">Captcha</label>
+                    <div class="captcha-wrapper">
+                        <div class="captcha-img" id="captcha-img-container">
+                            {!! captcha_img('register') !!}
+                        </div>
+                        <button type="button" class="btn-refresh-captcha" id="btn-refresh" title="Segarkan Captcha">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                    <input
+                        type="text"
+                        id="captcha"
+                        name="captcha"
+                        placeholder="Masukkan kode di atas"
+                        class="@error('captcha') is-invalid @enderror"
+                        required
+                        autocomplete="off"
+                        style="border: 1px solid #d9ccc3; border-radius: 10px; width: 100%; height: 46px; padding: 12px 16px; font-size: 13px;"
+                    >
+                    @error('captcha')
+                        <div class="error" style="color: #b02a37; font-size: 11px; margin-top: 4px;">{{ $message }}</div>
+                    @enderror
+                </div>
+                @endif
             </div>
 
-            <button type="submit" class="btn-primary">Daftar</button>
+            <button type="submit" class="btn-primary" style="margin-top: 15px;">Daftar</button>
         </form>
+
+        <script>
+            const btnRefresh = document.getElementById('btn-refresh');
+            if (btnRefresh) {
+                btnRefresh.addEventListener('click', function() {
+                    const btn = this;
+                    const icon = btn.querySelector('i');
+                    
+                    icon.classList.add('bi-spin');
+                    btn.disabled = true;
+                    
+                    fetch('{{ route("captcha.refresh") }}?config=register')
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('captcha-img-container').innerHTML = data.captcha;
+                        })
+                        .catch(error => console.error('Error refreshing captcha:', error))
+                        .finally(() => {
+                            icon.classList.remove('bi-spin');
+                            btn.disabled = false;
+                        });
+                });
+            }
+        </script>
 
         <div class="auth-link">
             Sudah punya akun? <a href="{{ route('login') }}">Masuk</a>

@@ -17,11 +17,18 @@ class OwnerBookingController extends Controller
 
         // Filters
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('payment_status')) {
+            if ($request->status === 'dibatalkan') {
+                $query->whereIn('status', Booking::CANCELLED_STATUSES);
+            } else {
+                $query->where('status', $request->status);
+            }
+        } elseif ($request->filled('payment_status')) {
             $query->where('payment_status', $request->payment_status);
+            if ($request->payment_status !== 'dp_dikembalikan') {
+                $query->whereNotIn('status', Booking::CANCELLED_STATUSES);
+            }
         }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -174,19 +181,30 @@ class OwnerBookingController extends Controller
 
         DB::transaction(function () use ($booking, $cancelReq, $validated) {
             if ($validated['action'] === 'approve') {
+                // Check if customer has already paid DP
+                $hasPaidDp = $booking->total_dibayar > 0;
+                $dpAmount = $booking->total_dibayar;
+
                 $cancelReq->update([
                     'status_persetujuan' => 'disetujui',
                     'approved_by' => auth()->id(),
-                    'customer_dibaca' => false, // trigger notification to customer
+                    'customer_dibaca' => false,
+                    'dp_dikembalikan' => $hasPaidDp,
+                    'jumlah_dp_dikembalikan' => $hasPaidDp ? $dpAmount : null,
                 ]);
 
                 $bookingService = app(\App\Services\BookingService::class);
                 $bookingService->cancelBooking($booking);
+
+                // Update payment_status to reflect DP refund
+                if ($hasPaidDp) {
+                    $booking->update(['payment_status' => 'dp_dikembalikan']);
+                }
             } else {
                 $cancelReq->update([
                     'status_persetujuan' => 'ditolak',
                     'approved_by' => auth()->id(),
-                    'customer_dibaca' => false, // trigger notification to customer
+                    'customer_dibaca' => false,
                 ]);
             }
         });
@@ -200,9 +218,21 @@ class OwnerBookingController extends Controller
 
     public function laporan(Request $request)
     {
-        $bookings = Booking::with(['user', 'package.items', 'addons', 'payments'])
-            ->whereNotIn('status', Booking::CANCELLED_STATUSES)
-            ->get();
+        $filterBulan = $request->input('bulan');
+        $filterTahun = $request->input('tahun', date('Y'));
+
+        $query = Booking::with(['user', 'package.items', 'addons', 'payments'])
+            ->whereNotIn('status', Booking::CANCELLED_STATUSES);
+
+        if ($filterBulan) {
+            $query->whereMonth('tanggal_acara', $filterBulan);
+        }
+        if ($filterTahun) {
+            $query->whereYear('tanggal_acara', $filterTahun);
+        }
+
+        // Clone query for summary calculation (before pagination)
+        $summaryBookings = (clone $query)->get();
 
         $totalHargaBooking = 0;
         $totalDiterima = 0;
@@ -213,26 +243,8 @@ class OwnerBookingController extends Controller
         $totalGatewayFee = 0;
         $totalBersihOwner = 0;
 
-        foreach ($bookings as $booking) {
-            // Biaya Pihak Lain
+        foreach ($summaryBookings as $booking) {
             $breakdown = $booking->pihak_lain_breakdown;
-            $booking->biaya_pihak_lain = $breakdown['total'];
-            $booking->biaya_melati = $breakdown['melati'];
-            $booking->biaya_henna = $breakdown['henna'];
-            $booking->biaya_lainnya = $breakdown['lainnya'];
-
-            // Gateway Fee
-            $booking->gateway_fee = $booking->gateway_fee;
-
-            // Bersih Owner
-            if (in_array($booking->status, Booking::CANCELLED_STATUSES)) {
-                $booking->bersih_owner = 0;
-            } else {
-                $booking->bersih_owner = $booking->total_dibayar > 0
-                    ? max(0, $booking->total_dibayar - $breakdown['total'] - $booking->gateway_fee)
-                    : max(0, $booking->dp_amount - $breakdown['total']);
-            }
-
             $totalHargaBooking += $booking->total_price;
             $totalDiterima += $booking->total_dibayar;
             $totalBiayaPihakLain += $breakdown['total'];
@@ -240,7 +252,38 @@ class OwnerBookingController extends Controller
             $totalBiayaHenna += $breakdown['henna'];
             $totalBiayaLainnya += $breakdown['lainnya'];
             $totalGatewayFee += $booking->gateway_fee;
-            $totalBersihOwner += $booking->bersih_owner;
+
+            $bersih = $booking->total_dibayar > 0
+                ? max(0, $booking->total_dibayar - $breakdown['total'] - $booking->gateway_fee)
+                : max(0, $booking->dp_amount - $breakdown['total']);
+            $totalBersihOwner += $bersih;
+        }
+
+        // Paginated bookings for table display
+        $bookings = $query->latest('tanggal_acara')->paginate(10)->withQueryString();
+
+        // Attach computed fields for each paginated booking
+        foreach ($bookings as $booking) {
+            $breakdown = $booking->pihak_lain_breakdown;
+            $booking->biaya_pihak_lain = $breakdown['total'];
+            $booking->biaya_melati = $breakdown['melati'];
+            $booking->biaya_henna = $breakdown['henna'];
+            $booking->biaya_lainnya = $breakdown['lainnya'];
+            $booking->bersih_owner = $booking->total_dibayar > 0
+                ? max(0, $booking->total_dibayar - $breakdown['total'] - $booking->gateway_fee)
+                : max(0, $booking->dp_amount - $breakdown['total']);
+        }
+
+        // Available years for filter dropdown
+        $availableYears = Booking::selectRaw('YEAR(tanggal_acara) as tahun')
+            ->whereNotNull('tanggal_acara')
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun')
+            ->filter()
+            ->values();
+        if ($availableYears->isEmpty()) {
+            $availableYears = collect([date('Y')]);
         }
 
         return view('owner.laporan', compact(
@@ -252,17 +295,42 @@ class OwnerBookingController extends Controller
             'totalBiayaHenna',
             'totalBiayaLainnya',
             'totalGatewayFee',
-            'totalBersihOwner'
+            'totalBersihOwner',
+            'filterBulan',
+            'filterTahun',
+            'availableYears'
         ));
     }
 
-    public function exportLaporanCsv()
+    /**
+     * Build the base query for laporan export (shared by CSV and PDF).
+     */
+    private function buildLaporanQuery(Request $request)
     {
-        $bookings = Booking::with(['user', 'package.items', 'addons', 'payments'])
-            ->whereNotIn('status', Booking::CANCELLED_STATUSES)
-            ->get();
+        $query = Booking::with(['user', 'package.items', 'addons', 'payments'])
+            ->whereNotIn('status', Booking::CANCELLED_STATUSES);
 
-        $fileName = 'Laporan_Keuangan_'.date('Y-m-d').'.csv';
+        if ($request->filled('bulan')) {
+            $query->whereMonth('tanggal_acara', $request->bulan);
+        }
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal_acara', $request->tahun);
+        }
+
+        return $query;
+    }
+
+    public function exportLaporanCsv(Request $request)
+    {
+        $bookings = $this->buildLaporanQuery($request)->get();
+
+        $periodLabel = '';
+        if ($request->filled('bulan') && $request->filled('tahun')) {
+            $periodLabel = '_' . $request->tahun . '-' . str_pad($request->bulan, 2, '0', STR_PAD_LEFT);
+        } elseif ($request->filled('tahun')) {
+            $periodLabel = '_' . $request->tahun;
+        }
+        $fileName = 'Laporan_Keuangan' . $periodLabel . '_' . date('Y-m-d') . '.csv';
 
         $headers = [
             'Content-type' => 'text/csv; charset=UTF-8',
@@ -291,13 +359,9 @@ class OwnerBookingController extends Controller
                 $breakdown = $booking->pihak_lain_breakdown;
                 $biayaP = $breakdown['total'];
 
-                if (in_array($booking->status, Booking::CANCELLED_STATUSES)) {
-                    $bersih = 0;
-                } else {
-                    $bersih = $booking->total_dibayar > 0
-                        ? max(0, $booking->total_dibayar - $biayaP - $booking->gateway_fee)
-                        : max(0, $booking->dp_amount - $biayaP);
-                }
+                $bersih = $booking->total_dibayar > 0
+                    ? max(0, $booking->total_dibayar - $biayaP - $booking->gateway_fee)
+                    : max(0, $booking->dp_amount - $biayaP);
 
                 fputcsv($file, [
                     $booking->booking_code,
@@ -322,5 +386,67 @@ class OwnerBookingController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportLaporanPdf(Request $request)
+    {
+        $bookings = $this->buildLaporanQuery($request)->latest('tanggal_acara')->get();
+
+        $totalHargaBooking = 0;
+        $totalDiterima = 0;
+        $totalBiayaPihakLain = 0;
+        $totalBiayaMelati = 0;
+        $totalBiayaHenna = 0;
+        $totalGatewayFee = 0;
+        $totalBersihOwner = 0;
+
+        foreach ($bookings as $booking) {
+            $breakdown = $booking->pihak_lain_breakdown;
+            $booking->biaya_pihak_lain = $breakdown['total'];
+            $booking->biaya_melati = $breakdown['melati'];
+            $booking->biaya_henna = $breakdown['henna'];
+            $booking->biaya_lainnya = $breakdown['lainnya'];
+            $booking->bersih_owner = $booking->total_dibayar > 0
+                ? max(0, $booking->total_dibayar - $breakdown['total'] - $booking->gateway_fee)
+                : max(0, $booking->dp_amount - $breakdown['total']);
+
+            $totalHargaBooking += $booking->total_price;
+            $totalDiterima += $booking->total_dibayar;
+            $totalBiayaPihakLain += $breakdown['total'];
+            $totalBiayaMelati += $breakdown['melati'];
+            $totalBiayaHenna += $breakdown['henna'];
+            $totalGatewayFee += $booking->gateway_fee;
+            $totalBersihOwner += $booking->bersih_owner;
+        }
+
+        // Build period label
+        $periodLabel = 'Semua Periode';
+        if ($request->filled('bulan') && $request->filled('tahun')) {
+            $bulanNames = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+            $periodLabel = ($bulanNames[(int)$request->bulan] ?? '') . ' ' . $request->tahun;
+        } elseif ($request->filled('tahun')) {
+            $periodLabel = 'Tahun ' . $request->tahun;
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('owner.laporan-pdf', compact(
+            'bookings',
+            'totalHargaBooking',
+            'totalDiterima',
+            'totalBiayaPihakLain',
+            'totalBiayaMelati',
+            'totalBiayaHenna',
+            'totalGatewayFee',
+            'totalBersihOwner',
+            'periodLabel'
+        ))->setPaper('a4', 'landscape');
+
+        $fileLabel = '';
+        if ($request->filled('bulan') && $request->filled('tahun')) {
+            $fileLabel = '_' . $request->tahun . '-' . str_pad($request->bulan, 2, '0', STR_PAD_LEFT);
+        } elseif ($request->filled('tahun')) {
+            $fileLabel = '_' . $request->tahun;
+        }
+
+        return $pdf->download('Laporan_Keuangan' . $fileLabel . '_' . date('Y-m-d') . '.pdf');
     }
 }

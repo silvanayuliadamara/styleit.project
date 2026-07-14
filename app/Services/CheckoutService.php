@@ -360,6 +360,7 @@ class CheckoutService
                     'va' => 'Transfer Bank',
                     'qris' => 'QRIS',
                     'wallet' => 'E-Wallet',
+                    'manual_transfer' => 'Transfer Manual',
                 ];
                 $selectedMethod = $methodMap[$validated['payment_method']] ?? $validated['payment_method'];
 

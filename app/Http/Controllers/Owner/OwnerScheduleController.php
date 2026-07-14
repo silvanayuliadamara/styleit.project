@@ -104,7 +104,7 @@ class OwnerScheduleController extends Controller
                     $date = $item->schedule->tanggal->toDateString();
                 }
 
-                return $date.'_'.($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
+                return $date.'_'.($item->schedule ? $item->schedule->jenis_jadwal : ($item->slot_waktu ?? 'pagi'));
             });
 
         return view('owner.schedule.wedding', [
@@ -165,7 +165,7 @@ class OwnerScheduleController extends Controller
                     $date = $item->schedule->tanggal->toDateString();
                 }
 
-                return $date.'_'.($item->schedule ? $item->schedule->jenis_jadwal : 'pagi');
+                return $date.'_'.($item->schedule ? $item->schedule->jenis_jadwal : ($item->slot_waktu ?? 'pagi'));
             });
 
         return view('owner.schedule.regular', [
@@ -302,6 +302,7 @@ class OwnerScheduleController extends Controller
                     $defaultTimes = [
                         'pagi' => ['start' => '06:00', 'end' => '11:00'],
                         'siang' => ['start' => '12:00', 'end' => '16:00'],
+                        'sore' => ['start' => '16:30', 'end' => '20:30'],
                         'baju' => ['start' => '08:00', 'end' => '17:00'],
                     ];
                     $jamMulai = $slotData['jam_mulai'] ?? ($schedule ? $schedule->jam_mulai : ($defaultTimes[$jenisJadwal]['start'] ?? '06:00'));
@@ -368,6 +369,7 @@ class OwnerScheduleController extends Controller
             $defaultSlots = [
                 'pagi' => ['start' => '06:00', 'end' => '11:00'],
                 'siang' => ['start' => '12:00', 'end' => '16:00'],
+                'sore' => ['start' => '16:30', 'end' => '20:30'],
             ];
         } elseif ($categoryType === 'regular') {
             $r = ServiceCategory::where('slug', 'regular')->first();
@@ -377,6 +379,7 @@ class OwnerScheduleController extends Controller
             $defaultSlots = [
                 'pagi' => ['start' => '06:00', 'end' => '11:00'],
                 'siang' => ['start' => '12:00', 'end' => '16:00'],
+                'sore' => ['start' => '16:30', 'end' => '20:30'],
             ];
         } elseif ($categoryType === 'baju') {
             $b = ServiceCategory::where('slug', 'baju')->first();

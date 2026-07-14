@@ -68,7 +68,7 @@
                                     $isPast = $day->isPast() && !$isToday;
 
                                     $slotsData = [];
-                                    foreach(['pagi', 'siang'] as $slot) {
+                                    foreach(['pagi', 'siang', 'sore'] as $slot) {
                                         $schedKey = $dateStr . '_' . $slot;
                                         $schedule = $schedules->get($schedKey)?->first();
 
@@ -93,8 +93,8 @@
                                             'db_status' => $schedule ? $schedule->status : 'diblokir',
                                             'kuota' => $kuota,
                                             'booked_count' => $bookedCount,
-                                            'jam_mulai' => $schedule ? $schedule->jam_mulai->format('H:i') : ($slot == 'pagi' ? '06:00' : ($slot == 'siang' ? '12:00' : '17:00')),
-                                            'jam_selesai' => $schedule ? $schedule->jam_selesai->format('H:i') : ($slot == 'pagi' ? '11:00' : ($slot == 'siang' ? '16:00' : '21:00')),
+                                            'jam_mulai' => $schedule ? $schedule->jam_mulai->format('H:i') : ($slot == 'pagi' ? '06:00' : ($slot == 'siang' ? '12:00' : '16:30')),
+                                            'jam_selesai' => $schedule ? $schedule->jam_selesai->format('H:i') : ($slot == 'pagi' ? '11:00' : ($slot == 'siang' ? '16:00' : '20:30')),
                                             'catatan' => $schedule ? $schedule->catatan : '',
                                             'wedding_blocked' => 0,
                                             'wedding_booking_details' => '',
@@ -116,7 +116,7 @@
                                     </div>
 
                                     <div class="lyb-cal-slots">
-                                        @foreach(['pagi', 'siang'] as $slot)
+                                        @foreach(['pagi', 'siang', 'sore'] as $slot)
                                             @php
                                                 $sInfo = $slotsData[$slot];
                                                 $pillClass = ($sInfo['status'] == 'diblokir' ? 'diblokir' : 'tersedia');
@@ -171,7 +171,7 @@
                         </div>
 
                         <div class="d-flex flex-column gap-3">
-                            @foreach(['pagi', 'siang'] as $slot)
+                            @foreach(['pagi', 'siang', 'sore'] as $slot)
                                 <div class="lyb-slot-config" id="config-card-{{ $slot }}">
                                     <div class="lyb-slot-config-head" onclick="toggleActiveSlot('{{ $slot }}')">
                                         <div class="lyb-slot-title">
@@ -318,7 +318,7 @@
 
             let allBlocked = true;
 
-            for (const slot of ['pagi', 'siang']) {
+            for (const slot of ['pagi', 'siang', 'sore']) {
                 const sInfo = slots[slot];
                 const card = document.getElementById('config-card-' + slot);
                 const body = document.getElementById('config-body-' + slot);

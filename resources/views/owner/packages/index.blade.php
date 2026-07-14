@@ -90,6 +90,12 @@
                     </tbody>
                 </table>
             </div>
+
+            @if($packages->hasPages())
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $packages->links() }}
+                </div>
+            @endif
         </div>
     </section>
 @endsection

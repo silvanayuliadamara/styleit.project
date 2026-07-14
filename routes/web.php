@@ -25,6 +25,7 @@ Route::get('/profil', [PublicPageController::class, 'profil'])->name('profil');
 Route::get('/layanan', [PublicPageController::class, 'layanan'])->name('layanan.index');
 Route::get('/layanan/{slug}', [PublicPageController::class, 'kategori'])->name('layanan.kategori');
 Route::get('/paket/{code}', [PublicPageController::class, 'paket'])->name('paket.show');
+Route::get('/paket/{code}/ulasan', [PublicPageController::class, 'ulasanPaket'])->name('paket.ulasan');
 Route::get('/paket/{code}/slots', [PublicPageController::class, 'getAvailableSlots'])->name('paket.slots');
 Route::get('/portofolio', [PublicPageController::class, 'portofolio'])->name('portofolio');
 Route::get('/pricelist', [PublicPageController::class, 'pricelist'])->name('pricelist');
@@ -81,6 +82,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pembayaran/{booking_code}/berhasil', [CheckoutController::class, 'paymentSuccess'])->name('customer.payment.success');
     Route::post('/pembayaran/{booking_code}/confirm', [CheckoutController::class, 'confirmPayment'])->name('customer.payment.confirm');
     Route::get('/pembayaran/{booking_code}/sandbox', [CheckoutController::class, 'sandboxSimulator'])->name('customer.payment.sandbox');
+    Route::get('/pembayaran/{booking_code}/transfer-manual', [CheckoutController::class, 'manualTransfer'])->name('customer.payment.manual');
+    Route::post('/pembayaran/{booking_code}/upload-bukti', [CheckoutController::class, 'uploadBuktiTransfer'])->name('customer.payment.upload-bukti');
 });
 
 // Owner routes
@@ -100,6 +103,7 @@ Route::middleware(['auth', 'role:owner'])
 
         Route::get('/laporan', [OwnerBookingController::class, 'laporan'])->name('laporan');
         Route::get('/laporan/export', [OwnerBookingController::class, 'exportLaporanCsv'])->name('laporan.export');
+        Route::get('/laporan/pdf', [OwnerBookingController::class, 'exportLaporanPdf'])->name('laporan.pdf');
 
         // Schedules
         Route::get('/schedules/wedding', [OwnerScheduleController::class, 'wedding'])->name('schedules.wedding');

@@ -64,4 +64,17 @@ return [
         'bgColor' => '#ffffff',
         'fontColors' => ['#201313', '#b08a42', '#6f5a4c'],
     ],
+    'register' => [
+        'length' => 4,
+        'width' => 200,
+        'height' => 46,
+        'quality' => 90,
+        'math' => false,
+        'expire' => 120,
+        'sensitive' => false,
+        'lines' => 2,
+        'angle' => 8,
+        'bgColor' => '#ffffff',
+        'fontColors' => ['#201313', '#b08a42', '#6f5a4c'],
+    ],
 ];

@@ -43,14 +43,14 @@ class StoreCartRequest extends FormRequest
         }
 
         if ($categorySlug === 'wedding' || $categorySlug === 'prewedding' || $categorySlug === 'regular') {
-            $rules['slot_waktu'] = ['required', 'string', 'in:pagi,siang'];
+            $rules['slot_waktu'] = ['required', 'string', 'in:pagi,siang,sore'];
             if ($is2xMakeup || $is3xMakeup) {
-                $rules['slot_waktu_2'] = ['required', 'string', 'in:pagi,siang'];
+                $rules['slot_waktu_2'] = ['required', 'string', 'in:pagi,siang,sore'];
             } else {
                 $rules['slot_waktu_2'] = ['nullable', 'string'];
             }
             if ($is3xMakeup) {
-                $rules['slot_waktu_3'] = ['required', 'string', 'in:pagi,siang'];
+                $rules['slot_waktu_3'] = ['required', 'string', 'in:pagi,siang,sore'];
             } else {
                 $rules['slot_waktu_3'] = ['nullable', 'string'];
             }

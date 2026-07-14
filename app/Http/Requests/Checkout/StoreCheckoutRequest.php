@@ -46,7 +46,7 @@ class StoreCheckoutRequest extends FormRequest
             'phone' => ['required', 'string', 'max:20'],
             'instagram' => ['required', 'string', 'max:50'],
             'notes' => ['nullable', 'string', 'max:1000'],
-            'payment_method' => ['required', 'string', 'in:va,qris,wallet'],
+            'payment_method' => ['required', 'string', 'in:va,qris,wallet,manual_transfer'],
         ];
 
         if ($needsAddress) {

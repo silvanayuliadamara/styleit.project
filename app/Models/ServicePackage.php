@@ -83,6 +83,11 @@ class ServicePackage extends Model
 
     public function getDpAmountAttribute($value)
     {
+        $regularCategory = ServiceCategory::findBySlug('regular');
+        if ($regularCategory && $this->category_id == $regularCategory->id) {
+            return min(200000, $this->price);
+        }
+
         $dp = ($this->butuh_makeup && $this->butuh_baju) ? 1000000 : 500000;
         return min($dp, $this->price);
     }

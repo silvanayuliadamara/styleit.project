@@ -64,7 +64,18 @@ class CheckoutController extends Controller
             return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
 
+        $isManualTransfer = $request->input('payment_method') === 'manual_transfer';
+
         if ($request->expectsJson()) {
+            if ($isManualTransfer) {
+                return response()->json([
+                    'success' => true,
+                    'manual_transfer' => true,
+                    'redirect_url' => route('customer.payment.manual', $createdBookings[0]->booking_code),
+                    'booking_codes' => collect($createdBookings)->pluck('booking_code')->all(),
+                ]);
+            }
+
             $midtransService = app(MidtransService::class);
             $snapToken = $midtransService->getSnapTokenForBookings($createdBookings);
 
@@ -79,6 +90,11 @@ class CheckoutController extends Controller
                 'redirect_url' => route('customer.payment.instruction', $createdBookings[0]->booking_code),
                 'booking_codes' => collect($createdBookings)->pluck('booking_code')->all(),
             ]);
+        }
+
+        if ($isManualTransfer) {
+            return redirect()->route('customer.payment.manual', $createdBookings[0]->booking_code)
+                ->with('success', 'Booking berhasil dibuat! Silakan transfer dan upload bukti pembayaran.');
         }
 
         return redirect()->route('customer.payment.instruction', $createdBookings[0]->booking_code)
@@ -195,5 +211,73 @@ class CheckoutController extends Controller
         }
 
         return response()->json(['message' => 'Pembayaran berhasil dikonfirmasi.', 'success' => true]);
+    }
+
+    /**
+     * Show the manual bank transfer instruction page.
+     */
+    public function manualTransfer($booking_code)
+    {
+        $booking = Booking::where('booking_code', $booking_code)->firstOrFail();
+        abort_if($booking->user_id !== Auth::id(), 403);
+
+        // If already paid, redirect to success
+        if (in_array($booking->payment_status, ['dp_diterima', 'lunas'])) {
+            return redirect()->route('customer.payment.success', $booking_code);
+        }
+
+        // If already uploaded proof, redirect to dashboard
+        if ($booking->payment_status === 'dp_diupload') {
+            return redirect()->route('customer.dashboard')
+                ->with('success', 'Bukti transfer sudah diupload. Menunggu konfirmasi owner.');
+        }
+
+        $payment = $booking->payments()->where('status', 'pending')->first();
+
+        return view('customer.payment-manual-transfer', compact('booking', 'payment'));
+    }
+
+    /**
+     * Upload proof of manual bank transfer.
+     */
+    public function uploadBuktiTransfer(Request $request, $booking_code)
+    {
+        $booking = Booking::where('booking_code', $booking_code)->firstOrFail();
+        abort_if($booking->user_id !== Auth::id(), 403);
+
+        $request->validate([
+            'proof_image' => 'required|image|mimes:jpeg,png,jpg|max:10240',
+        ], [
+            'proof_image.required' => 'Bukti transfer wajib diupload.',
+            'proof_image.image' => 'File harus berupa gambar.',
+            'proof_image.mimes' => 'Format gambar harus JPEG, PNG, atau JPG.',
+            'proof_image.max' => 'Ukuran gambar maksimal 10MB.',
+        ]);
+
+        $path = $request->file('proof_image')->store('payment_proofs', 'public');
+
+        // Update the pending payment with proof image
+        $payment = $booking->payments()->where('status', 'pending')->first();
+        if ($payment) {
+            $payment->update([
+                'proof_image' => $path,
+            ]);
+        } else {
+            $booking->payments()->create([
+                'amount' => $booking->dp_amount,
+                'proof_image' => $path,
+                'status' => 'pending',
+                'metode_pembayaran' => 'Transfer Manual',
+            ]);
+        }
+
+        // Update booking status to waiting for owner confirmation
+        $booking->update([
+            'status' => 'menunggu_konfirmasi',
+            'payment_status' => 'dp_diupload',
+        ]);
+
+        return redirect()->route('customer.dashboard')
+            ->with('success', 'Bukti transfer berhasil diupload! Menunggu konfirmasi dari admin.');
     }
 }

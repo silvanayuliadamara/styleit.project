@@ -19,7 +19,7 @@
 
     {{-- Filter Quick Actions --}}
     <div class="d-flex gap-2 mb-3 flex-wrap align-items-center lyb-filter-pills">
-        <a href="{{ route('owner.bookings.index') }}" class="btn btn-sm rounded-pill px-3 {{ !request('payment_status') ? 'btn-dark' : 'btn-outline-dark' }}" style="font-size: 12px; font-weight: 600;">
+        <a href="{{ route('owner.bookings.index') }}" class="btn btn-sm rounded-pill px-3 {{ !request('payment_status') && !request('status') ? 'btn-dark' : 'btn-outline-dark' }}" style="font-size: 12px; font-weight: 600;">
             Semua
         </a>
         <a href="{{ route('owner.bookings.index', ['payment_status' => 'belum_bayar']) }}" class="btn btn-sm rounded-pill px-3 {{ request('payment_status') === 'belum_bayar' ? 'btn-dark' : 'btn-outline-dark' }}" style="font-size: 12px; font-weight: 600;">
@@ -33,6 +33,12 @@
         </a>
         <a href="{{ route('owner.bookings.index', ['payment_status' => 'lunas']) }}" class="btn btn-sm rounded-pill px-3 {{ request('payment_status') === 'lunas' ? 'btn-dark' : 'btn-outline-dark' }}" style="font-size: 12px; font-weight: 600;">
             Lunas
+        </a>
+        <a href="{{ route('owner.bookings.index', ['payment_status' => 'dp_dikembalikan']) }}" class="btn btn-sm rounded-pill px-3 {{ request('payment_status') === 'dp_dikembalikan' ? 'btn-dark' : 'btn-outline-dark' }}" style="font-size: 12px; font-weight: 600;">
+            DP Dikembalikan
+        </a>
+        <a href="{{ route('owner.bookings.index', ['status' => 'dibatalkan']) }}" class="btn btn-sm rounded-pill px-3 {{ request('status') === 'dibatalkan' ? 'btn-dark' : 'btn-outline-dark' }}" style="font-size: 12px; font-weight: 600;">
+            Dibatalkan
         </a>
     </div>
 
@@ -87,8 +93,10 @@
                                             $sClass = 'pending'; $sText = 'Perlu Konfirmasi';
                                         } elseif ($booking->payment_status == 'belum_bayar') {
                                             $sClass = 'pending'; $sText = 'Menunggu DP';
+                                        } elseif ($booking->payment_status == 'dp_dikembalikan') {
+                                            $sClass = 'ditolak'; $sText = 'DP Dikembalikan';
                                         }
-                                        if ($booking->status == 'dibatalkan') {
+                                        if ($booking->status == 'dibatalkan' && $booking->payment_status != 'dp_dikembalikan') {
                                             $sClass = 'ditolak'; $sText = 'Dibatalkan';
                                         } elseif ($booking->status == 'expired') {
                                             $sClass = 'ditolak'; $sText = 'Expired';

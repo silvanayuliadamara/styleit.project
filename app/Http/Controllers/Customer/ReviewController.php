@@ -31,12 +31,20 @@ class ReviewController extends Controller
         $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'komentar' => 'nullable|string|max:1000',
+            'foto' => 'nullable|image|max:10240',
         ], [
             'rating.required' => 'Silakan pilih rating bintang.',
             'rating.min' => 'Rating minimal 1 bintang.',
             'rating.max' => 'Rating maksimal 5 bintang.',
             'komentar.max' => 'Komentar maksimal 1000 karakter.',
+            'foto.image' => 'File ulasan harus berupa foto/gambar.',
+            'foto.max' => 'Ukuran foto ulasan maksimal 10MB.',
         ]);
+
+        $fotoPath = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('reviews', 'public');
+        }
 
         Review::create([
             'booking_id' => $booking->id,
@@ -44,6 +52,7 @@ class ReviewController extends Controller
             'package_id' => $booking->package_id,
             'rating' => $validated['rating'],
             'komentar' => $validated['komentar'],
+            'foto' => $fotoPath,
             'status_review' => 'tampil',
         ]);
 

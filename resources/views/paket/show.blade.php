@@ -48,7 +48,15 @@
                             <span class="badge rounded-pill px-2.5 py-1" style="background-color: #fbf8f1; color: var(--lyb-gold); border: 1px solid var(--lyb-gold-border); font-size: 10px; font-weight: 700; letter-spacing: 0.5px;">BEST SELLER</span>
                         @endif
                     </div>
-                    <h1 class="fw-bold text-dark" style="font-size: 2.2rem; font-family: Georgia, serif !important;">{{ $package->name }}</h1>
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+                        <h1 class="fw-bold text-dark mb-0" style="font-size: 2.2rem; font-family: Georgia, serif !important;">{{ $package->name }}</h1>
+                        <div>
+                            <a href="{{ route('paket.ulasan', $package->code) }}" class="d-inline-flex align-items-center gap-2 text-decoration-none" style="background: rgba(33, 19, 19, 0.85); border: 1px solid rgba(176, 138, 66, 0.3); padding: 9px 18px; border-radius: 99px; color: #fff; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" onmouseover="this.style.background='#b08a42'; this.style.color='#211313'; this.querySelector('i').style.color='#211313'" onmouseout="this.style.background='rgba(33, 19, 19, 0.85)'; this.style.color='#fff'; this.querySelector('i').style.color='#b08a42'">
+                                <i class="bi bi-star-fill" style="color: #b08a42; transition: color 0.3s ease; font-size: 13px;"></i>
+                                <span>Ulasan</span>
+                            </a>
+                        </div>
+                    </div>
                     @php
                         $points = array_map('trim', explode('+', $package->description));
                     @endphp
@@ -349,9 +357,6 @@
                         <a href="https://wa.me/6281227545591?text=Halo%20admin%20LYB,%20saya%20mau%20tanya%20paket%20{{ urlencode($package->name) }}" target="_blank" class="link-whatsapp-gold">
                             <i class="bi bi-whatsapp" style="font-size: 16px;"></i> Tanya via WhatsApp (Owner Makeup)
                         </a>
-                    </div>
-                    </div>
-                </div>
             </div>
         </div>
     </form>

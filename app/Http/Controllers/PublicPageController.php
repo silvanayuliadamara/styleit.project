@@ -28,10 +28,15 @@ class PublicPageController extends Controller
             ->where('rating', '>=', 4)
             ->with(['user', 'package'])
             ->latest()
-            ->take(6)
+            ->take(9)
             ->get();
 
-        return view('home', compact('categories', 'portfolioItems', 'reviews'));
+        $reviewStats = [
+            'avg_rating' => Review::where('status_review', 'tampil')->avg('rating') ?? 0,
+            'total_count' => Review::where('status_review', 'tampil')->count(),
+        ];
+
+        return view('home', compact('categories', 'portfolioItems', 'reviews', 'reviewStats'));
     }
 
     public function profil()
@@ -115,7 +120,18 @@ class PublicPageController extends Controller
             $editItem = collect($cart)->firstWhere('key', request()->query('edit_key'));
         }
 
-        return view('paket.show', compact('package', 'addons', 'calendar', 'editItem'));
+        // Fetch package-specific reviews
+        $reviews = Review::where('status_review', 'tampil')
+            ->where('package_id', $package->id)
+            ->with('user')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        $avgRating = Review::where('status_review', 'tampil')->where('package_id', $package->id)->avg('rating') ?? 0;
+        $totalReviews = Review::where('status_review', 'tampil')->where('package_id', $package->id)->count();
+
+        return view('paket.show', compact('package', 'addons', 'calendar', 'editItem', 'reviews', 'avgRating', 'totalReviews'));
     }
 
     public function portofolio()
@@ -216,7 +232,7 @@ class PublicPageController extends Controller
 
             if (! $isBlocked) {
                 if ($categorySlug === 'wedding' || $categorySlug === 'prewedding') {
-                    // Check slots: pagi (max 2), siang (max 1)
+                    // Check slots: pagi (max 2), siang (max 1), sore (max 1)
                     $pagiBooked = isset($weddingBookings[$dateStr.'_pagi']) ? count($weddingBookings[$dateStr.'_pagi']) : 0;
                     $pagiBlocked = isset($blockedSchedules[$dateStr.'_pagi']) ? 2 : 0;
                     $pagiUnavailable = max($pagiBooked, $pagiBlocked);
@@ -225,9 +241,13 @@ class PublicPageController extends Controller
                     $siangBlocked = isset($blockedSchedules[$dateStr.'_siang']) ? 1 : 0;
                     $siangUnavailable = max($siangBooked, $siangBlocked);
 
-                    $unavailableSlotsCount = $pagiUnavailable + $siangUnavailable;
-                    $isFull = ($unavailableSlotsCount >= 3);
-                    $remaining = max(0, 3 - $unavailableSlotsCount);
+                    $soreBooked = isset($weddingBookings[$dateStr.'_sore']) ? count($weddingBookings[$dateStr.'_sore']) : 0;
+                    $soreBlocked = isset($blockedSchedules[$dateStr.'_sore']) ? 1 : 0;
+                    $soreUnavailable = max($soreBooked, $soreBlocked);
+
+                    $unavailableSlotsCount = $pagiUnavailable + $siangUnavailable + $soreUnavailable;
+                    $isFull = ($unavailableSlotsCount >= 4);
+                    $remaining = max(0, 4 - $unavailableSlotsCount);
                 } elseif ($categorySlug === 'regular') {
                     // Check if owner opened any slots for this day
                     $daySchedules = $regularSchedules[$dateStr] ?? [];
@@ -282,6 +302,7 @@ class PublicPageController extends Controller
         $slots = [
             'pagi' => ['available' => true, 'label' => 'Pagi', 'reason' => null],
             'siang' => ['available' => true, 'label' => 'Siang', 'reason' => null],
+            'sore' => ['available' => true, 'label' => 'Sore', 'reason' => null],
         ];
 
         if ($categorySlug === 'wedding' || $categorySlug === 'prewedding') {
@@ -373,5 +394,54 @@ class PublicPageController extends Controller
             'slots' => $slots,
             'needs_fitting' => $needsFitting,
         ]);
+    }
+
+    /**
+     * Show all reviews for a specific service package.
+     */
+    public function ulasanPaket(string $code)
+    {
+        $request = request();
+        $package = ServicePackage::with(['category'])->where('code', $code)->firstOrFail();
+        
+        $query = Review::where('status_review', 'tampil')
+            ->where('package_id', $package->id);
+
+        // Rating filter
+        if ($request->has('rating') && in_array($request->rating, [1, 2, 3, 4, 5])) {
+            $query->where('rating', $request->rating);
+        }
+
+        // Comment or Photo filters
+        if ($request->has('filter_type')) {
+            if ($request->filter_type === 'comment') {
+                $query->whereNotNull('komentar')->where('komentar', '!=', '');
+            } elseif ($request->filter_type === 'photo') {
+                $query->whereNotNull('foto')->where('foto', '!=', '');
+            }
+        }
+
+        $reviews = $query->with('user')
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $avgRating = Review::where('status_review', 'tampil')->where('package_id', $package->id)->avg('rating') ?? 0;
+        $totalReviews = Review::where('status_review', 'tampil')->where('package_id', $package->id)->count();
+
+        // Calculate category counts
+        $countAll = Review::where('status_review', 'tampil')->where('package_id', $package->id)->count();
+        $count5 = Review::where('status_review', 'tampil')->where('package_id', $package->id)->where('rating', 5)->count();
+        $count4 = Review::where('status_review', 'tampil')->where('package_id', $package->id)->where('rating', 4)->count();
+        $count3 = Review::where('status_review', 'tampil')->where('package_id', $package->id)->where('rating', 3)->count();
+        $count2 = Review::where('status_review', 'tampil')->where('package_id', $package->id)->where('rating', 2)->count();
+        $count1 = Review::where('status_review', 'tampil')->where('package_id', $package->id)->where('rating', 1)->count();
+        $countComment = Review::where('status_review', 'tampil')->where('package_id', $package->id)->whereNotNull('komentar')->where('komentar', '!=', '')->count();
+        $countPhoto = Review::where('status_review', 'tampil')->where('package_id', $package->id)->whereNotNull('foto')->where('foto', '!=', '')->count();
+
+        return view('paket.ulasan', compact(
+            'package', 'reviews', 'avgRating', 'totalReviews',
+            'countAll', 'count5', 'count4', 'count3', 'count2', 'count1', 'countComment', 'countPhoto'
+        ));
     }
 }

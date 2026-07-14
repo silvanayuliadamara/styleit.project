@@ -30,14 +30,15 @@ class CustomerDashboardController extends Controller
             }
         }
 
+        $allBookings = Booking::where('user_id', $userId)->get();
+        $totalBookingCount = $allBookings->count();
+        $activeBookingCount = $allBookings->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima'])->count();
+        $completedBookingCount = $allBookings->where('status', 'selesai')->count();
+
         $bookings = Booking::where('user_id', $userId)
             ->with(['package', 'addons', 'payments', 'latestCancellationRequest', 'review'])
             ->latest()
-            ->get();
-
-        $totalBookingCount = $bookings->count();
-        $activeBookingCount = $bookings->whereIn('status', ['pending', 'menunggu_konfirmasi', 'diterima'])->count();
-        $completedBookingCount = $bookings->where('status', 'selesai')->count();
+            ->paginate(5);
 
         // Fetch unread cancellation result notifications for this customer
         $unreadCancellationNotifs = $userId ? CancellationRequest::whereHas('booking', function ($q) use ($userId) {

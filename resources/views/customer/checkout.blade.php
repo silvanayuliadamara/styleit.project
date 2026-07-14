@@ -121,6 +121,17 @@
                                     </div>
                                 </div>
                             </label>
+
+                            <label class="payment-option" id="option4">
+                                <input type="radio" name="payment_method" value="manual_transfer" class="me-3" onclick="togglePaymentActive('option4')">
+                                <div class="payment-option-details">
+                                    <i class="bi bi-upload"></i>
+                                    <div>
+                                        <span class="title">Transfer Manual + Upload Bukti</span>
+                                        <span class="subtitle">Transfer langsung ke rekening owner, lalu upload bukti</span>
+                                    </div>
+                                </div>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -211,7 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.json();
             })
             .then(data => {
-                if (data.success && data.sandbox_mode && data.sandbox_url) {
+                if (data.success && data.manual_transfer && data.redirect_url) {
+                    // Manual transfer: redirect to upload page
+                    window.location.href = data.redirect_url;
+                } else if (data.success && data.sandbox_mode && data.sandbox_url) {
                     // Sandbox mode: redirect to sandbox simulator instead of Snap popup
                     window.location.href = data.sandbox_url;
                 } else if (data.success && data.snap_token) {

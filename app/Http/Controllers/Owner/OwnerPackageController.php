@@ -17,8 +17,8 @@ class OwnerPackageController extends Controller
 {
     public function index()
     {
-        $packages = ServicePackage::with('category')->orderBy('sort_order')->get();
-
+        $packages = ServicePackage::with('category')->orderBy('sort_order')->paginate(10);
+ 
         return view('owner.packages.index', compact('packages'));
     }
 

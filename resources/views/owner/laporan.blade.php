@@ -7,13 +7,62 @@
             <h2>Laporan Keuangan</h2>
             <p>Rekapitulasi seluruh transaksi booking MUA dan perhitungan bersih owner.</p>
         </div>
-        <a href="{{ route('owner.laporan.export') }}" class="lyb-admin-action-btn" style="padding: 10px 20px; font-size: 13px;">
-            <i class="bi bi-download me-2"></i> Export CSV
-        </a>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ route('owner.laporan.export', array_filter(['bulan' => $filterBulan, 'tahun' => $filterTahun])) }}" class="lyb-admin-action-btn" style="padding: 10px 20px; font-size: 13px;">
+                <i class="bi bi-filetype-csv me-2"></i> Export CSV
+            </a>
+            <a href="{{ route('owner.laporan.pdf', array_filter(['bulan' => $filterBulan, 'tahun' => $filterTahun])) }}" class="lyb-admin-action-btn" style="padding: 10px 20px; font-size: 13px; background: #a03131; color: #fff; border-color: #a03131;">
+                <i class="bi bi-file-earmark-pdf me-2"></i> Export PDF
+            </a>
+        </div>
     </header>
+
+    {{-- Filter Form --}}
+    <section class="lyb-admin-section">
+        <form action="{{ route('owner.laporan') }}" method="GET" class="d-flex gap-2 mb-4 flex-wrap align-items-end">
+            <div>
+                <label class="form-label small text-muted fw-bold mb-1">Bulan</label>
+                <select name="bulan" class="form-select form-select-sm" style="min-width: 150px; border-radius: 10px; border-color: #eadfd6; font-size: 13px;">
+                    <option value="">Semua Bulan</option>
+                    @php
+                        $bulanNames = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+                    @endphp
+                    @foreach($bulanNames as $num => $nama)
+                        <option value="{{ $num }}" {{ (string)$filterBulan === (string)$num ? 'selected' : '' }}>{{ $nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="form-label small text-muted fw-bold mb-1">Tahun</label>
+                <select name="tahun" class="form-select form-select-sm" style="min-width: 110px; border-radius: 10px; border-color: #eadfd6; font-size: 13px;">
+                    @foreach($availableYears as $year)
+                        <option value="{{ $year }}" {{ (string)$filterTahun === (string)$year ? 'selected' : '' }}>{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-dark px-4" style="border-radius: 10px; font-size: 13px; font-weight: 600; background: #211313; border: none;">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+                <a href="{{ route('owner.laporan') }}" class="btn btn-sm btn-outline-secondary px-3" style="border-radius: 10px; font-size: 13px; border-color: #eadfd6; color: #6f625c;">
+                    <i class="bi bi-x-circle me-1"></i> Reset
+                </a>
+            </div>
+        </form>
+    </section>
 
     {{-- Summary Cards --}}
     <section class="lyb-admin-section">
+        @if($filterBulan || $filterTahun)
+            <div class="mb-3" style="font-size: 13px; color: #8a7a72;">
+                <i class="bi bi-funnel-fill me-1" style="color: #b08a42;"></i>
+                Menampilkan data:
+                <strong style="color: #211313;">
+                    {{ $filterBulan ? $bulanNames[(int)$filterBulan] : 'Semua Bulan' }}
+                    {{ $filterTahun ?? '' }}
+                </strong>
+            </div>
+        @endif
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-4">
                 <div class="lyb-stat-card">
@@ -146,13 +195,19 @@
                             <tr>
                                 <td colspan="9" class="text-center lyb-empty-row">
                                     <i class="bi bi-inbox"></i>
-                                    <p>Belum ada data transaksi.</p>
+                                    <p>Belum ada data transaksi{{ $filterBulan || $filterTahun ? ' pada periode ini' : '' }}.</p>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+
+            @if($bookings->hasPages())
+                <div class="mt-4 d-flex justify-content-center">
+                    {{ $bookings->links() }}
+                </div>
+            @endif
         </div>
     </section>
 @endsection

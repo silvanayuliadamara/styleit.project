@@ -614,6 +614,24 @@
                 </div>
             </div>
 
+            {{-- DP Dikembalikan Notification --}}
+            @if($booking->latestCancellationRequest && $booking->latestCancellationRequest->dp_dikembalikan)
+                <div class="detail-card" style="background: #fef3e2; border-color: #f5c842;">
+                    <div class="d-flex align-items-start gap-3">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: #fff3cd; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="bi bi-arrow-return-left" style="color: #d97706; font-size: 20px;"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold mb-1" style="color: #92400e; font-size: 14px;">DP Dikembalikan</div>
+                            <p class="mb-0" style="color: #78350f; font-size: 13px; line-height: 1.5;">
+                                DP Anda sebesar <strong>Rp{{ number_format($booking->latestCancellationRequest->jumlah_dp_dikembalikan, 0, ',', '.') }}</strong> akan dikembalikan karena pengajuan pembatalan disetujui.
+                                Silakan hubungi admin untuk informasi pengembalian dana.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- WhatsApp --}}
             <a href="https://wa.me/6281227545591?text=Halo%20admin%20LYB,%20saya%20mau%20tanya%20booking%20{{ $booking->booking_code ?? '' }}" target="_blank" class="btn-wa-detail">
                 <i class="bi bi-whatsapp"></i> Tanya Admin via WhatsApp
@@ -650,7 +668,7 @@
                         <p class="review-subtitle">
                             Bagaimana pengalaman Anda? Ulasan Anda sangat berarti bagi kami untuk terus meningkatkan layanan.
                         </p>
-                        <form action="{{ route('customer.bookings.review', $booking->booking_code) }}" method="POST">
+                        <form action="{{ route('customer.bookings.review', $booking->booking_code) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label fw-bold small mb-2" style="color: #211313; font-size: 13px;">Rating <span class="text-danger">*</span></label>
@@ -661,9 +679,14 @@
                                     @endfor
                                 </div>
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label fw-bold small mb-1" style="color: #211313; font-size: 13px;">Komentar <span class="text-muted fw-normal">(opsional)</span></label>
                                 <textarea name="komentar" class="form-control" rows="3" maxlength="1000" placeholder="Ceritakan pengalaman Anda..." style="border-color: #eadfd6; font-size: 13px; border-radius: 14px; padding: 14px; resize: none;">{{ old('komentar') }}</textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small mb-1" style="color: #211313; font-size: 13px;">Lampiran Foto <span class="text-muted fw-normal">(opsional)</span></label>
+                                <input type="file" name="foto" class="form-control" accept="image/*" style="border-color: #eadfd6; font-size: 13px; border-radius: 14px; padding: 10px;">
+                                <div class="form-text text-muted" style="font-size: 11px;">Maksimal ukuran file 10MB. Format gambar (JPG, PNG, JPEG).</div>
                             </div>
                             <button type="submit" class="btn-submit-review">
                                 <i class="bi bi-send"></i> Kirim Ulasan

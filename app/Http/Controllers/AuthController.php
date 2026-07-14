@@ -17,10 +17,14 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function refreshCaptcha()
+    public function refreshCaptcha(Request $request)
     {
+        $config = $request->input('config', 'login');
+        if (!in_array($config, ['login', 'register'])) {
+            $config = 'login';
+        }
         return response()->json([
-            'captcha' => captcha_img('login')
+            'captcha' => captcha_img($config)
         ]);
     }
 

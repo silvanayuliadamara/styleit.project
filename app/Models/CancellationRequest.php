@@ -12,10 +12,14 @@ class CancellationRequest extends Model
         'status_persetujuan',
         'approved_by',
         'customer_dibaca',
+        'dp_dikembalikan',
+        'jumlah_dp_dikembalikan',
     ];
 
     protected $casts = [
         'customer_dibaca' => 'boolean',
+        'dp_dikembalikan' => 'boolean',
+        'jumlah_dp_dikembalikan' => 'integer',
     ];
 
     public function booking()
